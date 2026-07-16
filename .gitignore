@@ -1,0 +1,24 @@
+# --- 操作系统生成文件 ---
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# --- Python ---
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+
+# --- Node / JS ---
+node_modules/
+
+# --- Claude 本地配置 ---
+.claude/
+
+# --- 论文 PDF（体积大，可重新下载）---
+papers/pdf/
+
+# --- IDE ---
+.vscode/
+.idea/

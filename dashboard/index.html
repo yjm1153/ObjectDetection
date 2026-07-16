@@ -1,0 +1,610 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>目标检测科研系统 · 研究面板</title>
+<style>
+  :root{
+    --blue:#1a6fe8; --blue-deep:#0f56c2; --blue-light:#e8f1fe; --blue-border:#dce8fa;
+    --bg:#f5f8fd; --card:#ffffff; --text:#1f2d3d; --text-sub:#6b7d95;
+    --green:#16a37a; --amber:#e8960c; --red:#d9534f;
+    --shadow:0 1px 3px rgba(26,111,232,.08), 0 4px 14px rgba(26,111,232,.06);
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  body{font-family:"Segoe UI","Microsoft YaHei",system-ui,sans-serif; background:var(--bg); color:var(--text); font-size:14px;}
+
+  /* ===== 布局 ===== */
+  #topbar{position:fixed; top:0; left:0; right:0; height:56px; background:var(--card); border-bottom:1px solid var(--blue-border);
+    display:flex; align-items:center; gap:14px; padding:0 20px; z-index:10;}
+  #topbar .logo{font-size:16px; font-weight:700; color:var(--blue-deep);}
+  #topbar .badge{background:var(--blue-light); color:var(--blue-deep); border:1px solid var(--blue-border);
+    border-radius:999px; padding:3px 12px; font-size:12px; font-weight:600;}
+  #topbar .spacer{flex:1;}
+  #topbar .meta{color:var(--text-sub); font-size:12px;}
+  #btn-refresh{background:var(--blue); color:#fff; border:none; border-radius:8px; padding:7px 16px;
+    font-size:13px; cursor:pointer; transition:background .15s;}
+  #btn-refresh:hover{background:var(--blue-deep);}
+
+  #sidebar{position:fixed; top:56px; left:0; bottom:0; width:210px; background:var(--card);
+    border-right:1px solid var(--blue-border); padding:14px 10px;}
+  .nav-item{display:flex; align-items:center; gap:10px; padding:10px 14px; border-radius:9px; cursor:pointer;
+    color:var(--text-sub); font-weight:500; margin-bottom:4px; border-left:3px solid transparent; transition:all .15s;}
+  .nav-item:hover{background:var(--bg); color:var(--text);}
+  .nav-item.active{background:var(--blue-light); color:var(--blue-deep); border-left-color:var(--blue); font-weight:700;}
+
+  #main{margin:56px 0 0 210px; padding:24px 28px; max-width:1200px;}
+  .view-title{font-size:20px; font-weight:700; margin-bottom:4px;}
+  .view-sub{color:var(--text-sub); font-size:13px; margin-bottom:18px;}
+
+  /* ===== 卡片 ===== */
+  .card{background:var(--card); border:1px solid var(--blue-border); border-radius:12px; box-shadow:var(--shadow);
+    padding:18px 20px; margin-bottom:18px;}
+  .card h3.card-title{font-size:15px; color:var(--blue-deep); margin-bottom:12px; display:flex; align-items:center; gap:8px;}
+  .grid{display:grid; gap:18px;}
+  .grid-2{grid-template-columns:1fr 1fr;}
+  .grid-4{grid-template-columns:repeat(4,1fr);}
+  @media(max-width:900px){.grid-2,.grid-4{grid-template-columns:1fr;}}
+
+  .stat-card{text-align:center; padding:20px 12px;}
+  .stat-card .num{font-size:32px; font-weight:800; color:var(--blue); line-height:1.2;}
+  .stat-card .label{color:var(--text-sub); font-size:13px; margin-top:6px;}
+
+  .highlight-card{background:linear-gradient(135deg,#e8f1fe 0%,#f4f9ff 100%); border:1px solid #bcd6f9;}
+
+  /* ===== 进度条 ===== */
+  .progress{height:10px; background:#e3edfb; border-radius:999px; overflow:hidden;}
+  .progress .fill{height:100%; background:linear-gradient(90deg,#4a90f2,var(--blue)); border-radius:999px; transition:width .4s;}
+
+  /* ===== Roadmap 步骤 ===== */
+  .step{display:flex; align-items:center; gap:12px; padding:7px 0;}
+  .step .dot{width:22px; height:22px; border-radius:50%; display:flex; align-items:center; justify-content:center;
+    font-size:11px; flex-shrink:0; background:#e3edfb; color:var(--text-sub);}
+  .step.doing .dot{background:#fdf0d8; color:var(--amber);}
+  .step.done .dot{background:#d9f2e9; color:var(--green);}
+  .step .st-label{flex:1;}
+  .step .st-status{font-size:12px; color:var(--text-sub);}
+
+  /* ===== 任务清单 ===== */
+  .filter-bar{display:flex; gap:8px; margin-bottom:16px;}
+  .filter-btn{background:var(--card); border:1px solid var(--blue-border); border-radius:999px; padding:6px 16px;
+    font-size:13px; cursor:pointer; color:var(--text-sub);}
+  .filter-btn.active{background:var(--blue); border-color:var(--blue); color:#fff; font-weight:600;}
+  .task-item{display:flex; align-items:flex-start; gap:10px; padding:8px 4px; border-bottom:1px dashed #edf3fc;}
+  .task-item:last-child{border-bottom:none;}
+  .task-item .box{width:17px; height:17px; border-radius:5px; border:2px solid #b9cfef; flex-shrink:0; margin-top:1px;
+    display:flex; align-items:center; justify-content:center; font-size:11px; color:#fff;}
+  .task-item.done .box{background:var(--green); border-color:var(--green);}
+  .task-item.done .txt{color:var(--text-sub); text-decoration:line-through;}
+
+  /* ===== Markdown 渲染 ===== */
+  .md h1{font-size:20px; margin:14px 0 10px; color:var(--blue-deep);}
+  .md h2{font-size:17px; margin:16px 0 8px; padding-bottom:5px; border-bottom:1px solid var(--blue-border); color:var(--blue-deep);}
+  .md h3{font-size:15px; margin:12px 0 6px;}
+  .md h4,.md h5,.md h6{font-size:14px; margin:10px 0 5px;}
+  .md p{margin:6px 0; line-height:1.75;}
+  .md ul,.md ol{margin:6px 0 6px 22px; line-height:1.75;}
+  .md li{margin:2px 0;}
+  .md blockquote{border-left:3px solid var(--blue); background:var(--blue-light); padding:8px 14px;
+    border-radius:0 8px 8px 0; margin:8px 0; color:#3d5877;}
+  .md code{background:#eef4fd; color:var(--blue-deep); padding:1px 6px; border-radius:5px;
+    font-family:Consolas,monospace; font-size:12.5px;}
+  .md pre{background:#f0f5fd; border:1px solid var(--blue-border); border-radius:8px; padding:12px; overflow-x:auto; margin:8px 0;}
+  .md pre code{background:none; padding:0;}
+  .md hr{border:none; border-top:1px solid var(--blue-border); margin:14px 0;}
+  .md table{border-collapse:collapse; width:100%; margin:10px 0; font-size:13px;}
+  .md th{background:var(--blue-light); color:var(--blue-deep); font-weight:700;}
+  .md th,.md td{border:1px solid var(--blue-border); padding:7px 10px; text-align:left; line-height:1.6;}
+  .md tr:nth-child(even) td{background:#fafcff;}
+  .md a{color:var(--blue); text-decoration:none;}
+  .md a:hover{text-decoration:underline;}
+  .md input[type=checkbox]{accent-color:var(--blue); margin-right:5px;}
+
+  /* ===== 知识库网格 ===== */
+  .kb-grid{display:grid; grid-template-columns:repeat(auto-fill,minmax(170px,1fr)); gap:14px; margin-bottom:20px;}
+  .kb-card{background:var(--card); border:1px solid var(--blue-border); border-radius:11px; padding:14px;
+    cursor:pointer; box-shadow:var(--shadow); transition:all .15s; position:relative;}
+  .kb-card:hover{border-color:var(--blue); transform:translateY(-2px);}
+  .kb-card.selected{border-color:var(--blue); background:var(--blue-light);}
+  .kb-card .kb-icon{font-size:20px;}
+  .kb-card .kb-name{font-weight:700; margin:6px 0 2px;}
+  .kb-card .kb-file{font-size:11px; color:var(--text-sub); font-family:Consolas,monospace;}
+  .kb-card .kb-status{position:absolute; top:10px; right:12px; font-size:13px;}
+
+  /* ===== 列表条目(论文等) ===== */
+  .doc-item{display:flex; align-items:center; gap:12px; padding:12px 14px; border:1px solid var(--blue-border);
+    border-radius:10px; margin-bottom:10px; cursor:pointer; background:var(--card); transition:all .15s;}
+  .doc-item:hover{border-color:var(--blue);}
+  .doc-item.selected{background:var(--blue-light); border-color:var(--blue);}
+  .doc-item .doc-name{font-weight:600; flex:1;}
+
+  /* ===== 折叠详情 ===== */
+  details.idea-detail{border:1px solid var(--blue-border); border-radius:10px; margin-bottom:10px; background:var(--card);}
+  details.idea-detail summary{padding:12px 16px; cursor:pointer; font-weight:600; color:var(--blue-deep);
+    list-style:none; display:flex; align-items:center; gap:8px;}
+  details.idea-detail summary::before{content:'▸'; transition:transform .15s;}
+  details.idea-detail[open] summary::before{transform:rotate(90deg);}
+  details.idea-detail .detail-body{padding:0 18px 14px; border-top:1px dashed var(--blue-border);}
+
+  /* ===== 时间线 ===== */
+  .timeline-entry{position:relative; padding-left:26px; margin-bottom:18px;}
+  .timeline-entry::before{content:''; position:absolute; left:6px; top:8px; bottom:-14px; width:2px; background:var(--blue-border);}
+  .timeline-entry:last-child::before{bottom:auto; height:12px;}
+  .timeline-entry .tl-dot{position:absolute; left:0; top:5px; width:14px; height:14px; border-radius:50%;
+    background:var(--blue); border:3px solid var(--blue-light);}
+  .timeline-entry .tl-date{font-weight:700; color:var(--blue-deep); margin-bottom:6px;}
+
+  /* ===== 状态提示 ===== */
+  .loading{color:var(--text-sub); padding:40px; text-align:center;}
+  .error-box{background:#fdf0ef; border:1px solid #f2c9c7; color:#a94442; border-radius:10px; padding:16px 20px; line-height:1.8;}
+  .rank1-star{color:var(--amber);}
+  tr.rank1-row td{background:#fdf6e3 !important; font-weight:600;}
+</style>
+</head>
+<body>
+
+<div id="topbar">
+  <span class="logo">🔬 目标检测科研系统 · 研究面板</span>
+  <span class="badge" id="stage-badge">加载中…</span>
+  <span class="spacer"></span>
+  <span class="meta" id="last-update"></span>
+  <button id="btn-refresh" onclick="refresh()">🔄 刷新</button>
+</div>
+
+<div id="sidebar">
+  <div class="nav-item" data-view="overview">📊 <span>总览</span></div>
+  <div class="nav-item" data-view="tasks">✅ <span>任务</span></div>
+  <div class="nav-item" data-view="ideas">💡 <span>Ideas</span></div>
+  <div class="nav-item" data-view="kb">📚 <span>知识库</span></div>
+  <div class="nav-item" data-view="papers">📄 <span>论文</span></div>
+  <div class="nav-item" data-view="decisions">🧭 <span>决策与日志</span></div>
+</div>
+
+<div id="main"><div class="loading">加载中…</div></div>
+
+<script>
+/* ============================================================
+ * 目标检测科研系统 · 本地研究面板
+ * 实时读取项目内 Markdown 文件渲染,零外部依赖
+ * ============================================================ */
+
+const $main = document.getElementById('main');
+const cache = {};
+let currentView = 'overview';
+
+/* ---------- 数据获取 ---------- */
+async function fetchText(path) {
+  if (cache[path] !== undefined) return cache[path];
+  const resp = await fetch(encodeURI('/' + path));
+  if (!resp.ok) throw new Error(path + ' (HTTP ' + resp.status + ')');
+  const text = await resp.text();
+  cache[path] = text;
+  return text;
+}
+
+/* ---------- Markdown 渲染器(覆盖系统文件用到的全部语法) ---------- */
+function esc(s) {
+  return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+}
+function inlineMd(s) {
+  s = esc(s);
+  s = s.replace(/`([^`]+)`/g, '<code>$1</code>');
+  s = s.replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>');
+  s = s.replace(/(^|[^\w*])\*([^*\s][^*]*)\*/g, '$1<em>$2</em>');
+  s = s.replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" target="_blank" rel="noopener">$1</a>');
+  return s;
+}
+function splitTableRow(line) {
+  // 处理转义竖线 \|
+  const PH = '\u0001';
+  line = line.replace(/\\\|/g, PH);
+  let cells = line.trim().replace(/^\|/, '').replace(/\|$/, '').split('|');
+  return cells.map(c => c.split(PH).join('|').trim());
+}
+function mdToHtml(md) {
+  const lines = md.replace(/\r\n/g, '\n').split('\n');
+  const out = [];
+  const listStack = []; // 元素为 'ul' 或 'ol'
+  let i = 0;
+
+  function closeLists(toDepth) {
+    while (listStack.length > toDepth) out.push('</' + listStack.pop() + '>');
+  }
+
+  while (i < lines.length) {
+    const line = lines[i];
+
+    // 代码块
+    if (/^```/.test(line)) {
+      closeLists(0);
+      const buf = [];
+      i++;
+      while (i < lines.length && !/^```/.test(lines[i])) { buf.push(lines[i]); i++; }
+      i++; // 跳过结束围栏
+      out.push('<pre><code>' + esc(buf.join('\n')) + '</code></pre>');
+      continue;
+    }
+    // 表格:当前行以 | 开头且下一行是分隔行
+    if (/^\s*\|/.test(line) && i + 1 < lines.length && /^\s*\|?[\s:|-]+\|[\s:|-]*$/.test(lines[i + 1])) {
+      closeLists(0);
+      const header = splitTableRow(line);
+      i += 2;
+      const rows = [];
+      while (i < lines.length && /^\s*\|/.test(lines[i])) { rows.push(splitTableRow(lines[i])); i++; }
+      let html = '<table><thead><tr>' + header.map(c => '<th>' + inlineMd(c) + '</th>').join('') + '</tr></thead><tbody>';
+      for (const r of rows) html += '<tr>' + r.map(c => '<td>' + inlineMd(c) + '</td>').join('') + '</tr>';
+      html += '</tbody></table>';
+      out.push(html);
+      continue;
+    }
+    // 标题
+    const h = line.match(/^(#{1,6})\s+(.*)/);
+    if (h) {
+      closeLists(0);
+      out.push('<h' + h[1].length + '>' + inlineMd(h[2]) + '</h' + h[1].length + '>');
+      i++;
+      continue;
+    }
+    // 分隔线
+    if (/^\s*(-{3,}|\*{3,})\s*$/.test(line)) {
+      closeLists(0);
+      out.push('<hr>');
+      i++;
+      continue;
+    }
+    // 引用块
+    if (/^\s*>/.test(line)) {
+      closeLists(0);
+      const buf = [];
+      while (i < lines.length && /^\s*>/.test(lines[i])) { buf.push(lines[i].replace(/^\s*>\s?/, '')); i++; }
+      out.push('<blockquote>' + buf.map(inlineMd).join('<br>') + '</blockquote>');
+      continue;
+    }
+    // 列表(支持任务清单与两级缩进)
+    const li = line.match(/^(\s*)([-*]|\d+\.)\s+(.*)/);
+    if (li) {
+      const depth = Math.min(Math.floor(li[1].length / 2), 3) + 1;
+      const type = /\d/.test(li[2]) ? 'ol' : 'ul';
+      while (listStack.length > depth) out.push('</' + listStack.pop() + '>');
+      while (listStack.length < depth) { out.push('<' + type + '>'); listStack.push(type); }
+      let content = li[3];
+      const task = content.match(/^\[([ xX])\]\s*(.*)/);
+      if (task) {
+        content = '<input type="checkbox" disabled' + (task[1] !== ' ' ? ' checked' : '') + '>' + inlineMd(task[2]);
+      } else {
+        content = inlineMd(content);
+      }
+      out.push('<li>' + content + '</li>');
+      i++;
+      continue;
+    }
+    // 空行
+    if (/^\s*$/.test(line)) { closeLists(0); i++; continue; }
+    // 普通段落
+    closeLists(0);
+    out.push('<p>' + inlineMd(line) + '</p>');
+    i++;
+  }
+  closeLists(0);
+  return '<div class="md">' + out.join('\n') + '</div>';
+}
+
+/* ---------- Markdown 结构解析工具 ---------- */
+// 提取 "## 标题" 到下一个 "## " 之间的内容
+function extractSection(md, title) {
+  const hit = splitSections(md).find(s => s.title.startsWith(title));
+  return hit ? hit.body.trim() : null;
+}
+// 按 "## " 拆分为 {title, body} 数组
+function splitSections(md) {
+  const parts = md.split(/^## /m).slice(1);
+  return parts.map(p => {
+    const nl = p.indexOf('\n');
+    return { title: p.slice(0, nl < 0 ? p.length : nl).trim(), body: nl < 0 ? '' : p.slice(nl + 1) };
+  });
+}
+function countCheckboxes(md) {
+  const done = (md.match(/^\s*- \[[xX]\]/gm) || []).length;
+  const todo = (md.match(/^\s*- \[ \]/gm) || []).length;
+  return { done, todo, total: done + todo };
+}
+
+/* ---------- 视图框架 ---------- */
+const views = {
+  overview:  { title: '总览',       sub: '系统研究近况一览(数据来自 README.md / TASKS.md)', render: renderOverview },
+  tasks:     { title: '任务',       sub: '数据来自 TASKS.md', render: renderTasks },
+  ideas:     { title: 'Ideas',      sub: '数据来自 Ideas/innovation_ranking.md 与 Ideas/candidate.md', render: renderIdeas },
+  kb:        { title: '知识库',     sub: '点击卡片查看 Knowledge Base 文件内容', render: renderKB },
+  papers:    { title: '论文',       sub: '已读论文总结(papers/summaries/)', render: renderPapers },
+  decisions: { title: '决策与日志', sub: '数据来自 Decision/decision_history.md 与 Research/journal.md', render: renderDecisions },
+};
+
+async function setView(id) {
+  currentView = id;
+  document.querySelectorAll('.nav-item').forEach(el =>
+    el.classList.toggle('active', el.dataset.view === id));
+  const v = views[id];
+  $main.innerHTML = '<div class="view-title">' + v.title + '</div><div class="view-sub">' + v.sub +
+    '</div><div id="view-body"><div class="loading">加载中…</div></div>';
+  const body = document.getElementById('view-body');
+  try {
+    await v.render(body);
+  } catch (e) {
+    body.innerHTML = '<div class="error-box"><strong>⚠️ 加载失败:</strong> ' + esc(e.message) +
+      '<br>请通过项目根目录的 <code>启动研究面板.bat</code> 打开本页面(需要本地 HTTP 服务)。</div>';
+  }
+}
+function refresh() {
+  Object.keys(cache).forEach(k => delete cache[k]);
+  loadTopbar();
+  setView(currentView);
+}
+
+/* ---------- 顶部栏 ---------- */
+async function loadTopbar() {
+  try {
+    const readme = await fetchText('README.md');
+    const stage = readme.match(/\*\*阶段\*\*[:：]\s*`?([^`\n(（]+)/);
+    document.getElementById('stage-badge').textContent = '阶段:' + (stage ? stage[1].trim() : '未知');
+    const upd = readme.match(/Last Update[:：]\s*([0-9-]+)/);
+    document.getElementById('last-update').textContent = upd ? '系统最近更新:' + upd[1] : '';
+  } catch (e) {
+    document.getElementById('stage-badge').textContent = '离线';
+  }
+}
+
+/* ---------- 视图 1:总览 ---------- */
+async function renderOverview(el) {
+  const [readme, tasks] = await Promise.all([fetchText('README.md'), fetchText('TASKS.md')]);
+
+  // 统计数字(解析失败显示 —)
+  const papersRead = (readme.match(/\|\s*已读论文\s*\|\s*(\d+)/) || [])[1] || '—';
+  let candidates = '—';
+  const pipeSec = extractSection(readme, 'Idea Pipeline');
+  if (pipeSec) {
+    const rows = pipeSec.split('\n').filter(l => /^\s*\|/.test(l) && !/---/.test(l));
+    if (rows.length >= 2) candidates = splitTableRow(rows[1])[0] || '—';
+  }
+  let kbText = '—', kbPct = 0;
+  const kbSec = extractSection(readme, 'Knowledge Base Status');
+  if (kbSec) {
+    const done = (kbSec.match(/✅/g) || []).length;
+    const total = done + (kbSec.match(/⬜/g) || []).length;
+    if (total > 0) { kbText = done + '/' + total; kbPct = Math.round(done / total * 100); }
+  }
+  const tc = countCheckboxes(tasks);
+  const taskText = tc.total ? tc.done + '/' + tc.total : '—';
+  const taskPct = tc.total ? Math.round(tc.done / tc.total * 100) : 0;
+
+  // Rank1 Idea(README「Current Ideas」表首行)
+  let rank1Html = '';
+  const ideaSec = extractSection(readme, 'Current Ideas');
+  if (ideaSec) {
+    const rows = ideaSec.split('\n').filter(l => /^\s*\|/.test(l) && !/---/.test(l));
+    if (rows.length >= 2) {
+      const c = splitTableRow(rows[1]);
+      rank1Html = '<div class="card highlight-card"><h3 class="card-title"><span class="rank1-star">⭐</span> 当前最优候选 Idea(Rank 1)</h3>' +
+        '<div style="font-size:16px;font-weight:700;margin-bottom:6px;">#' + esc(c[0]) + ' ' + inlineMd(c[1] || '') + '</div>' +
+        '<div style="color:var(--text-sub);">状态:' + inlineMd(c[2] || '') + '</div></div>';
+    }
+  }
+
+  // Roadmap
+  let roadmapHtml = '';
+  const rmSec = extractSection(readme, 'Roadmap');
+  if (rmSec) {
+    const rows = rmSec.split('\n').filter(l => /^\s*\|/.test(l) && !/---/.test(l)).slice(1);
+    roadmapHtml = rows.map(r => {
+      const c = splitTableRow(r);
+      const status = c[1] || '';
+      const cls = status.includes('✅') ? 'done' : (status.includes('🟨') ? 'doing' : '');
+      const icon = cls === 'done' ? '✓' : (cls === 'doing' ? '●' : '○');
+      return '<div class="step ' + cls + '"><div class="dot">' + icon + '</div>' +
+        '<div class="st-label">' + inlineMd(c[0] || '') + '</div>' +
+        '<div class="st-status">' + inlineMd(status) + '</div></div>';
+    }).join('');
+  }
+
+  const nextSteps = extractSection(readme, 'Next Steps');
+  const problems = extractSection(readme, 'Current Problems');
+  const gaps = extractSection(readme, 'Key Research Gap');
+
+  el.innerHTML =
+    '<div class="grid grid-4">' +
+      '<div class="card stat-card"><div class="num">' + papersRead + '</div><div class="label">📄 已读论文</div></div>' +
+      '<div class="card stat-card"><div class="num">' + candidates + '</div><div class="label">💡 候选 Idea</div></div>' +
+      '<div class="card stat-card"><div class="num">' + kbText + '</div><div class="label">📚 知识库完成</div>' +
+        '<div class="progress" style="margin-top:10px;"><div class="fill" style="width:' + kbPct + '%"></div></div></div>' +
+      '<div class="card stat-card"><div class="num">' + taskText + '</div><div class="label">✅ 任务完成</div>' +
+        '<div class="progress" style="margin-top:10px;"><div class="fill" style="width:' + taskPct + '%"></div></div></div>' +
+    '</div>' +
+    rank1Html +
+    '<div class="grid grid-2">' +
+      '<div class="card"><h3 class="card-title">🗺️ Roadmap</h3>' + (roadmapHtml || mdToHtml(rmSec || '暂无')) + '</div>' +
+      '<div class="card"><h3 class="card-title">👣 Next Steps</h3>' + mdToHtml(nextSteps || '暂无') + '</div>' +
+      '<div class="card"><h3 class="card-title">❗ Current Problems</h3>' + mdToHtml(problems || '暂无') + '</div>' +
+      '<div class="card"><h3 class="card-title">🕳️ Key Research Gap</h3>' + mdToHtml(gaps || '暂无') + '</div>' +
+    '</div>';
+}
+
+/* ---------- 视图 2:任务 ---------- */
+let taskFilter = 'all';
+async function renderTasks(el) {
+  const tasks = await fetchText('TASKS.md');
+  const tc = countCheckboxes(tasks);
+  const pct = tc.total ? Math.round(tc.done / tc.total * 100) : 0;
+  const sections = splitSections(tasks).filter(s => /- \[/.test(s.body));
+
+  let html = '<div class="card"><div style="display:flex;justify-content:space-between;margin-bottom:8px;">' +
+    '<strong>总体进度</strong><span>' + tc.done + ' / ' + tc.total + '(' + pct + '%)</span></div>' +
+    '<div class="progress"><div class="fill" style="width:' + pct + '%"></div></div></div>';
+
+  html += '<div class="filter-bar">' +
+    ['all|全部', 'todo|进行中', 'done|已完成'].map(f => {
+      const [key, label] = f.split('|');
+      return '<button class="filter-btn' + (taskFilter === key ? ' active' : '') +
+        '" onclick="taskFilter=\'' + key + '\';setView(\'tasks\')">' + label + '</button>';
+    }).join('') + '</div>';
+
+  for (const sec of sections) {
+    const items = [];
+    for (const line of sec.body.split('\n')) {
+      const m = line.match(/^\s*- \[([ xX])\]\s*(.*)/);
+      if (m) items.push({ done: m[1] !== ' ', text: m[2] });
+    }
+    const filtered = items.filter(it => taskFilter === 'all' || (taskFilter === 'done') === it.done);
+    if (!filtered.length) continue;
+    const secDone = items.filter(i => i.done).length;
+    html += '<div class="card"><h3 class="card-title">' + esc(sec.title) +
+      ' <span style="font-weight:400;color:var(--text-sub);font-size:12px;">' + secDone + '/' + items.length + '</span></h3>' +
+      filtered.map(it =>
+        '<div class="task-item' + (it.done ? ' done' : '') + '"><div class="box">' + (it.done ? '✓' : '') +
+        '</div><div class="txt">' + inlineMd(it.text) + '</div></div>').join('') +
+      '</div>';
+  }
+  el.innerHTML = html;
+}
+
+/* ---------- 视图 3:Ideas ---------- */
+async function renderIdeas(el) {
+  const [ranking, candidate] = await Promise.all([
+    fetchText('Ideas/innovation_ranking.md'),
+    fetchText('Ideas/candidate.md'),
+  ]);
+  // 排行表:整体渲染后给 Rank1 行加高亮
+  let rankHtml = mdToHtml(ranking);
+  const tmp = document.createElement('div');
+  tmp.innerHTML = rankHtml;
+  const firstRow = tmp.querySelector('tbody tr');
+  if (firstRow && firstRow.firstElementChild && firstRow.firstElementChild.textContent.trim() === '1') {
+    firstRow.classList.add('rank1-row');
+    firstRow.firstElementChild.innerHTML = '⭐ 1';
+  }
+  rankHtml = tmp.innerHTML;
+
+  // candidate.md 按 ## 拆成折叠面板
+  const ideaSections = splitSections(candidate);
+  let candHtml;
+  if (ideaSections.length) {
+    candHtml = ideaSections.map(s =>
+      '<details class="idea-detail"><summary>' + inlineMd(s.title) + '</summary>' +
+      '<div class="detail-body">' + mdToHtml(s.body) + '</div></details>').join('');
+  } else {
+    candHtml = mdToHtml(candidate);
+  }
+
+  el.innerHTML =
+    '<div class="card"><h3 class="card-title">🏆 Innovation Ranking</h3>' + rankHtml + '</div>' +
+    '<div class="card"><h3 class="card-title">📋 候选 Idea 详情(点击展开)</h3>' + candHtml + '</div>';
+}
+
+/* ---------- 视图 4:知识库 ---------- */
+const KB_FILES = [
+  { file: 'backbone.md',     name: '主干网络',  icon: '🦴' },
+  { file: 'neck.md',         name: '特征融合',  icon: '🔗' },
+  { file: 'head.md',         name: '检测头',    icon: '🎯' },
+  { file: 'attention.md',    name: '注意力',    icon: '👁️' },
+  { file: 'loss.md',         name: '损失函数',  icon: '📉' },
+  { file: 'training.md',     name: '训练策略',  icon: '🏋️' },
+  { file: 'augmentation.md', name: '数据增强',  icon: '🎨' },
+  { file: 'dataset.md',      name: '数据集',    icon: '🗂️' },
+  { file: 'timeline.md',     name: '时间线',    icon: '🕐' },
+  { file: 'compare.md',      name: '模型对比',  icon: '⚖️' },
+  { file: 'sota.md',         name: 'SOTA 记录', icon: '🏅' },
+  { file: 'research_gap.md', name: '研究缺口',  icon: '🕳️' },
+  { file: 'future_work.md',  name: '未来工作',  icon: '🚀' },
+];
+async function renderKB(el) {
+  const contents = await Promise.all(KB_FILES.map(k =>
+    fetchText('Knowledge Base/' + k.file).catch(() => null)));
+  let grid = '<div class="kb-grid">' + KB_FILES.map((k, idx) => {
+    const c = contents[idx];
+    const filled = c !== null && c.length > 400; // 超过模板长度视为已填充
+    return '<div class="kb-card" data-idx="' + idx + '" onclick="showKB(' + idx + ')">' +
+      '<span class="kb-status">' + (c === null ? '❌' : (filled ? '✅' : '⬜')) + '</span>' +
+      '<div class="kb-icon">' + k.icon + '</div>' +
+      '<div class="kb-name">' + k.name + '</div>' +
+      '<div class="kb-file">' + k.file + '</div></div>';
+  }).join('') + '</div>';
+  el.innerHTML = grid + '<div id="kb-content"><div class="card" style="color:var(--text-sub);text-align:center;">👆 点击上方卡片查看内容</div></div>';
+}
+async function showKB(idx) {
+  document.querySelectorAll('.kb-card').forEach((c, i) => c.classList.toggle('selected', i === idx));
+  const box = document.getElementById('kb-content');
+  const k = KB_FILES[idx];
+  box.innerHTML = '<div class="card"><div class="loading">加载中…</div></div>';
+  try {
+    const md = await fetchText('Knowledge Base/' + k.file);
+    box.innerHTML = '<div class="card"><h3 class="card-title">' + k.icon + ' ' + k.name +
+      ' <span style="font-weight:400;color:var(--text-sub);font-size:12px;">Knowledge Base/' + k.file + '</span></h3>' +
+      mdToHtml(md) + '</div>';
+  } catch (e) {
+    box.innerHTML = '<div class="error-box">⚠️ 无法读取 ' + esc(k.file) + ':' + esc(e.message) + '</div>';
+  }
+  box.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+/* ---------- 视图 5:论文 ---------- */
+async function listMdFiles(dirPath, fallback) {
+  // python http.server 的目录页含 <a href="xxx.md"> 链接,借此自动发现文件
+  try {
+    const html = await fetchText(dirPath + '/');
+    const files = [...html.matchAll(/href="([^"]+\.md)"/g)].map(m => decodeURIComponent(m[1]));
+    if (files.length) return files;
+  } catch (e) { /* 目录列表不可用则回退 */ }
+  return fallback;
+}
+async function renderPapers(el) {
+  const files = await listMdFiles('papers/summaries',
+    ['SEEN-DA_CVPR2025.md', 'SEMA-YOLO_RemoteSensing2025.md']);
+  el.innerHTML =
+    '<div class="card"><h3 class="card-title">📄 已读论文(' + files.length + ' 篇)</h3><div id="paper-list">' +
+    files.map((f, i) =>
+      '<div class="doc-item" data-idx="' + i + '" onclick="showPaper(' + i + ', \'' + encodeURIComponent(f) + '\')">' +
+      '<span>📑</span><span class="doc-name">' + esc(f.replace(/\.md$/, '')) + '</span><span style="color:var(--blue);">查看 →</span></div>'
+    ).join('') + '</div></div>' +
+    '<div id="paper-content"></div>';
+}
+async function showPaper(idx, encName) {
+  const name = decodeURIComponent(encName);
+  document.querySelectorAll('#paper-list .doc-item').forEach((c, i) => c.classList.toggle('selected', i === idx));
+  const box = document.getElementById('paper-content');
+  box.innerHTML = '<div class="card"><div class="loading">加载中…</div></div>';
+  try {
+    const md = await fetchText('papers/summaries/' + name);
+    box.innerHTML = '<div class="card">' + mdToHtml(md) + '</div>';
+  } catch (e) {
+    box.innerHTML = '<div class="error-box">⚠️ 无法读取论文总结:' + esc(e.message) + '</div>';
+  }
+  box.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+/* ---------- 视图 6:决策与日志 ---------- */
+async function renderDecisions(el) {
+  const [decision, journal] = await Promise.all([
+    fetchText('Decision/decision_history.md'),
+    fetchText('Research/journal.md'),
+  ]);
+  // journal 按日期节拆为时间线(过滤模板节)
+  const entries = splitSections(journal).filter(s => /\d{4}-\d{2}-\d{2}/.test(s.title));
+  let tlHtml;
+  if (entries.length) {
+    tlHtml = entries.map(s =>
+      '<div class="timeline-entry"><div class="tl-dot"></div>' +
+      '<div class="tl-date">📅 ' + esc(s.title) + '</div>' + mdToHtml(s.body) + '</div>').join('');
+  } else {
+    tlHtml = mdToHtml(journal);
+  }
+  el.innerHTML =
+    '<div class="card"><h3 class="card-title">🧭 决策历史</h3>' + mdToHtml(decision) + '</div>' +
+    '<div class="card"><h3 class="card-title">📓 研究日志</h3>' + tlHtml + '</div>';
+}
+
+/* ---------- 启动 ---------- */
+document.querySelectorAll('.nav-item').forEach(el =>
+  el.addEventListener('click', () => setView(el.dataset.view)));
+loadTopbar();
+setView('overview');
+</script>
+</body>
+</html>
