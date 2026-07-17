@@ -1,6 +1,7 @@
 # SFIDM: Few-Shot Object Detection in Remote Sensing Images with Spatial-Frequency Interaction and Distribution Matching
 
 - **出处**: Remote Sensing 2025, 17, 972(MDPI,2025-03-10)| Wang et al., 西安电子科技大学
+- **来源**: 【自】用户提供文献(papers/pdf/,2026-07-15 初期投喂)
 - **领域**: 遥感少样本目标检测(FSOD in RSI)
 - **代码**: 未开源(文中未给仓库)
 - **阅读日期**: 2026-07-15

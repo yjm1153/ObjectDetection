@@ -74,3 +74,17 @@
   2. max-sigmoid 门控形式可复用为 #5 的熵图门控(比 attention 便宜)
   3. I-Pooling 的 3×3 改成熵引导的自适应区域采样
 - **References**: YOLO-World arXiv:2401.17270;https://github.com/AILab-CVC/YOLO-World
+
+### 5. MDFC (Multi-Domain Feature Coordination, FMC-DETR)
+- **Name**: MDFC (振幅引导细节下采样 + 多域细化)
+- **Function**: DETR Hybrid Encoder内的跨尺度频率感知特征融合;将浅层P2转化为细节增强先验后与高层融合
+- **Feature Fusion Strategy**: 两阶段——①振幅引导下采样(P2特征分空间/频谱两分支,频谱分支FFT→振幅/相位解耦→仅调制振幅→保留相位→IFFT→与空间分支逐元素融合);②多域细化(空间DWConv+频谱混合FFT+边缘Sobel门控三路并行,部分通道细化)
+- **Advantages**: 振幅-相位解耦极优雅(调制振幅改特征强度,保留相位维持结构);边缘感知分支提供显式定位信号;振幅引导下采样比直接stride卷积保留更多小目标细节
+- **Weakness**: 三路并行计算开销;FFT在P2高分辨率上的墙钟代价未消融;DETR专属,非通用Neck
+- **Computational Cost**: MDFC单独+1.5 AP,计算开销未独立报告
+- **Suitable Scenario**: 小目标 | 遥感 | DETR系检测器
+- **Possible Improvement**:
+  1. 振幅调制→熵/高频判据替代可学习的1×1卷积(=#5/#11)
+  2. 部分通道细化比例自适应(高信息量区域→更多通道走变换路径)
+  3. MDFC的频率解耦迁移到YOLO PAN(替代简单Concat)
+- **References**: arXiv:2509.23056

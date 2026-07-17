@@ -44,3 +44,23 @@
 - **Advantages**: 训练期用 SwiGLU FFN 增强文本嵌入,推理期重参数化并入分类头卷积(`K'=R(f_θ(P))⊛Kᵀ`)→ **推理结构 = 原生闭集 YOLO,零开销开集能力**;LVIS 消融 +2.0 AP(APr +9.3)
 - **Weakness**: 词表固定后才能重参数化(动态加类需重算);对齐质量仍受冻结文本编码器上限约束
 - **Future Improvement**: ①#5 直接以此为基座加 P2+熵稀疏化(推理结构纯净,改造无纠缠);②LRPC 的 anchor 过滤思想下沉到特征级(=#5 本体);③熵图也走同款离线重参数化路径保实时
+
+### 4. DFM 动态特征复用头 (DM-EFS, ICCV 2025)
+- **Name**: Dynamic Feature Multiplexing (DFM) + Size-Features Codebook
+- **Classification**: Anchor-Free (YOLOv7 head)
+- **Prediction**: 标准 YOLO 分类+回归 + Control Module 预测 min/max object size
+- **Matching Strategy**: YOLOv7 默认
+- **Loss**: 标准检测 loss + Codebook 训练 loss
+- **Advantages**: 推理开销极小(仅查表+特征选择);按需使用浅层特征(小目标场景启用更多);3档离散切换简洁
+- **Weakness**: 图像级粗粒度(整图统一策略);离散codebook(仅3档);仅按尺寸(忽视语义/频域信息)
+- **Future Improvement**: Token级软门控替代图像级Codebook → Idea#5方向;语义熵+频域能量三维Codebook
+
+### 5. ADR 角度分布细化检测头 (O² 系列, TGRS 2026)
+- **Name**: Angle Distribution Refinement (ADR) + Chamfer Distance Cost (CDC)
+- **Classification**: DETR 旋转框检测头
+- **Prediction**: 角度概率分布(非标量回归)→迭代细化 + 旋转框顶点坐标
+- **Matching Strategy**: Chamfer距离二分匹配(4顶点最近邻距离之和)
+- **Loss**: Chamfer距离匹配代价 + 旋转对比去噪(OCD) + 标准DETR loss
+- **Advantages**: 角度不确定性建模(非过拟合单点);Chamfer距离消除几何歧义;推理零额外开销
+- **Weakness**: DETR专属;YOLO-OBB未验证;角度分布头在YOLO框架的移植性未知
+- **Future Improvement**: ADR迁移到YOLO-OBB → 验证跨架构通用性;YOLO版角度分布头+Chamfer匹配

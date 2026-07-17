@@ -1,5 +1,7 @@
 # SEEN-DA: SEmantic ENtropy guided Domain-aware Attention for Domain Adaptive Object Detection
 
+> 来源: 【自】用户提供文献(papers/pdf/,2026-07-15 初期投喂)
+
 ## Basic Info
 - **Title**: SEEN-DA: SEmantic ENtropy guided Domain-aware Attention for Domain Adaptive Object Detection
 - **Conference**: CVPR 2025

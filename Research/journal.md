@@ -1,5 +1,108 @@
 # Research Journal
 
+## 2026-07-17 (第十五次记录: 文献检索轮——HF-DETR 撞车监控 + #5 gap 再确认)
+
+- **任务**: 双轨全类目 2025–2026 新作检索(设计文档栈闭环后的唯一无阻塞工作线)
+- **核心命中 HF-DETR(IEEE SPL 2026)⚠️🔔**: LoG 算子 stem(FSD-Stem)+ 小波逆投影重建(FEFR-Encoder)+ **SSMG saliency token 稀疏门控**;VisDrone AP +4.3/AP50 +6.0,8.6M,121 FPS——「高频+token稀疏+VisDrone+实时」四要素齐聚,**#30 组合空间迄今最近邻居**。判定:高频组件做增强非判据统计;SSMG 大概率可学习微门(落 learnable gating 已占区)→ 与 #30 免监督统计判据仍可划界;**但无 arXiv/IEEE 全文不可获取,SSMG 判据性质待核实 → 🔔 挂跟踪(第 2 项)**,#30 方案 §6 新增风险 5。附带正面证据:LoG(Laplacian 家族)被顶刊快报用作高频提取器 = S1 工具选择又一独立佐证
+- **UFO-DETR 快评补全数字**: VisDrone mAP50 46.1(vs RT-DETR-L +2.6)/算力 -60%;纯"频域增强+轻量化"(DynFreq-C3 内用 FDConv),不做条件计算 → 维持"外围计数项"判定不威胁
+- **无新撞车确认**: ①#5 近邻(语义熵/空间门控 CNN 特征稀疏化)检索无新命中;②Dome-DETR 代码仍未放出;③YOLO P2 侧 2026 批量新作(LAF-YOLOv10 35.1@VisDrone/Edge-Constrained QIEA/DroneScan-YOLO 等)全部是"加 P2 头"路线,无人做 P2 内部空间稀疏化——**#5 gap 第 N+1 次确认**;Edge-Constrained "P2 分支 alone +31% AP_small" 为 #5/#6 新增 motivation 数据点
+- **产出**: HF-DETR_SPL2026.md 快评新建 + attention_round1 UFO-DETR 条目补全 + database(50 条,🔔×2)+ #30 方案 §6 风险 5 + ranking 续十一日志
+- **下一步**: ①🔔 跟踪 HF-DETR 全文(SSMG 判据裁决)/Dome 放码/Unmasking 放码;②继续周期性检索;③⏸ 实验类待实验模块(E3/M0 首验候选)
+
+## 2026-07-17 (第十四次记录: 🟦 A轨双文档修订——#11 v1.1 + #5 v3.0 Dome 划界段)
+
+- **任务**: TASKS 既定的 A轨两项纯文档修订,一轮完成
+- **#11 频域交叉分析 v1.1**([frequency_domain_cross_analysis.md](../Ideas/frequency_domain_cross_analysis.md)): ①工具首选 FFT→**S1 空域高通代理**(EFSI 硬消融 33.1>FFT 32.3>DWT 32.1 + 四条工程理由),FFT/DCT 降为消融;②叙事抽象为「高频响应统计判据(实现无关)」,新增消融 F-impl(同判据形式换实现,与 #30 E2 共用)支撑该论断;③判据维度调整为"先高频+局部异常度,三频段留 F3 裁决"(门控容错不对称:误保留只多算,误丢弃才致命);④**判据族权威定义收敛至 #30 方案 §2**(#11 YOLO P2 / #30 DETR token 共用,杜绝分叉维护)——双轨"同判据跨架构"文档基础闭环(⬜#24 卖点);⑤SPA(ICLR 2026)GT 监督门控+packing 记录为 #5/#22 侧可学习升级选项,#11 主打免监督版不采用(定位一致性)
+- **#5 v3.0 §十 Dome-DETR 划界段**([idea_005_v3_design.md](../Ideas/idea_005_v3_design.md)): 四轴划界表——架构载体(CNN P2 卷积分支 vs DETR encoder token,token selection 社区未覆盖 CNN 特征级)/判据(零参语义熵复用 cls logits vs 0.8M DeFE+GT 密度监督+DRFL)/判据语义(**不确定性 vs 密度 = 正交信息维度**,密度低的难例区仍被保留)/成本叙事(净减法 −19% vs 控增量 +37%,互补不冲突);附英文 RW 段落草案(写论文直接用);概念红线落款「熵引导的空间计算分配」
+- **产出**: 2 个设计文档修订 + ranking(#5/#11 行+续十日志)/TASKS(双任务✅+Completed 续六)同步
+- **意义**: A轨设计文档栈(#5 v3.0+§十 / #11 v1.1)与 B轨 #30 方案 v1.0 完成判据统一与相互划界——**双轨设计阶段文档基础全部闭环**,余下推进依赖实验模块或新文献
+- **下一步**: ①持续检索 2025–2026 双轨新作(唯一无阻塞工作线);🔔 Dome/Unmasking 放码跟踪;②⏸ 实验类待实验模块(E3 免训练判据 AUROC 为最低成本首验候选)
+
+## 2026-07-17 (第十三次记录: 🟪 #30 技术方案 v1.0——判据选型×D-FINE接入点×Dome对照叙事)
+
+- **任务**: B轨主 Idea #30 技术方案 v1.0 落地(纯文档,实验全部 ⏸)→ [idea_030_technical_proposal_v1.md](../Ideas/idea_030_technical_proposal_v1.md)
+- **判据定型**: 三选项 **S1 空域高通代理(首选)**/S2 DCT/S3 FFT——直接吸收 EFSI 硬消融(空域代理 33.1 > FFT 32.3 > DWT 32.1)与其四条工程理由;判据公式继承 #11 修正版(局部异常度归一,回应 SET"背景高频噪声"警告);叙事从"FFT 判据"抽象为「**高频响应统计判据(实现无关)**」,同时规避与 FFT 系竞品的工具层撞车。零参数版主打,+1参数(可学习τ)/4参数(线性组合)作消融阶梯,证明"判据不需要 0.8M"
+- **接入点设计**: 与 Dome 逐点对齐做控制变量——P(最浅层判据,与 DeFE 同位)/E(MWAS 窗口注意力结构**沿用并引用**,非本方案贡献;背景 token identity 直通,SViT 硬删除教训)/Q(query 弹性预算掩码过滤,**不引入 Dynamic NMS**=保住 D-FINE 端到端性,直接回应 Dome 攻击面③)。全部差异集中在「判据+无NMS」两点,增益归因干净
+- **对照叙事**: Dome 三攻击面→#30 三卖点表(判据 1/40 成本/免监督零重训跨数据集迁移/端到端保持);定位诚实声明:不许诺净省算力(Dome GFLOPs +37% 教训),定位="以受控成本引入浅层高分辨率信息,判据免费化"
+- **实验协议锁定(⏸ 待实验模块)**: E0 基线复现→**E1 判据 vs 复现版 DeFE 头对头(生死项,>1AP 差距则退守"1/40 成本保 x% 增益")**→E2 判据消融→**E3 免训练判据热图 AUROC(不训检测器即可跑,实验模块最低成本首验)**→E4 跨数据集 τ 迁移→E5 query 预算消融→E6 成本核算(报 GFLOPs 分布+FPS,修 Dome 未报漏洞)
+- **产出**: 技术方案 v1.0 新建 + ranking/candidate/detr_map/TASKS 四处状态同步
+- **风险跟踪**: 撞车窗口(频域 DETR ~6篇/年,「频谱判据+条件计算」空白可能 6–12 个月被填)→ #30 维持 B轨最高优先;🔔 Dome 放码后 E1 升级为官方对照(利好)
+- **下一步**: ①🟦 A轨 #11 v1.1 修订(判据设计直接引用 #30 §2,避免分叉);②🟦 #5 v3.0 Related Work 补 Dome 划界段;③持续检索双轨新作
+
+## 2026-07-17 (第十二次记录: 🟪 B轨衍生查新裁决——#5-D ❌ / #11-D→#30 ✅)
+
+- **任务**: detr_map 规划的「B轨下一优先:#5-D/#11-D 查新与划界」执行完毕,裁决落地
+- **致命发现**: **Dome-DETR**(arXiv 2505.05741, USTC)——D-FINE 底座 + DeFE 密度头(0.8M,GT 高斯监督)→ MWAS 浅层掩码窗口 token 稀疏 + PAQI 自适应 query,AI-TOD-V2 34.6/VisDrone val 39.0 双 SOTA。「判据热图→掩码→浅层 token 稀疏+query 预算」结构与 #5-D 拟议完全同构,底座/数据集/卖点全部重合 → **#5-D 查新不通过,不占编号**(叠加 Dynamic DETR ICML'25 学习式 importance、MATP/EnTeR ViT 熵剪枝夹击);熵判据遗产并入 #19 DETR 侧对照列
+- **幸存与占号**: **#11-D → 正式占编号 #30「免监督频谱判据→DETR 浅层 token 条件计算」(3.9,B轨主 Idea)**——频域 DETR 竞品 6+ 篇全部停留在增强范式,无人做 token 级条件计算;分类域 TREWA 判据方向相反(保低频,小目标需高频)天然划界;Dome 反而佐证通路有效(+2.5~3.3),#30 的差异 = 判据免监督零参数 vs DeFE 学习头,Dome 三攻击面(GFLOPs+37% 非净省/保留 NMS/判据需监督)= 对照叙事
+- **连带修正**: ①「全线无 P2」结论失效(Dome 已用最浅层四尺度)→ #14 降级回结构对照实验,B轨入口更替为 #30;②概念红线扩充(「密度引导 token 稀疏」「learnable frequency gating」「学习式 token importance」均被占)→ B轨合法表述收敛为「免监督/零参数判据驱动的 token 预算分配」;③A轨 #5 v3.0 Related Work 须补 Dome-DETR 划界段
+- **产出**: Dome-DETR 深读 summary + 裁决文档 detr_derivative_novelty_check.md + ranking(26 Idea)/candidate/detr_map/compare(结论25)/timeline/sota/database(49 条)七处同步
+- **最大风险**: 审稿人必问「免监督频谱判据 vs 学习式 DeFE 谁强」→ 头对头对照实验为 #30 生死项(⏸ 待实验模块);Dome 未开源,复现其 MWAS 做对照有工程成本
+- **下一步**: ①🟦 A轨 #11 v1.1 修订(吸收 EFSI 三选项判据+SPA 门控证据,与 #30 共用判据设计);②#30 技术方案文档 v1.0;③持续检索双轨新作
+
+## 2026-07-17 (第十一次记录: 双轨决策 + 🟪 B轨基础线四篇闭环)
+
+- **用户决策**: 「YOLO 和 DETR 都很好」→ 研究体系重组为 **🟦 A轨·YOLO(~60%)+ 🟪 B轨·DETR(~25%)+ ⬜ C类·双轨通用理论(~15%)** 双轨并行;25 个 Idea 完成架构分类;#14 升级 B轨入口;新增衍生候选 #5-D(语义熵→query 稀疏化)/#11-D(频域门控 DETR 版),须过查新才占正式编号
+- **阅读**: B轨基础线 4 篇全部深读闭环——①RT-DETR(CVPR 2024,AIFI+CCFF+不确定性QS,53.1@108FPS,**官方自认小目标短板**);②D-FINE(ICLR 2025,FDR 分布式回归+GO-LSD 自蒸馏,54.0@31M/91G,O365 后 APs 40.0);③Deformable DETR(ICLR 2021,MSDeformAttn K点稀疏采样,QS 诞生地,APs +5.9);④DINO(ICLR 2023,CDN+混合QS+LFT,APs +7.2,首登 COCO 榜端到端)
+- **最大发现**: **QS 判据三代演进链**(纯 top-K→混合→不确定性最小)= #5-D 第三判据(语义熵)的谱系落点;**小目标增益是 DETR 谱系每一环的最大收益项**——DETR 主线是"让 query 离小目标更近",与 YOLO 主线"分辨率更高(P2)"正交 → B轨引 P2 是跨路线组合创新(全线无 P2 已证)
+- **决策**: B轨基线**纸面初判 D-FINE**(RT-DETR 为机制理解层+ultralytics 生态兜底;最终确认⏸待实验模块)
+- **新Idea**: 无新占号;#5-D/#11-D 挂查新门槛
+- **最大疑问**: #5-D 的增量能否真正落到"减少 encoder/特征计算"?若只改 QS 排序则退化为 QS 改良,查新难过 DQ-DETR/D3Q 一线
+- **最大风险**: 「注意力稀疏采样」概念已被 MSDeformAttn(15000+ 引用)占据——B轨 Idea 表述必须落「query/token 预算的内容自适应分配」;DINO 的 CDN 900 query 显存开销在 VisDrone 密集场景需重估
+- **下一步**: ①DETR 方向知识小结(14 篇→B轨技术地图);②#5-D/#11-D 查新划界;③A轨 #11 v1.1 修订
+
+## 2026-07-17 (第十次记录: A轨设计深化 + 基础设施,覆盖 07-16 深夜至 07-17)
+
+- **阅读/评估**: SViT+DFIR-DETR+DQ-DETR 深读;FFCA/MDI/SFS 快评;AD-Det(RS 2025,coarse-to-fine SOTA 37.5)深读;HashEye+EFSI-DETR 深度评估;DroneScan 快评;SPA/SPT(ICLR 2026)深度评估;Unmasking the Tiny(IVC 2026)快评并**挂 #5 最近哨点跟踪**;DINOv2/Focal Loss/FcaNet(pre-2025 解锁三篇)
+- **产出**: Idea 生成突破分析(三路径元研究)→ #18–#29 十二个新 Idea 录入(#23 SNR退化/#24 信息瓶颈 4.6 并列登顶);**Idea#5 v3.0 代码级设计**(稠密重排推理路径,FLOPs 纸面 −19%);**papers/database.md 论文数据库建立**(46 条七大主题分区);augmentation.md 填充 → KB 12/12 全部完成
+- **最大发现**: ①HashEye 证明 GPU 稀疏计算须走"gather→稠密重排→scatter"(v3.0 推理路径定稿);②SPA"浅层不剪"与 #5"专剪浅层"构成正面张力(M0 预实验为裁判);③EFSI"频域启发非变换"(空域代理胜 FFT)修正 #11 判据实现
+- **工作流**: 工作项移出 Long-term Tasks;实验类暂缓扩大至 CPU 分析类(用户决策)
+- **下一步**: (已被第十一次记录的双轨决策接管)
+
+## 2026-07-16 (第九次记录: 用户提供三篇新论文)
+
+- **论文1**: Xu et al. — "Rethinking Boundary Discontinuity Problem for Oriented Object Detection" (CVPR 2024). ✅ 已写Summary. 旋转框角度边界不连续；核心发现:KLD/GWD/KFIoU并未真正解决边界不连续——根因是编码模式(encoding mode)而非loss形式。ACM-Coder用复指数编码 `e^(jωθ)` 消除断点,AP75提升高达+14.38。**对项目的价值**: 方法论警示——"换了度量≠解决了问题"→对#12(KLD标签分配)的类比:需要验证KLD在标签分配中是否真正解决了小目标尺度相关偏差,而非仅整体数字提升。
+- **论文2**: Chen et al. — "Adaptive Label Granularity Selection for Remote Sensing Targets" (IEEE TGRS 2025). ✅ 已写Summary. 遥感多粒度分类(MGC)首次;accuracy-specificity曲线+语义距离约束loss+有序Pareto集推理。SOTA on HRSC/FGSC/FGSRSIS。**对项目的价值**: 概念层面——"自适应粒度选择"在精神上与检测中"自适应选择特征层级/标签分配粒度"相通,但直接技术迁移路径有限(纯分类→检测)。
+- **论文3**: GCA2Net — "Global-Consolidation and Angle-Adaptive Network for Oriented Object Detection" (Remote Sensing 2025). ✅ 已写Summary. DRC(动态旋转卷积)+ARU(自适应路由单元)+MOSCAB+AugFPN+。DOTA 77.56%, HRSC 90.4%。**对项目的价值**: ARU的"轻量路由单元→预测参数→条件执行"三段式设计——#5/#11的条件计算路由参考。
+- **留存率**: 3/3（用户提供论文全部处理）
+- **共同特征**: 三篇全部来自旋转框/遥感方向——两个是旋转框检测、一个是遥感细粒度分类。说明用户在探索遥感+旋转框的交叉地带。
+- **关键整合**: 
+  - ACM-Coder + #12: "换了度量≠解决根本问题"的方法论警示
+  - GCA2Net ARU + MGS: 共同构成#5/#11的工程参照系(MGS=门控训练, ARU=路由设计)
+  - ALGS: 概念参考,暂不形成可操作的技术输入
+- **下一步**: 等待用户进一步指示
+
+## 2026-07-16 (第八次记录: 跨界搜索——门控/蒸馏方向收获)
+
+- **任务**: 顶刊广泛搜索跨界碰撞，饱和方向(频域/YOLO/DETR)降优先级。7个方向并行搜索。
+- **搜索方向与结果**:
+  - 动态网络/条件计算 → **命中 MGS**(MLSP 2025): 分组门控+冻结主干→85–95% MLP 稀疏率。#5/#11 的工程实现模板✅
+  - 自监督+检测 → DeCon(WACV 2026,+0.37 AP 边际)、DINO Teacher(CVPR 2025,DAOD 已饱和)→ **全部舍弃**
+  - 知识蒸馏 → **命中 ELDET**(NeurIPS 2025): 定位/分类噪声记忆时序不对称(epoch 4 vs 11)→ #7 分阶段蒸馏策略✅。CLD-FCOS/CLoCKDistill/MuSCM → 增量改进、DETR专属→ **舍弃**
+  - FSOD → FSOD-VFM(ICLR 2026,图扩散免训练,但2.4s/image+无法扩展到P2密集网格)→ **舍弃**。LMP/GiPL/CD-FSOD→ 与#5/#11方向无关→ **舍弃**
+  - 小目标非频域 → SPAR-Det(WACV 2026,MoE检测头动态路由,但场景级非空间级;分割依赖);BDNet(CVPR 2026,双骨架仿生,可操作性强但方向不符)→ **全部舍弃**
+  - 门控/稀疏计算 → 与动态网络方向重叠,归入MGS
+  - NAS/硬件感知 → 未发现高价值2025+检测相关论文
+- **留存率**: 7方向搜索 → ~40篇初筛 → 5篇深入评估 → **仅2篇写入系统**(MGS + ELDET)
+- **最大发现**: MGS 的分组门控范式是#5/#11 目前最接近的已有工程实现——但需要关键改造:**通道级→空间级**(Linear+Sigmoid→Conv1×1+Sigmoid; 通道分组→空间分块)
+- **第二大发现**: ELDET 的早学时序不对称(定位噪声比分类噪声更早被记忆)为 #7 提供了"何时蒸馏什么"的时序维度——当前 #7 的最薄弱环节(蒸馏 schedule 未设计)得到具体解决方案
+- **该放弃的已放弃**: SPAR-Det 的 MoE routing 吸引人但场景级粒度不对; FSOD-VFM 的图扩散免训练理念好但计算不可行; BDNet 双骨架仿生有启发但方向不符
+- **新Idea**: 暂无全新 idea; MGS→#5/#11 工程实现方案细化; ELDET→#7 训练 schedule 设计
+- **最大疑问**: ①MGS 的分组门控在 CNN 卷积层(非 Transformer MLP)上的稀疏模式是否同样有效?②空间级门控的分块粒度(8×8 vs 16×16 vs per-pixel)对精度-效率 trade-off 的影响?③ELDET 的早学拐点在"教师模型定位偏差"(非标注噪声)场景下是否仍然存在?
+- **下一步**: ①等待用户提供其在读论文或指示新方向;②若用户无新指令,可深入搜索"spatial gating / spatial sparsity"方向(空间门控是 MGS→#5 改造的核心技术缺口)
+
+## 2026-07-16 (第七次记录: FMC-DETR + 频域浪潮3→4 + YOLOv12/FDConv 快速评估)
+
+- **阅读**: ①FMC-DETR(arXiv 2025.09,频域解耦+KAN+多域协调,VisDrone 33.7 SOTA,✅已写Summary);②FDConv(CVPR 2025,频域动态卷积核,+3.6M参数超ODConv+65M,不做条件计算,✅已确认);③YOLOv12(NeurIPS 2025,注意力中心YOLO,无P2,FlashAttention硬依赖,✅已评估)
+- **最大发现**: **频域小目标浪潮从 3 篇确认为 4 篇**(SET+FMC-DETR+DERNet+SFDNet)——FMC-DETR 作为第 4 篇独立工作,再次确认:①频域对小目标确实有效;②**无人做条件计算/稀疏化**。#11 的差异化生命线从"3篇增强都回避"升级为"4篇增强都回避"——差异化论证更充分。
+- **第二大发现**: FMC-DETR 的**振幅-相位解耦**极优雅——"振幅=改多少,相位=在哪"。这对 #11 是直接的技术方案输入:#11 可以用振幅(免训练的频域响应强度)替代原始的高频能量作判据。同时 FMC-DETR 的检测层 [D2,D4] 设计在 DETR 侧验证了 SLE(P2头+截短backbone)的架构无关普适性→#6 的学术叙事更强。
+- **第三大发现**: FDConv(CVPR 2025)用傅里叶域不相交索引组生成 n=64 个频率多样化权重,仅 +3.6M 参数(+90M CondConv的1/25)。但同样**不做条件计算**——FBM 在所有空间位置预测调制值,无 gating/dropping。再次确认频率域方法的"两条路":绝大多数走特征增强(FDConv/FMC-DETR/SET/DERNet/SFDNet),条件计算路完全空白。
+- **YOLOv12 评估结论**:注意力中心YOLO,无P2头,小目标 AP_small=20.2%(N)/39.6%(X);FlashAttention 硬依赖(GPU需Turing+架构)→本机无法复现。不构成基线切换——基线保持 YOLO11。
+- **YOLO26 评估结论**:STAL(小目标标签分配)直接竞争 Idea #12;但论文为综述性质,技术细节未公开,暂不能深度评估。待 Ultralytics 公开 STAL 细节后重新评估 #12 的 novelty。
+- **新Idea**: #13(振幅门控,#11技术细化);#14(D2=SLE跨架构验证,#6佐证);#15(三源门控融合=振幅×语义熵×高频能量,#5+#11 长期融合方案)
+- **放弃的Idea**: 暂无
+- **最大疑问**: ①FMC-DETR 的振幅调制若改成空间选择性(只在判据认为"值得"的位置做FFT),能加速多少?②三源门控(振幅/语义熵/高频异常度)的错误模式是否真的互补(高度相关→融合无增益)?③YOLO26的STAL到底是怎么做的——等公开细节后需紧急评估对#12 novelty 的影响
+- **下一步**: ①若用户无新指令,继续检索 2025+ 小目标/轻量化/注意力机制论文;②FDConv 快速 Summary(虽不做条件计算,但频率域方法参考价值高);③持续关注 YOLO26 STAL 细节公开
+
 ## 2026-07-16(第六次记录:频域小目标浪潮 + YOLO 决策再确认)
 - **阅读**: ①TinyFormer(arXiv 2026.05,YOLO-DETR混合,PBM+SSA);②DERNet(arXiv 2026.06,频域全管线,1/6参数超YOLOv11);③SET(CVPR 2025,频域归因→抑制噪声而非增强信号);④D3Q(IEEE JSTARS 2025,DETR动态查询,AI-TOD 32.1 SOTA);⑤SFDNet(ECCV 2026,频谱解耦分治+原型蒸馏,AI-TOD 31.7)
 - **DQ-DETR 年份修正**:检索发现 DQ-DETR 实际为 ECCV 2024(非 AAAI 2025),已标注"待用户提供";其 2025 升级版 D3Q 替代验证任务
@@ -56,7 +159,7 @@
 - **最大风险**: (更新)原"CLIP 对齐失效"风险已有 #11 对冲;当前最大风险转为稀疏计算的工程实现(稠密检测头上的条件计算,SViT 的 token 再激活可借鉴作误剪兜底)
 - **下一步**: ①熵图+高频能量图 vs GT 重合率预实验(合并设计);②VisDrone+YOLO11n 环境搭建与 SLE 复现(#6,同批加 #12);③读 RFLA(#12 前置)
 
-## 2026-07-15
+## 2026-07-15 (第一次记录: 初期文献调研 + Idea 孵化)
 - **阅读**: ①SEEN-DA(CVPR 2025,语义熵引导域感知注意力,DAOD);②SEMA-YOLO(Remote Sens. 2025,SLE+GCP-ASFF+RFA-C3k2,遥感小目标)
 - **最大发现**: 两篇论文的最大短板互为解药——SEMA 的 P2 头算力翻倍(大量花在背景),SEEN-DA 的语义熵恰是免训练的背景/冗余判别器。交叉点"熵引导的浅层特征稀疏化"无人做过,同时命中本项目 Current Problems #1(小目标精度)和 #2(计算成本)。
 - **新Research Gap**: ①语义信息从未进入实时检测器(YOLO)的特征提取/融合阶段;②P2 头的稀疏化/条件计算空白;③遥感小目标论文评估协议混乱(AI-TOD 被随意重划分)。

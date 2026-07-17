@@ -1,5 +1,7 @@
 # SEMA-YOLO: Lightweight Small Object Detection in Remote Sensing Image via Shallow-Layer Enhancement and Multi-Scale Adaptation
 
+> 来源: 【自】用户提供文献(papers/pdf/,2026-07-15 初期投喂)
+
 ## Basic Info
 - **Title**: SEMA-YOLO: Lightweight Small Object Detection in Remote Sensing Image via Shallow-Layer Enhancement and Multi-Scale Adaptation
 - **Journal**: Remote Sensing (MDPI), 2025, 17, 1917(2025-05-31 发表)

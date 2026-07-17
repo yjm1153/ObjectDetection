@@ -71,3 +71,20 @@
   2. 高频能量图作免训练前景判据,引导 P2 稀疏化(→ Idea #11,免 VLM)
   3. 高低频切分阈值自适应(城市高频噪声场景)
 - **References**: doi:10.3390/rs17060972
+
+### 4. WeKat (Wavelet Kolmogorov-Arnold Transformer, FMC-DETR)
+- **Name**: WeKat (HSG-WAVE浅层 + HSG-AKAT深层)
+- **Category**: Hybrid (CNN + Wavelet + KAN + Attention)
+- **Paper**: FMC-DETR | arXiv | 2025.09
+- **Core Idea**: 异质分裂门控(HSG)三流分解(保留/门控/计算);浅层用Haar小波递归分解做结构-细节解耦;深层用非对称自注意力+Group KAN替代MLP
+- **Architecture**: HSG-WAVE: Haar小波→递归分解低频子带→结构先验细化→逆变换重建; HSG-AKAT: Q/K压缩投影+动态位置偏置(3×3 DWConv)+Group KAN(样条基函数+分组共享)
+- **Advantages**: 频率感知的特征提取;参数量可控(分组KAN);浅层小波扩大ERF且抑制噪声
+- **Disadvantages**: DETR专属;小波GPU墙钟效率未验证;FlashAttention依赖;复杂度高于纯CNN
+- **Computational Cost**: FMC-DETR-T 13.8M; FMC-DETR-B 17.4M / 53.3 GFLOPs
+- **Performance**: VisDrone AP 33.7 / AP50 53.6 (SOTA)
+- **Used By**: FMC-DETR(RT-DETR 系)
+- **Possible Improvements**:
+  1. HSG-WAVE的小波结构解耦迁移到YOLO CSPDarknet替代C2PSA
+  2. Group KAN用更轻量的激活函数替代样条基(降低训练复杂度)
+  3. 保留流/门控流/计算流三路分解 → 门控流用熵/频域先验替代可学习参数(=#5/#11思路)
+- **References**: arXiv:2509.23056; https://github.com/bloomingvision/FMC-DETR
