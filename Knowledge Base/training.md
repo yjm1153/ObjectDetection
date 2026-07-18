@@ -60,3 +60,22 @@ Weight Decay | Dropout | Drop Path | Label Smoothing
 3. 训练期辅助模块 + 推理期移除(SFIDM reweighting 范式)→ 与可重参数化思想同源,可用于 P2 头辅助监督
 4. 离线词表重参数化(YOLO-World):文本嵌入/熵图等语义先验全部离线预计算,推理零额外开销——#5 的实时性保障机制
 5. **#6 免费改进项**:VisDrone 微调从 YOLOE 预训练权重出发(而非 COCO 权重),YOLOE 数据显示可省 epoch 且涨点
+
+### DALA (ESWA 2026) — 密度感知两阶段标签分配训练策略
+
+- **核心理念**: 训练信号分布应随目标密度自适应——密集目标少给正样本（防重复）、稀疏目标多给正样本（保表征）
+- **密度分类阶段**（每 epoch 固定，基于 GT 空间分布）:
+  - 计算每个 GT 的邻域密度 d（邻域内 GT 数量）
+  - d > τ_dense → 密集目标 → O2O 分配（固定 1 个正样本）
+  - d ≤ τ_dense → 稀疏目标 → Decreasing LA
+- **Decreasing LA 阶段**（epoch 驱动衰减）:
+  - 早期（epoch < E_start）: K = K_max 个正样本 → 充足表征学习
+  - 中期（E_start ≤ epoch ≤ E_end）: K 线性/余弦衰减 K_max → 1
+  - 后期（epoch > E_end）: K = 1 → 退化至 O2O，实现 NMS-free
+- **Loss 处理**: 两类目标使用不同的正样本集计算 loss，需处理正样本数不一致导致的 loss 尺度差异（可能按正样本数归一化或加权求和）
+- **检测器**: FCOS/RetinaNet/ATSS/GFL V1（anchor-free + anchor-based 均兼容）
+- **数据集**: VisDrone (10,209, 10 类) / COCO / CrowdHuman
+- **对本项目的启发**:
+  - #5/#11 的 P2 稀疏化与 DALA 的 Decreasing LA 共享"从多到少的动态过渡"范式——前者减少特征计算，后者减少训练信号
+  - 两个维度可协同: 标签分配（DALA）决定"教什么" + 特征稀疏化（#5/#11）决定"在哪算"
+  - 密度分类可作为 #5 门控的额外输入信号（密度×熵联合判据）

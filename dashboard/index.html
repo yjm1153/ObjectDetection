@@ -9,6 +9,9 @@
     --blue:#2979ff; --blue-deep:#1a5fd6; --blue-light:#eef4ff; --blue-border:#d6e4fa;
     --bg:#f1f5fa; --card-bg:#ffffff; --text:#1a2332; --text-sub:#5e6f85;
     --green:#0fa87a; --amber:#e69809; --red:#d9534f;
+    --track-a:#2979ff; --track-a-bg:#e8f1ff; --track-a-deep:#1a5fd6;
+    --track-b:#8b5cf6; --track-b-bg:#f3edfd; --track-b-deep:#6d28d9;
+    --track-c:#78909c; --track-c-bg:#eceff1; --track-c-deep:#546e7a;
     --shadow-xs:0 1px 2px rgba(0,0,0,.03);
     --shadow-sm:0 1px 3px rgba(0,0,0,.05), 0 3px 10px rgba(0,0,0,.04);
     --shadow:0 2px 5px rgba(0,0,0,.06), 0 6px 20px rgba(0,0,0,.05);
@@ -327,6 +330,52 @@
   }
   .idea-rank-card .irk-detail-link:hover{background:var(--blue-light); border-color:var(--blue);}
 
+  /* ===== 双轨区分：轨道徽章 + 卡片左色条 ===== */
+  .idea-rank-card{border-left:4px solid transparent;}
+  .idea-rank-card.track-a{border-left-color:var(--track-a);}
+  .idea-rank-card.track-b{border-left-color:var(--track-b);}
+  .idea-rank-card.track-c{border-left-color:var(--track-c);}
+  .track-chip{
+    flex-shrink:0; display:inline-flex; align-items:center; gap:4px;
+    font-size:11px; font-weight:700; padding:3px 10px; border-radius:999px;
+    white-space:nowrap; letter-spacing:0.2px;
+  }
+  .track-chip.track-a{background:var(--track-a-bg); color:var(--track-a-deep); border:1px solid #c5d9f9;}
+  .track-chip.track-b{background:var(--track-b-bg); color:var(--track-b-deep); border:1px solid #ddd0f7;}
+  .track-chip.track-c{background:var(--track-c-bg); color:var(--track-c-deep); border:1px solid #d5dde2;}
+
+  /* 双轨图例横幅 */
+  .track-legend{
+    display:flex; gap:14px; flex-wrap:wrap; align-items:stretch;
+    margin-bottom:18px;
+  }
+  .track-legend .tl-card{
+    flex:1; min-width:230px; display:flex; align-items:flex-start; gap:12px;
+    background:var(--card-bg); border:1px solid var(--blue-border); border-radius:11px;
+    border-left:4px solid transparent; padding:13px 16px; box-shadow:var(--shadow-xs);
+  }
+  .track-legend .tl-card.track-a{border-left-color:var(--track-a); background:linear-gradient(135deg,#f4f8ff 0%,#ffffff 70%);}
+  .track-legend .tl-card.track-b{border-left-color:var(--track-b); background:linear-gradient(135deg,#f8f4ff 0%,#ffffff 70%);}
+  .track-legend .tl-card.track-c{border-left-color:var(--track-c); background:linear-gradient(135deg,#f4f6f7 0%,#ffffff 70%);}
+  .track-legend .tl-icon{font-size:20px; line-height:1.3;}
+  .track-legend .tl-name{font-weight:800; font-size:13.5px;}
+  .track-legend .tl-card.track-a .tl-name{color:var(--track-a-deep);}
+  .track-legend .tl-card.track-b .tl-name{color:var(--track-b-deep);}
+  .track-legend .tl-card.track-c .tl-name{color:var(--track-c-deep);}
+  .track-legend .tl-desc{font-size:12px; color:var(--text-sub); margin-top:2px; line-height:1.55;}
+  .track-legend .tl-count{
+    margin-left:auto; align-self:center; flex-shrink:0;
+    font-size:16px; font-weight:800;
+  }
+  .track-legend .tl-card.track-a .tl-count{color:var(--track-a);}
+  .track-legend .tl-card.track-b .tl-count{color:var(--track-b);}
+  .track-legend .tl-card.track-c .tl-count{color:var(--track-c);}
+
+  /* 轨道筛选按钮的选中配色（沿用 .filter-btn 结构） */
+  .filter-btn.active.fb-track-a{background:var(--track-a); border-color:var(--track-a);}
+  .filter-btn.active.fb-track-b{background:var(--track-b); border-color:var(--track-b);}
+  .filter-btn.active.fb-track-c{background:var(--track-c); border-color:var(--track-c);}
+
   /* ===== 知识库网格 ===== */
   .kb-grid{
     display:grid; grid-template-columns:repeat(auto-fill,minmax(180px,1fr));
@@ -420,6 +469,73 @@
     #main{margin-left:0;}
     body{font-size:14px;}
   }
+
+  /* ========================================================================
+   *  论文分类视图
+   * ======================================================================== */
+  .cls-stats{
+    display:flex; gap:12px; flex-wrap:wrap; margin-bottom:20px;
+  }
+  .cls-stat{
+    flex:1; min-width:110px; text-align:center; padding:14px 10px;
+    background:var(--card-bg); border:1px solid var(--blue-border);
+    border-radius:var(--radius-sm); cursor:pointer; transition:all var(--transition);
+    box-shadow:var(--shadow-xs);
+  }
+  .cls-stat:hover{transform:translateY(-1px); box-shadow:var(--shadow-sm);}
+  .cls-stat .cs-num{font-size:26px; font-weight:800; line-height:1.2;}
+  .cls-stat .cs-label{font-size:12px; color:var(--text-sub); margin-top:3px; font-weight:500;}
+
+  .cls-cat-header{
+    display:flex; align-items:center; gap:10px; padding:9px 16px;
+    border-radius:10px; margin:18px 0 8px; font-weight:700; font-size:14.5px;
+  }
+  .cls-cat-header .cch-count{
+    margin-left:auto; font-weight:400; font-size:12.5px; opacity:.8;
+  }
+
+  .cls-paper-cards{display:flex; flex-direction:column; gap:6px; margin-bottom:14px;}
+
+  .cls-paper-card{
+    display:flex; align-items:center; gap:11px; padding:11px 14px;
+    background:var(--card-bg); border:1px solid #edf2fa; border-radius:9px;
+    cursor:pointer; transition:all var(--transition); font-size:13.5px;
+  }
+  .cls-paper-card:hover{border-color:var(--blue); box-shadow:var(--shadow-sm); transform:translateX(2px);}
+
+  .cls-paper-card .cp-year{
+    flex-shrink:0; font-weight:700; font-size:12px; color:var(--text-sub);
+    background:#f5f7fa; padding:3px 8px; border-radius:6px; min-width:44px; text-align:center;
+  }
+  .cls-paper-card .cp-name{flex:1; min-width:0; font-weight:600; color:var(--text);}
+  .cls-paper-card .cp-desc{flex:2; min-width:0; color:var(--text-sub); font-size:12.5px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;}
+  .cls-paper-card .cp-section{flex-shrink:0; font-size:11px; color:var(--text-sub); opacity:.7;}
+
+  .cls-tag{
+    flex-shrink:0; display:inline-flex; align-items:center; gap:3px;
+    font-size:10.5px; font-weight:600; padding:2px 8px; border-radius:999px;
+    white-space:nowrap; letter-spacing:0.2px;
+  }
+  .cls-tag.self{background:#fff8ed; color:#8a5a00; border:1px solid #f0d9a8;}
+  .cls-tag.venue{background:#d9f4e8; color:#0fa87a; border:1px solid #b7e8d4;}
+  .cls-tag.pub{background:var(--blue-light); color:var(--blue-deep); border:1px solid var(--blue-border);}
+  .cls-tag.code{background:#e8f5fb; color:#1a7fb8; border:1px solid #c8e4f5;}
+  .cls-tag.inst{background:#f3edfd; color:#6d28d9; border:1px solid #ddd0f7;}
+  .cls-tag.arxiv{background:#f5f5f5; color:#9e9e9e; border:1px solid #e0e0e0;}
+
+  .cls-venue-badge{
+    flex-shrink:0; font-size:11px; font-weight:600; padding:2px 8px;
+    border-radius:4px; background:#f0f4fa; color:var(--text-sub); white-space:nowrap;
+  }
+  .cls-venue-badge.top{background:#d9f4e8; color:#0a8a6a;}
+
+  @media(max-width:900px){
+    .cls-paper-card .cp-desc{display:none;}
+    .cls-paper-card .cp-section{display:none;}
+    .cls-stats{flex-wrap:wrap;}
+    .cls-stat{min-width:80px; padding:10px 6px;}
+    .cls-stat .cs-num{font-size:22px;}
+  }
 </style>
 </head>
 <body>
@@ -439,6 +555,7 @@
   <div class="nav-item" data-view="kb">📚 <span>知识库</span></div>
   <div class="nav-item" data-view="papers">📄 <span>论文</span></div>
   <div class="nav-item" data-view="decisions">🧭 <span>决策与日志</span></div>
+  <div class="nav-item" data-view="classify">📊 <span>论文分类</span></div>
 </div>
 
 <div id="main"><div class="loading">加载中…</div></div>
@@ -651,10 +768,11 @@ function makeTaskCard(done, text, cls) {
 const views = {
   overview:  { title: '总览',       sub: '系统研究近况一览', render: renderOverview },
   tasks:     { title: '任务',       sub: '每个任务 = 一张卡片，按状态筛选', render: renderTasks },
-  ideas:     { title: 'Ideas',      sub: '候选 Idea 排行与详情', render: renderIdeas },
+  ideas:     { title: 'Ideas',      sub: '候选 Idea 排行与详情 · 🟦 A轨 YOLO / 🟪 B轨 DETR / ⬜ 双轨通用', render: renderIdeas },
   kb:        { title: '知识库',     sub: '点击卡片查看详情', render: renderKB },
   papers:    { title: '论文',       sub: '已读论文总结', render: renderPapers },
   decisions: { title: '决策与日志', sub: '研究决策与日志记录', render: renderDecisions },
+  classify:  { title: '论文分类',   sub: '按质量标准分类的论文数据库 · 点击卡片可查看论文详情', render: renderClassify },
 };
 
 async function setView(id) {
@@ -692,7 +810,10 @@ async function loadTopbar() {
  *  视图 1：总览
  * ======================================================================== */
 async function renderOverview(el) {
-  const [readme, tasks] = await Promise.all([fetchText('README.md'), fetchText('TASKS.md')]);
+  const [readme, tasks, ranking] = await Promise.all([
+    fetchText('README.md'), fetchText('TASKS.md'),
+    fetchText('Ideas/innovation_ranking.md').catch(() => ''),
+  ]);
 
   // 统计
   const papersRead = (readme.match(/\|\s*已读论文\s*\|\s*(\d+)/) || [])[1] || '—';
@@ -720,10 +841,13 @@ async function renderOverview(el) {
     const rows = ideaSec.split('\n').filter(l => /^\s*\|/.test(l) && !/---/.test(l));
     if (rows.length >= 2) {
       const c = splitTableRow(rows[1]);
+      const r1Num = (c[0] || '').match(/\d+/);  // e.g., "#23"
+      const r1Track = r1Num ? (parseTrackMap(ranking)[r1Num[0]] || null) : null;
       rank1Html = '<div class="card highlight-card" style="display:flex;align-items:center;gap:16px;padding:20px 26px;">' +
         '<div style="font-size:36px;">⭐</div>' +
         '<div style="flex:1;"><div style="font-size:13px;color:var(--text-sub);margin-bottom:4px;">当前最优候选 Idea（Rank 1）</div>' +
-        '<div style="font-size:17px;font-weight:700;">#' + esc(c[0]) + ' ' + inlineMd(c[1] || '') + '</div>' +
+        '<div style="font-size:17px;font-weight:700;">#' + esc(c[0]) + ' ' + inlineMd(c[1] || '') +
+        (r1Track ? ' ' + trackChipHtml(r1Track) : '') + '</div>' +
         '<div style="color:var(--text-sub);font-size:13.5px;margin-top:4px;">' + inlineMd(c[2] || '') + '</div></div></div>';
     }
   }
@@ -827,11 +951,51 @@ async function renderTasks(el) {
 let ideaDetailsMap = {};
 let candSectionList = [];
 
+/* ===== 双轨分类(2026-07-17 用户决策: YOLO + DETR 双轨并行) ===== */
+const TRACK_META = {
+  a: { chip: '🟦 A轨·YOLO', short: 'A轨',  cls: 'track-a',
+       name: '🟦 A轨 · YOLO 系', desc: '基线 YOLO11 + Ultralytics;主 Idea #5 语义熵 P2 稀疏化 / #11 高频能量判据' },
+  b: { chip: '🟪 B轨·DETR', short: 'B轨',  cls: 'track-b',
+       name: '🟪 B轨 · DETR 系', desc: '基线 D-FINE(选型初判);主 Idea #30 免监督频谱判据→浅层 token 条件计算' },
+  c: { chip: '⬜ 双轨通用', short: '通用', cls: 'track-c',
+       name: '⬜ C类 · 双轨通用理论', desc: '判据层/理论框架,与具体检测器解耦——双轨各验证一次 = 架构无关性卖点' },
+};
+let ideaTrackMap = {};      // ideaNum(str) → 'a'|'b'|'c'
+let ideaNameMap = {};       // ideaNum(str) → raw idea name(排行榜行原文)
+let ideaTrackFilter = 'all';
+
+/* 从 innovation_ranking.md 的 🧭 区块解析每个 Idea 所属轨道 */
+function parseTrackMap(ranking) {
+  const map = {};
+  const lineOf = marker => (ranking.split('\n').find(l => l.includes('> - ') && l.includes(marker)) || '');
+  const pairs = [['🟦', 'a'], ['🟪', 'b'], ['⬜', 'c']];
+  for (const [marker, track] of pairs) {
+    // 截断到首个中文句号:句号后的注记(如 B轨行的 ~~#5-D~~ 裁决说明)不参与归类
+    const line = lineOf(marker).split('。')[0];
+    // (?!\d) 防止 #11-D 回溯误捕 #1;(?!-D) 排除衍生候选编号
+    for (const m of line.matchAll(/#(\d+)(?!\d)(?!-D)/g)) {
+      if (!(m[1] in map)) map[m[1]] = track;   // 先到先得,防跨行串扰
+    }
+  }
+  return map;
+}
+
+function trackChipHtml(track, mini) {
+  const t = TRACK_META[track];
+  if (!t) return '';
+  return '<span class="track-chip ' + t.cls + '"' + (mini ? ' style="font-size:10px;padding:2px 8px;"' : '') + '>' + t.chip + '</span>';
+}
+
+function setIdeaTrackFilter(f) { ideaTrackFilter = f; setView('ideas'); }
+
 async function renderIdeas(el) {
   const [ranking, candidate] = await Promise.all([
     fetchText('Ideas/innovation_ranking.md'),
     fetchText('Ideas/candidate.md'),
   ]);
+
+  // 双轨分类:从 🧭 区块解析 Idea → 轨道 映射
+  ideaTrackMap = parseTrackMap(ranking);
 
   // 解析 candidate.md 按 ### #N 提取每个 Idea 的详情
   const ideaDetails = {};
@@ -856,31 +1020,56 @@ async function renderIdeas(el) {
     // 正则已将表头独立匹配，tableMatch[1] 仅含分隔行 + 数据行；filter 去掉分隔行后即为全部数据行
     const dataRows = tableMatch[1].trim().split('\n').filter(l => /^\s*\|/.test(l) && !/---/.test(l));
     if (dataRows.length) {
-      rankCardsHtml = '<div class="idea-cards">' + dataRows.map(r => {
+      // 过滤前统计各轨道数量(图例用)
+      const allRows = dataRows.map(r => {
         const c = splitTableRow(r);
-        // 列: 0=Rank | 1=Idea | 2=Novelty | 3=Difficulty | 4=Impact | 5=Feasibility | 6=Risk | 7=Publish | 8=Overall | 9=Status
-        const rank = parseInt(c[0]) || 0;
         const idea = c[1] || '';
-        const score = c[8] || '';     // Overall（修复：原为 c[2]=Novelty）
-        const novelty = c[2] || '';   // Novelty（修复：原为 c[3]=Difficulty）
-        const feasibility = c[5] || ''; // Feasibility（修复：原为 c[4]=Impact）
-        const status = c[9] || '';    // Status（修复：原为 c[5]=Feasibility）
-
-        // 从 Idea 名提取编号（如 "#5" 或加粗的 "**#23 …**"——🆕 条目带 ** 前缀，不能锚定行首）
         const ideaNum = (idea.match(/#(\d+)/) || [])[1];
-        const hasDetail = ideaNum && ideaDetails[ideaNum];
-
-        const cls = rank === 1 ? 'rank1' : (rank === 2 ? 'rank2' : (rank === 3 ? 'rank3' : ''));
-        return '<div class="idea-rank-card' + (cls ? ' ' + cls : '') + (hasDetail ? ' has-detail' : '') + '"' +
-          (hasDetail ? ' data-idea="' + ideaNum + '" onclick="openIdeaModal(\'' + ideaNum + '\')"' : '') + '>' +
-          '<div class="irk-rank">' + (rank === 1 ? '⭐' : (rank > 0 ? '#' + rank : '—')) + '</div>' +
+        const track = (ideaNum && ideaTrackMap[ideaNum]) || null;
+        return { rank: parseInt(c[0]) || 0, idea, ideaNum, track,
+          score: c[8] || '', novelty: c[2] || '', feasibility: c[5] || '', status: c[9] || '' };
+      });
+      // 存原始 Idea 名(去 ** 标记),供 openIdeaModal 标题使用
+      ideaNameMap = {};
+      allRows.forEach(r => { if (r.ideaNum) ideaNameMap[r.ideaNum] = r.idea.replace(/^\*+|\*+$/g, ''); });
+      function legendHtml(){
+        const counts = { a: 0, b: 0, c: 0 };
+        allRows.forEach(r => { if (r.track && counts[r.track] !== undefined) counts[r.track]++; });
+        const total = counts.a + counts.b + counts.c;
+        return '<div class="track-legend">' + ['a','b','c'].map(k => {
+          const t = TRACK_META[k];
+          const active = ideaTrackFilter === k;
+          return '<div class="tl-card ' + t.cls + (active ? ' active' : '') + '"' +
+            ' onclick="setIdeaTrackFilter(\'' + (active ? 'all' : k) + '\')"' +
+            ' title="' + (active ? '点击取消筛选,显示全部' : '点击筛选 ' + t.name) + '"' +
+            ' style="cursor:pointer;">' +
+            '<div class="tl-icon">' + (k === 'a' ? '🟦' : k === 'b' ? '🟪' : '⬜') + '</div>' +
+            '<div><div class="tl-name">' + t.name + '</div>' +
+            '<div class="tl-desc">' + t.desc + '</div></div>' +
+            '<div class="tl-count">' + counts[k] + '</div></div>';
+        }).join('') + '<div style="font-size:12px;color:var(--text-sub);padding:6px 0 0 4px;">💡 点击轨道卡片可筛选排行</div></div>';
+      }
+      const filteredRows = allRows.filter(r => ideaTrackFilter === 'all' || r.track === ideaTrackFilter);
+      const filterNote = ideaTrackFilter !== 'all'
+        ? '<div style="margin-bottom:10px;font-size:13px;color:var(--text-sub);">🔍 已筛选: ' +
+          trackChipHtml(ideaTrackFilter, true) + ' · ' + filteredRows.length + '/' + allRows.length + ' 条 ' +
+          '<a href="javascript:setIdeaTrackFilter(\'all\')" style="color:var(--blue);cursor:pointer;">✕ 显示全部</a></div>'
+        : '';
+      rankCardsHtml = legendHtml() + filterNote + '<div class="idea-cards">' + filteredRows.map(r => {
+        const hasDetail = r.ideaNum && ideaDetails[r.ideaNum];
+        const rankCls = r.rank === 1 ? 'rank1' : (r.rank === 2 ? 'rank2' : (r.rank === 3 ? 'rank3' : ''));
+        const trackCls = r.track ? ('track-' + r.track) : '';
+        return '<div class="idea-rank-card' + (rankCls ? ' ' + rankCls : '') + (trackCls ? ' ' + trackCls : '') + (hasDetail ? ' has-detail' : '') + '"' +
+          (hasDetail ? ' data-idea="' + r.ideaNum + '" onclick="openIdeaModal(\'' + r.ideaNum + '\')"' : '') + '>' +
+          '<div class="irk-rank">' + (r.rank === 1 ? '⭐' : (r.rank > 0 ? '#' + r.rank : '—')) + '</div>' +
+          (r.track ? trackChipHtml(r.track) : '') +
           '<div class="irk-body">' +
-          '<div class="irk-name">' + inlineMd(idea) + '</div>' +
-          '<div class="irk-desc">' + inlineMd(status) + '</div>' +
+          '<div class="irk-name">' + inlineMd(r.idea) + '</div>' +
+          '<div class="irk-desc">' + inlineMd(r.status) + '</div>' +
           '</div>' +
-          '<div class="irk-score">' + inlineMd(score) +
-          '<small>Nov ' + esc(novelty) + ' · Feas ' + esc(feasibility) + '</small></div>' +
-          (hasDetail ? '<button class="irk-detail-link" onclick="event.stopPropagation();openIdeaModal(\'' + ideaNum + '\')">📖 详情</button>' : '') +
+          '<div class="irk-score">' + inlineMd(r.score) +
+          '<small>Nov ' + esc(r.novelty) + ' · Feas ' + esc(r.feasibility) + '</small></div>' +
+          (hasDetail ? '<button class="irk-detail-link" onclick="event.stopPropagation();openIdeaModal(\'' + r.ideaNum + '\')">📖 详情</button>' : '') +
           '</div>';
       }).join('') + '</div>';
     }
@@ -890,13 +1079,26 @@ async function renderIdeas(el) {
   // 候选 Idea 分组 → 卡片行,点击弹窗查看
   const ideaSections = splitSections(candidate);
   candSectionList = ideaSections;
+
+  // 各分组轨道构成徽标(迷你 chips)
+  function candTrackChips(bodyMd) {
+    const nums = [...(bodyMd || '').matchAll(/### #(\d+)/g)].map(m => m[1]);
+    const tracks = nums.map(n => ideaTrackMap[n]).filter(Boolean);
+    // 各轨道首次出现时取标记,去重保序
+    const seen = new Set();
+    return tracks.map(t => { if (seen.has(t)) return null; seen.add(t); return t; }).filter(Boolean)
+      .map(t => { const m = TRACK_META[t]; return '<span class="track-chip ' + m.cls + '" style="font-size:10px;padding:2px 8px;">' + m.chip + '</span>'; }).join('');
+  }
   let candHtml;
   if (ideaSections.length) {
-    candHtml = '<div class="paper-cards">' + ideaSections.map((s, i) =>
-      '<div class="paper-card" onclick="openCandModal(' + i + ')">' +
-      '<span class="pp-icon">💡</span>' +
-      '<span class="pp-name">' + inlineMd(s.title) + '</span>' +
-      '<span style="color:var(--blue);font-size:13px;">查看 →</span></div>').join('') + '</div>';
+    candHtml = '<div class="paper-cards">' + ideaSections.map((s, i) => {
+      const chips = candTrackChips(s.body);
+      return '<div class="paper-card" onclick="openCandModal(' + i + ')">' +
+        '<span class="pp-icon">💡</span>' +
+        '<span class="pp-name">' + inlineMd(s.title) + '</span>' +
+        chips +
+        '<span style="color:var(--blue);font-size:13px;margin-left:4px;">查看 →</span></div>';
+    }).join('') + '</div>';
   } else {
     candHtml = mdBody(candidate);
   }
@@ -1014,9 +1216,41 @@ async function renderPapers(el) {
   // 从 database.md 提取每篇 summary 对应的【自】标记与原文链接
   // dbMap: summary文件名 → {self, url, rows}(rows>1 的快评汇总文件不挂单一原文链接)
   let dbMap = {};
+  // 从 database.md 的"关联 Idea"列提取每篇论文的轨道归属
+  const dbTrackMap = {};  // summaryFilename → Set<'a'|'b'|'c'>
   try {
     const db = await fetchText('papers/database.md');
+    // 预先构建 ideaTrackMap(从 innovation_ranking 解析,供无 emoji 行回退)
+    let idea2track = {};
+    try {
+      const ranking = await fetchText('Ideas/innovation_ranking.md');
+      idea2track = parseTrackMap(ranking);
+    } catch(e) {}
+    function tracksFromIdeaCol(cell) {
+      const t = new Set();
+      if (/🟦/.test(cell)) t.add('a');
+      if (/🟪/.test(cell)) t.add('b');
+      if (/⬜/.test(cell)) t.add('c');
+      // 文本线索:B轨 / DETR 字样(不依赖 emoji)
+      if (/B轨|DETR/.test(cell)) t.add('b');
+      // 无直接轨道标记 → 按 Idea 编号回退
+      if (t.size === 0) {
+        for (const m of (cell || '').matchAll(/#(\d+)/g)) {
+          const tk = idea2track[m[1]];
+          if (tk) t.add(tk);
+        }
+      }
+      return t;
+    }
+    let dbSectionTrack = null;  // 当前所属分区头隐含的轨道
     db.split('\n').forEach(line => {
+      // 分区头检测: ## 八、🟪 ... → 此后所有论文自动 +b
+      const secHdr = line.match(/^##\s+[^#].*/);
+      if (secHdr) {
+        if (/🟪|B轨.*DETR|DETR.*B轨/.test(line)) dbSectionTrack = 'b';
+        else if (/🟦|A轨.*YOLO|YOLO.*A轨/.test(line)) dbSectionTrack = 'a';
+        else dbSectionTrack = null;
+      }
       const m = line.match(/summaries\/([^)]+\.md)/);
       if (!m) return;
       const f = m[1];
@@ -1025,6 +1259,17 @@ async function renderPapers(el) {
       if (line.includes('【自】')) entry.self = true;
       const u = line.match(/\((https?:\/\/[^)]+)\)/);
       if (u) entry.url = u[1];
+      // 轨道提取:按 | 拆表行取第5列(关联 Idea)
+      const cols = line.split('|').map(c => c.trim());
+      if (cols.length >= 5) {
+        const ideaCol = cols[4] || '';
+        const tracks = tracksFromIdeaCol(ideaCol);
+        if (dbSectionTrack) tracks.add(dbSectionTrack);
+        if (tracks.size > 0) {
+          const cur = dbTrackMap[f] || (dbTrackMap[f] = new Set());
+          tracks.forEach(t => cur.add(t));
+        }
+      }
     });
   } catch (e) {}
   const hasSelf = Object.values(dbMap).some(e => e.self);
@@ -1036,11 +1281,15 @@ async function renderPapers(el) {
       const meta = parsePaperMeta(f);
       const displayName = f.replace(/\.md$/, '');
       const db = dbMap[f];
+      const pTracks = dbTrackMap[f];
+      const trackChipsHtml = pTracks && pTracks.size > 0
+        ? [...pTracks].sort().map(t => trackChipHtml(t, true)).join('') : '';
       return '<div class="paper-card" data-idx="' + i + '" onclick="showPaper(' + i + ', \'' + encodeURIComponent(f) + '\')">' +
         '<span class="pp-icon">📑</span>' +
         '<span class="pp-name">' + esc(displayName) + '</span>' +
         (db && db.self ? '<span class="pp-self" title="用户提供文献">【自】</span>' : '') +
         (meta.conf ? '<span class="pp-venue">' + esc(meta.conf) + (meta.year ? ' ' + esc(meta.year) : '') + '</span>' : '') +
+        trackChipsHtml +
         (db && db.url && db.rows === 1 ? '<a class="pp-origin" href="' + esc(db.url) + '" target="_blank" rel="noopener" onclick="event.stopPropagation()">🔗 原文</a>' : '') +
         '<span style="color:var(--blue);font-size:13px;">查看 →</span>' +
         '</div>';
@@ -1169,8 +1418,10 @@ function openHtmlModal(title, html, base) {
 function openIdeaModal(num) {
   const html = ideaDetailsMap[num];
   if (!html) return;
-  const nameEl = document.querySelector('.idea-rank-card[data-idea="' + num + '"] .irk-name');
-  openHtmlModal('💡 ' + (nameEl ? nameEl.textContent : '#' + num) + ' — 详情(candidate.md)', html, 'Ideas');
+  const track = ideaTrackMap[num];
+  const meta = track ? TRACK_META[track] : null;
+  const rawName = (ideaNameMap[num] || '#' + num).replace(/^\*+|\*+$/g, '');
+  openHtmlModal('💡 ' + (meta ? meta.chip + ' · ' : '') + rawName + ' — 详情(candidate.md)', html, 'Ideas');
 }
 
 /* 候选 Idea 分组卡片 → 弹窗展示该分组全文 */
@@ -1197,6 +1448,166 @@ document.addEventListener('click', e => {
   const baseEl = a.closest('[data-base]');
   openMdViewer(resolveMdPath(baseEl ? baseEl.dataset.base : '', href.split('#')[0]));
 }, true); // 捕获阶段,先于卡片 onclick 执行
+
+/* ========================================================================
+ *  视图 7：论文分类 —— 按质量标准分层展示
+ * ======================================================================== */
+let classifyData = null;
+let classifyFilter = 'all';
+
+async function loadClassifyData() {
+  if (classifyData) return classifyData;
+  try {
+    const json = await fetchText('papers/classification.json');
+    classifyData = JSON.parse(json);
+    return classifyData;
+  } catch (e) { return null; }
+}
+
+/* 计算论文主分类优先级: f > v > p > c+i > c|i > x */
+function primaryCat(tags) {
+  if (!tags) return 'arxiv';
+  if (tags.includes('f')) return 'self';
+  if (tags.includes('v')) return 'venue';
+  if (tags.includes('p')) return 'pub';
+  if (tags.includes('c') && tags.includes('i')) return 'dual';
+  if (tags.includes('c') || tags.includes('i')) return 'single';
+  return 'arxiv';
+}
+
+/* 渲染标签badge */
+function renderTagBadge(code, std) {
+  if (!std) return '';
+  return '<span class="cls-tag ' + std.cls + '" title="' + esc(std.desc) + '">' +
+    (std.icon || '') + ' ' + std.label + '</span>';
+}
+
+function renderClassifyTags(tags, standards) {
+  if (!tags) return '';
+  return [...tags].map(c => renderTagBadge(c, standards[c])).join('');
+}
+
+async function renderClassify(el) {
+  const data = await loadClassifyData();
+  if (!data) { el.innerHTML = '<div class="error-box">⚠️ 无法加载分类数据 (papers/classification.json)</div>'; return; }
+
+  const { standards, categories, sections, papers } = data;
+
+  /* 构建 section idx→name 映射 */
+  const secMap = {};
+  (sections || []).forEach(s => { secMap[s.idx] = s; });
+
+  /* 为主分类计数 */
+  const catCount = {};
+  categories.forEach(c => { catCount[c.id] = 0; });
+
+  /* 为每篇论文分配主分类并分组 */
+  const grouped = {};
+  categories.forEach(c => { grouped[c.id] = []; });
+
+  (papers || []).forEach(p => {
+    const cat = primaryCat(p.t);
+    catCount[cat] = (catCount[cat] || 0) + 1;
+    if (grouped[cat]) grouped[cat].push(p);
+  });
+
+  /* 每个分组内按年份降序排列 */
+  Object.values(grouped).forEach(arr => {
+    arr.sort((a, b) => (b.y - a.y) || ((b.m || 0) - (a.m || 0)));
+  });
+
+  /* 统计栏 */
+  const totalPapers = papers.length;
+  let statsHtml = '<div class="cls-stats">';
+  statsHtml += '<div class="cls-stat" style="cursor:default;"><div class="cs-num" style="color:var(--text);">' + totalPapers + '</div><div class="cs-label">📚 总计</div></div>';
+  categories.forEach(cat => {
+    const count = catCount[cat.id] || 0;
+    const active = classifyFilter === 'all' || classifyFilter === cat.id;
+    statsHtml += '<div class="cls-stat" onclick="classifyFilter=\'' + (active && classifyFilter !== 'all' ? 'all' : cat.id) +
+      '\';setView(\'classify\')" style="' + (active ? 'border-color:' + cat.color + ';box-shadow:0 0 0 2px ' + cat.bg + ';' : '') + '">' +
+      '<div class="cs-num" style="color:' + cat.color + ';">' + count + '</div>' +
+      '<div class="cs-label">' + cat.icon + ' ' + cat.label + '</div></div>';
+  });
+  statsHtml += '</div>';
+
+  /* 筛选提示 */
+  let filterNote = '';
+  if (classifyFilter !== 'all') {
+    const activeCat = categories.find(c => c.id === classifyFilter);
+    if (activeCat) {
+      filterNote = '<div style="margin-bottom:14px;font-size:13px;color:var(--text-sub);">🔍 已筛选: <strong>' +
+        activeCat.icon + ' ' + activeCat.label + '</strong> · ' + (catCount[classifyFilter] || 0) + ' 篇 ' +
+        '<a href="javascript:classifyFilter=\'all\';setView(\'classify\')" style="color:var(--blue);cursor:pointer;">✕ 显示全部</a></div>';
+    }
+  }
+
+  /* 渲染每个分类 */
+  let bodyHtml = '';
+  categories.forEach(cat => {
+    if (classifyFilter !== 'all' && classifyFilter !== cat.id) return;
+    const catPapers = grouped[cat.id] || [];
+    if (!catPapers.length) return;
+
+    bodyHtml += '<div class="cls-cat-header" style="background:' + cat.bg + ';color:' + cat.color + ';">' +
+      '<span>' + cat.icon + '</span><span>' + cat.label + '</span>' +
+      '<span style="font-size:12px;font-weight:400;opacity:.8;">' + cat.desc + '</span>' +
+      '<span class="cch-count">' + catPapers.length + ' 篇</span></div>';
+
+    bodyHtml += '<div class="cls-paper-cards">';
+    catPapers.forEach(p => {
+      const sec = secMap[p.s];
+      const secLabel = sec ? (sec.emoji || '') + ' ' + sec.name : '';
+      const venueCls = (p.t || '').includes('v') ? ' top' : '';
+      const summaryFile = p.f || '';
+      const hasSummary = summaryFile && !summaryFile.includes('quick_eval');
+
+      bodyHtml += '<div class="cls-paper-card"' +
+        (hasSummary ? ' onclick="showClassifyPaper(\'' + esc(p.n) + '\',\'' + encodeURIComponent(summaryFile) + '\')"' : '') +
+        ' title="' + esc(p.d || '') + '">' +
+        '<span class="cp-year">' + (p.y || '—') + (p.m ? '.' + String(p.m).padStart(2,'0') : '') + '</span>' +
+        '<span class="cp-name">' + esc(p.n) + '</span>' +
+        '<span class="cls-venue-badge' + venueCls + '">' + esc(p.v || '') + '</span>' +
+        renderClassifyTags(p.t, standards) +
+        '<span class="cp-desc">' + esc(p.d || '') + '</span>' +
+        '<span class="cp-section">' + esc(secLabel) + '</span>' +
+        (p.u ? '<a class="pp-origin" href="' + esc(p.u) + '" target="_blank" rel="noopener" onclick="event.stopPropagation()" style="font-size:10px;padding:2px 8px;">🔗</a>' : '') +
+        '</div>';
+    });
+    bodyHtml += '</div>';
+  });
+
+  /* 图例 */
+  const legendTags = Object.entries(standards).map(([k, v]) =>
+    '<span class="cls-tag ' + v.cls + '" style="cursor:default;">' + (v.icon || '') + ' ' + v.label + '</span>'
+  ).join(' ');
+
+  el.innerHTML = statsHtml + filterNote +
+    '<div style="margin-bottom:14px;font-size:12px;color:var(--text-sub);">🏷️ 标签: ' + legendTags +
+    ' | 💡 点击论文卡片可查看详情; 🔗 跳转原文; 按主分类优先级: 【自】> 顶会 > 已发表 > 双重背书 > 单一背书 > 纯arXiv</div>' +
+    '<div style="margin-bottom:6px;font-size:12px;color:var(--text-sub);">📌 每个分类内按时间从新到旧排列</div>' +
+    bodyHtml;
+}
+
+/* 从分类视图点击论文卡片 → 弹窗查看 summary */
+async function showClassifyPaper(name, encFile) {
+  const file = decodeURIComponent(encFile);
+  openHtmlModal('📑 ' + name + '（' + file + '）', '<div class="loading">加载中…</div>', 'papers/summaries');
+  const body = document.querySelector('#md-modal .mm-body');
+  try {
+    const md = await fetchText('papers/summaries/' + file);
+    body.innerHTML = mdToSectionCards(md, {
+      collapseThreshold: 10,
+      iconMap: {
+        '论文':'📄','一句话':'💡','核心方法':'⚙️','方法':'⚙️','小目标':'🎯',
+        '结果':'📊','实验':'📊','性能':'📊','关系':'🔗','本项目':'🔗',
+        '借鉴':'💎','参考':'💎','总结':'📌','结论':'📌','局限':'⚠️',
+      }
+    });
+    body.scrollTop = 0;
+  } catch (e) {
+    body.innerHTML = '<div class="error-box">⚠️ 无法读取: ' + esc(e.message) + '</div>';
+  }
+}
 
 /* ---------- 启动 ---------- */
 document.querySelectorAll('.nav-item').forEach(el =>

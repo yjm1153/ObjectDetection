@@ -64,3 +64,91 @@
 - **Advantages**: 角度不确定性建模(非过拟合单点);Chamfer距离消除几何歧义;推理零额外开销
 - **Weakness**: DETR专属;YOLO-OBB未验证;角度分布头在YOLO框架的移植性未知
 - **Future Improvement**: ADR迁移到YOLO-OBB → 验证跨架构通用性;YOLO版角度分布头+Chamfer匹配
+
+### 6. OPD — Occlusion Perception Decoder (遮挡感知解码器, 辅助头)
+- **Name**: OPD (Li & Li, ESWA 2025)
+- **Classification**: Transformer-based 辅助检测解码器（多任务网络组件）
+- **Prediction**: 遮挡感知图（Occlusion Perception Map），每空间位置预测遮挡概率 [0,1]
+- **Matching Strategy**: 无需匹配（OPD 输出整图遮挡概率图，非 per-object 预测）
+- **Loss**: OPL（Occlusion Perception Loss），监督信号来自 bbox 重叠+高斯模糊的 GT 遮挡图
+- **Advantages**:
+  - 首个人为设计的"遮挡感知"辅助头——与主检测头并行，训练期多任务、推理期可移除
+  - Transformer 结构提供全局感受野——能捕捉远距离遮挡关系（遮挡者与被遮挡者可能相距很远）
+  - OPC 机制将遮挡图注入检测头→直接补偿遮挡区域的信息缺失
+  - 零额外标注依赖（GT 来自 bbox 重叠的自动生成）
+- **Weakness**:
+  - Transformer 结构在高分辨率特征图上计算开销大（P2 级特征图面积是 P5 的 16 倍）
+  - 仅验证 CNN 检测器（行人检测），DETR/YOLO 通用检测器上的可移植性未知
+  - OPD 输出整图一张遮挡图→无法区分"哪个目标被哪个目标遮挡"（per-object 遮挡建模缺失）
+  - bbox 重叠→遮挡的假设在通用场景下可能不成立（并排目标的 bbox 重叠≠遮挡）
+- **Future Improvement**:
+  1. **轻量化 OPD**: 用小型 CNN（而非 Transformer）做遮挡图预测 + 复用 FPN 特征→降低训练/推理开销
+  2. **Per-object 遮挡建模**: 在 DETR 框架下用 per-query 遮挡图（而非整图一张）→更精细遮挡推理
+  3. **频域判据替代 GT 遮挡图**: 高频局部异常度作为 OPD 的无监督训练信号→覆盖 bbox 重叠无法捕获的遮挡类型
+  4. **遮挡图注入 Neck**: O_pred 不仅注入检测头，也注入 FPN→同时提升分类和回归的特征质量
+
+### 12. CSIM-Head — Context-Suppressed Implicit Modulation Head (DOMino-YOLO)
+- **Name**: CSIM-Head (上下文抑制隐式调制头)
+- **Classification**: Anchor-Free (YOLOv11 head 增强)
+- **Prediction**: 分类 + 回归 + 通道自适应重加权
+- **Paper**: DOMino-YOLO | MDPI Remote Sensing | 2025.12
+- **Advantages**: 通道维软门控——抑制遮挡/背景噪声通道，增强目标判别通道; 适配遮挡场景（遮挡区域分类特征不可靠→压低不可靠通道）; 与 #5 空间维P2门控互补（通道维×空间维双维门控）
+- **Weakness**: ⚠️ 通道调制机制细节未获取（SE-like / channel attention / 其他）; 仅在 VOD-UAV 车辆数据集验证; 与标准 SE/ECA 的差异化不明确
+- **Future Improvement**:
+  1. **通道×空间双维门控融合**: CSIM（通道维）+ #5 P2门控（空间维）→联合稀疏化
+  2. **频域判据引导通道选择**: 用频域高频能量指标选择保留哪些通道（高频响应高的通道→保留）
+
+### 13. LLFFH — Lightweight Low-Level Feature Fusion Head (HEdge-MamYOLO)
+- **Name**: LLFFH (轻量低级特征融合头)
+- **Classification**: Anchor-Free + PConv 稀疏处理
+- **Prediction**: 融合 P2 高分辨率浅层特征 + DSFFM 尺度自适应特征
+- **Paper**: HEdge-MamYOLO | IEEE TGRS | 2026.04
+- **Advantages**: PConv（部分卷积）稀疏处理特征图→保留小目标细节+减少FLOPs; P2 级特征显式融入检测头→极端小目标（12-20px）细节不丢失; 与 Mamba backbone 配合但 PConv 本身架构无关
+- **Weakness**: PConv 的通道选择策略未详述（随机/固定/可学习?）; 仅验证 Mamba backbone 上的效果→CNN backbone 上的可移植性未知
+- **Future Improvement**:
+  1. **PConv 在 YOLO P2 头的等价实现**: → #5 v3.1 空间+通道双维稀疏
+  2. **PConv 通道选择×频域判据**: 高频响应高的通道→全卷积; 低频通道→PConv 稀疏处理
+
+---
+
+## 🔴 密集遮挡检测头设计（密集遮挡 L3 知识提取·2026-07-18）
+
+> 涵盖密集遮挡论文中的检测头级创新，按功能维度组织。
+
+### 分类学
+
+```
+密集遮挡检测头
+├── 一、通道维遮挡抑制
+│   └── CSIM-Head (DOMino-YOLO, #12): 通道自适应重加权→压低遮挡噪声通道
+│
+├── 二、空间维细节保留
+│   ├── LLFFH (HEdge-MamYOLO, #13): PConv稀疏处理+P2高分辨率融合
+│   └── VASA (DOMino-YOLO): 可见度感知空间聚合→遮挡区降权
+│
+├── 三、多实例预测头
+│   └── CrowdDet K-Prediction Head (CVPR 2020): 每proposal预测K个实例(K=2)
+│
+├── 四、遮挡感知注入
+│   └── OPC (OPL ESWA 2025): 显式遮挡图通过Cross-Attn注入检测头
+│
+└── 五、未来方向
+    └── #37 YOLO Grid-Cell EMD: P2每grid-cell预测K个实例(K=2/自适应)
+```
+
+### 设计原则对比
+
+| 维度 | CSIM-Head | LLFFH | VASA | CrowdDet K-Head | OPC |
+|------|-----------|-------|------|-----------------|-----|
+| 遮挡处理策略 | 通道抑制（压低不可靠通道）| 细节保留（PConv稀疏+高分辨率）| 空间降权（遮挡区低权重）| 多实例预测（一框多物）| 遮挡图注入（显式补偿）|
+| 处理维度 | 通道维 | 空间+通道维 | 空间维 | 实例维 | 通道+空间维 |
+| 计算代价 | 轻量（通道门控）| PConv部分节省 | 中等（软权重）| 最小（K路输出）| 中等（Cross-Attn） |
+| 与P2的关系 | 独立（任意层）| P2专属 | 独立 | proposal通用 | 独立 |
+| YOLO迁移难度 | ✅ 低 | ✅ 低（PConv架构无关）| ✅ 低 | ⚠️ 中（需EMD Loss配合）| ⚠️ 中（需OPD模块） |
+
+### 与项目检测头路线的整合
+
+- **CSIM-Head × #5 P2门控**: 通道维(CSIM) + 空间维(#5) = 双维门控——正交可叠加
+- **LLFFH PConv × #11 频域判据**: 高频响应通道→全卷积 / 低频通道→PConv稀疏 → 频域引导的通道级条件计算
+- **CrowdDet K-Head × YOLO**: P2 grid-cell 每 cell 预测 K=2 实例 + P3-P5 K=1 → 仅在高分辨率层做多预测（密集区最多）
+- **OPC × #30 判据复用**: 遮挡图生成所需的先验→频域判据替代 bbox 重叠 GT → 免标注的 OPC 等效模块

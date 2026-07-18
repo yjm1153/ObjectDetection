@@ -1,7 +1,33 @@
 # TASKS
 
-> Current Sprint: Improve Object Detection Performance | 基线: 🟦 YOLO11(A轨) + 🟪 DETR(B轨,选型中) | Dataset: VisDrone | Stage: Literature Review
-> **2026-07-17 用户决策**: YOLO 与 DETR 双轨并行,研究任务按两大方法方向组织;Idea 分类见 innovation_ranking.md 🧭 区块
+> Current Sprint: Improve Object Detection Performance | 基线: 🟦 YOLO11(A轨·主战场) + 🟪 DETR(交叉融合副线) | Dataset: VisDrone | Stage: Literature Review
+> **2026-07-18 策略修订**: YOLO 回归唯一主战场，DETR 降级为交叉融合灵感源（不再追求 DETR 独立 Idea/设计文档）
+
+## 🔴 战略扩展: 三维度问题空间(2026-07-18)
+> 背景: 当前 26 个 Idea 过度集中于条件计算/稀疏化维度。VisDrone 场景中同等重要的**密集遮挡**、**旋转框**、**极端尺度变化**被系统性忽略。详细规划见 [Decision/research_strategy.md](Decision/research_strategy.md) § 战略扩展。
+
+### 🔴 密集排列与遮挡（最优先: 0 Idea → 🟨 L1 检索完成, 10 篇入库）
+- [x] **L1 文献检索**: ✅ 2026-07-18 双线检索轮, 6 组关键词, 命中 13 篇 → [quick_eval](papers/summaries/quick_eval_2026-07-18_dense_occlusion_detr_dx1.md); database 新增「九、🔴密集遮挡」10 条
+- [x] **L1.5 P0 深读**: DALA(密度感知LA)✅ / OPL(遮挡感知Loss)✅ / FAFL(五组件遮挡损失) —— 3 篇（DALA 完成 2026-07-18, Summary + KB 更新 + #31/#32 新Idea；**OPL 完成 2026-07-18**: 付费墙多源重构深读, OPL_ESWA2025.md + KB 4 文件(loss/head/attention/research_gap) + database ⚡→🔬 + **#35/#36 新Idea**(频域遮挡先验/语义熵隐式遮挡检测器)；余 FAFL）
+- [x] **L1.5 P1 深读**: DOMino-YOLO(OAR-Loss)✅ / DRONet✅ / HEdge-MamYOLO✅ / NWD-Soft-NMS(MFF-YOLO)✅ / GCS-DETR(YOLO迁移✅)✅ —— 5 篇（2026-07-18 全部完成）
+- [x] **L2 经典补读**: Repulsion Loss(CVPR 2018)✅ / CrowdDet(CVPR 2020 Oral)✅ / Soft-NMS(ICCV 2017)✅ —— 2026-07-18 全部完成。三条经典路线奠基(NMS演进/遮挡损失/集合预测)。产出:3 Summary + loss.md #15–#17 + database 82条(🔬48) + compare结论32 + 新Idea #37/#38/#39
+- [x] **L3 知识提取**: ✅ 2026-07-18 全部完成。loss.md遮挡专项(七大类taxonomy+范式演化图谱+NMS演进线) / head.md密集检测头(五大类taxonomy+五维对比表) / compare结论33(11篇知识全景+频域判据复用) / 密集遮挡方向知识基础设施就绪
+- [ ] **K1 Gap 分析**: 密集场景下标签分配/NMS 敏感性/遮挡特征恢复/DETR query 冲突 — 系统分析
+- [ ] **I1 Idea 生成**: 每个 Gap → ≥3 个 Idea，评分排序，择优设计
+- [ ] **交叉分析**: 密集 × P2 稀疏化（#5 熵判据在密集场景是否失效？）/ 密集 × DETR（query 去重）/ 密集 × 频域（密集边缘 vs 孤立目标频谱差异）
+
+### 🟠 旋转检测/OBB（有基础: 5 篇论文, 1 个低优先级 Idea #17, Timeline 有角度编码演进线）
+- [ ] **L1 补充检索**: YOLO-OBB 最新进展 / OBB 数据增强 / 旋转框 loss 新变体
+- [ ] **L2 深度补读**: ACM-Coder(已有条目未深读) / Oriented RepPoints / CFA / PSC 等
+- [ ] **K1 知识补充**: loss.md OBB 专项 / augmentation.md 旋转增强 / head.md 旋转头
+- [ ] **G1 Gap 分析**: YOLO-OBB vs DETR-OBB 对比空白 / OBB × 条件计算 / 旋转框密集场景
+- [ ] **I1 Idea 生成**: OBB + 频域判据 / OBB + 密集场景 / OBB 标签分配
+- [ ] **交叉分析**: OBB × 条件计算（旋转框空间分布与 HBB 不同→判据需重验证）/ OBB × 密集（旋转框 IoU 重叠更大→NMS 更严重）/ OBB × 频域（方向性→频谱方向性特征）
+
+### 🟡 尺度变化拓展（存量最多, 从"P2 稀疏化"扩展到全面尺度建模）
+- [ ] **补充检索**: 自适应感受野 / 尺度感知标签分配 / 极端小目标增强 / 多尺度特征对齐
+- [ ] **Gap 升级**: 现有 Neck 对比空白(#9 未执行)→ 系统化 Neck 统一对照实验设计
+- [ ] **Idea 升级**: #8 尺度感知语义熵升级为独立方向; 新增尺度自适应门控/感受野路由
 
 ## High Priority
 - [ ] ⏸【暂缓】熵图+高频能量图 vs GT 小目标重合率预实验(一次实验定 Idea#5/#11 生死)——2026-07-15 用户决策:VisDrone 暂不提供,待数据集就绪后恢复
@@ -16,18 +42,25 @@
 - [x] **Idea#11 技术方案 v1.1 修订** ✅ 2026-07-17:frequency_domain_cross_analysis.md → v1.1——工具首选 FFT→**S1 空域高通代理**(EFSI 硬消融 33.1>32.3>32.1+四条工程理由);叙事抽象「高频响应统计判据(实现无关)」;判据维度改"先高频+局部异常度,三频段留消融 F3";**判据族权威定义收敛至 idea_030_technical_proposal_v1.md §2**(#11/#30 共用,不再分叉);新增消融 F-impl(同判据换实现,支撑"实现无关",与 #30 E2 共用);SPA GT监督门控+packing 记录为 #5/#22 侧可学习升级选项(#11 主打免监督不采用);§七 修订日志
 - [x] **#5 v3.0 Related Work 补 Dome-DETR 划界段** ✅ 2026-07-17:idea_005_v3_design.md 新增 §十——四轴划界(CNN P2 卷积分支 vs DETR encoder token/零参语义熵复用 cls logits vs 0.8M DeFE+GT密度监督/语义不确定性 vs 密度=正交信息维度/净减法 −19% vs 控增量 +37%)+ 英文 RW 段落草案(写论文直接用)+ 概念红线提醒(#5 表述统一「熵引导的空间计算分配」)
 - [ ] 持续检索 2025–2026 YOLO 系小目标/轻量化/门控新作(服务 #5/#11/#22)(✅ 2026-07-17 续十一检索轮:P2 侧 2026 批量新作 LAF-YOLOv10/Edge-Constrained QIEA/DroneScan-YOLO 等全部"加P2头"路线,无人做 P2 内部空间条件计算 → **#5 gap 再确认**;Edge-Constrained "P2 alone +31% AP_small"=#5/#6 新 motivation 数据点)
-- [ ] 🔔 跟踪项:Unmasking the Tiny(IVC 2026)代码/arXiv 放出后回读,复核 #5 三轴划界
+- [ ] 🔔 跟踪项:Unmasking the Tiny(IVC 2026)代码放出后回读——**07-18 已见刊(IVC Vol.172)方法细节补全:STSM+FRM=补强式(加法)vs #5跳过式(减法)方向相反 → 哨点降级为普通近邻,低频跟踪**;代码仍占位(GitHub: AngstCJ/Unmasking-the-Tiny)
 - [ ] ⏸【暂缓】#5 v3.0 验证点 M0–M4、熵图/高频能量图预实验、#6+#12 baseline 复现——实验类待实验模块设计
 
-## 🟪 B轨·DETR 方向任务(基线: 选型中 RT-DETR / D-FINE 系)
-> 2026-07-17 双轨决策新增;B轨主 Idea: **#30(查新✅)**;已有 DETR 侧论文积累 15 篇
-- [x] **DETR 基础线补读** ✅ 2026-07-17 全部完成(**进度 3/3**):~~RT-DETR(CVPR 2024)~~✅ → ~~Deformable DETR(ICLR 2021)~~✅(DeformableDETR_ICLR2021.md,MSDeformAttn 底座算子+QS 诞生地)→ ~~DINO(ICLR 2023)~~✅(DINO_ICLR2023.md,CDN+混合QS+LFT,APs +7.2)——QS 判据三代演进链闭环,#5-D 谱系落点确认
-- [x] **DETR 方向知识小结** ✅ 2026-07-17:整合已读 14 篇 DETR 侧论文 → **B轨技术地图**(`Knowledge Base/detr_map.md`):三主线(query 机制四代演进/小目标适配"query 离目标更近"/实时化算力证据库)× Idea 挂点汇总表 × 概念红线 × 基线选型;已纳入 dashboard 知识库视图
-- [x] **B轨基线选型调研** ✅ 2026-07-17 纸面初判:**D-FINE 为主基座**(54.0@31M/91G 全面占优+O365后APs 40.0+O²已用作底座),RT-DETR 为机制理解层+ultralytics 生态兜底 → 已记入 decision_history(最终确认⏸待实验模块)
-- [x] **#5-D / #11-D 衍生 Idea 查新与划界** ✅ 2026-07-17 裁决完成:**#5-D ❌ 不占编号**(致命竞品 Dome-DETR(arXiv 2505.05741)结构性占据:密度判据→MWAS浅层token稀疏+PAQI自适应query,D-FINE底座+VisDrone主战场完全重合;熵判据遗产并入 #19)/ **#11-D ✅ → 正式占编号 #30**(免监督频谱判据→浅层token条件计算,3.9,B轨主Idea;频域DETR竞品全是增强范式,条件计算空白确认)→ 裁决文档 `Ideas/detr_derivative_novelty_check.md` + Dome-DETR summary 入库
-- [x] **#30 技术方案 v1.0** ✅ 2026-07-17:判据三选项定型(**S1 空域高通代理首选**,EFSI 硬消融 33.1>FFT 32.3;S2 DCT/S3 FFT 作消融;叙事抽象为"高频响应统计判据·实现无关")× D-FINE 三接入点(P 最浅层判据/E MWAS 结构沿用引用/Q query 预算**无 NMS** 保端到端)× Dome 三攻击面→三卖点对照叙事 × 实验协议 E0–E6 锁定(**E1 判据 vs DeFE 头对头=生死项**;E3 免训练判据 AUROC=实验模块最低成本首验)→ `Ideas/idea_030_technical_proposal_v1.md`(实验全部 ⏸ 待实验模块)
-- [ ] ~~**#14 升级文档化**~~ **#14 降级**(2026-07-17):Dome-DETR 已用最浅层四尺度特征,"首次 DETR 浅层"新颖性消失 → 退回 #6 的跨架构结构对照,不独立文档化
-- [ ] 持续检索 2025–2026 小目标 DETR 新作(✅ 2026-07-17 续十一检索轮:UFO-DETR 快评补全数字·维持不威胁判定;**新命中 HF-DETR(IEEE SPL 2026)= #30 组合空间最近邻居 → 快评入库+🔔挂跟踪**);🔔 跟踪项×2:①Dome-DETR 代码 accept 后放出 → 回读复核 MWAS 实现细节;②**HF-DETR 全文获取 → 核实 SSMG saliency 门控判据性质(可学习 vs 免监督统计=#30 撞车裁决)**
+## 🟪 DETR 交叉融合（副线·2026-07-18 策略修订降级）
+> ~~2026-07-17 双轨决策新增;2026-07-18 强化~~ → **2026-07-18 策略修订**: DETR 降级为 YOLO 交叉融合灵感源。不再追求 DETR 独立 Idea/设计文档/DX1-DX5 强化计划。仅保留判据层通用 + 概念层迁移两条交叉线。DETR 论文阅读新原则：每篇必须通过「YOLO 迁移过滤器」（这对 YOLO 有什么用？→ 能迁移就记录，不能就跳过）。
+
+- [x] **DETR 基础线补读** ✅ 2026-07-17: RT-DETR/Deformable DETR/DINO 全部完成
+- [x] **B轨技术地图** ✅ 2026-07-17: detr_map.md
+- [x] **基线选型** ✅ 2026-07-17: D-FINE 纸面初判
+- [x] **#5-D/#11-D 查新** ✅ 2026-07-17: #5-D ❌ / #11-D→#30 ✅
+- [x] **#30 技术方案 v1.0** ✅ 2026-07-17
+- [x] **Dynamic DETR 深读** ✅ 2026-07-18: ⚖️不撞车 → #33/#34 + RCDR
+- [ ] **#30 v1.1 修订**（低优先级·文档维护）：吸收 RCDR + Dynamic DETR 合并式 token 处理 + E1 三臂对照
+- [ ] **DETR 交叉灵感记录**（随读随记）：仅记录通过「YOLO 迁移过滤器」的概念/判据洞察
+
+### ~~DX1-DX5 强化计划~~（已停止）
+- [x] ~~DX1.5 P0 深读: Dynamic DETR~~ ✅ 已完成
+- [ ] ~~DX1.5 P1 深读 5 篇~~ → **全部取消**（纯 DETR 论文，YOLO 迁移价值低）
+- [ ] ~~DX2-DX5~~ → **全部取消**
 
 ## Literature Tasks
 > 模式变更(2026-07-15 用户授权):不再等待投喂 PDF,由 Agent 直接从 arXiv 等公开渠道抓取全文阅读
@@ -96,7 +129,9 @@
 - [ ] ⏸【暂缓】验证 CLIP/RegionCLIP 文本嵌入对 VisDrone 俯视视角的对齐质量(Idea#5/#7/#8 共同前置)——依赖 VisDrone,暂缓
 - [ ] Idea#9:统一协议下 PAN/AFPN/ASFF/GCP-ASFF 对照实验设计
 
+- [x] **2026-07-18 续: PRNet 深读(VisDrone 最高纪录拆解)**——arXiv 2510.09531(Zheng et al.,未见venue);PRN(P2^in/P3^in 多次复用+迭代精炼 Neck)单模块 +10.3 AP50/参数反降(9.4→7.71M)/FLOPs+110.7%(21.3→44.9G)=**#5 motivation 最强新证**;ESSamp=PixelUnShuffle+d=2深度卷积;VisDrone val AP50 49.9@7.77M/54.1@24.6M(L)/61.0@1024;AI-TOD-L 35.6;跨架构泛化(YOLOv5/v8/11/FBRT +6~10,RT-DETR+3.2);P2路线图第四分支(骨干复用)+gap N+3确认;静态迭代深度(阶段0→3:45.0→51.4)一刀切=层深维条件计算入口;无FPS漏洞=#30 E6正面理由;产出:PRNet_arXiv2025.md(🔬全协议)+KB 5文件(neck+compare结论27/timeline分支+research_gap PRNet段/sota升级)+database ⚡→🔬+journal(第十七次)+Idea #5/#6/#24注记+README同步+
 ## Completed Tasks
+- [x] **2026-07-18: 文献检索轮(跟踪项三连裁决 + 6 路并行扫描)**——①**Dome-DETR 放码✅+ACM MM 2025 接收确认**(S/M/L 权重+训练日志;#30 E1 生死项升级"官方代码对照",MWAS 控制变量可落代码级;⚠️动态query限单批训练);②**Unmasking the Tiny 见刊细节补全**(IVC Vol.172:STSM+FRM=前景分数**补强式加法**,与 #5 跳过式减法方向相反 → 哨点降级普通近邻);③HF-DETR 仍付费墙(SSMG 裁决悬置);④新作划界×3:FSDETR(IJCNN 2026,频域浪潮**第 7 篇**纯增强,VisDrone APs 13.9)/HI-MoE(DETR 专家维 MoE,+3.3 APs,与#30正交+通路侧翼佐证)/MFVL-YOLO(熵引导用于前景增强非计算分配,#5 近邻划界);⑤数据点:PRNet VisDrone AP50 **54.1/61.0@1024=检索所见最高**、FFKD-Net 47.7@3.0M、Scale-Conscious KD 面积加权=**#7 现成消融对照轴**、HFSP-YOLO P2→P3 注入=P2 第三路线;⑥**双 gap 再确认**(P2 内稀疏化无人做 N+2/频域条件计算空白维持)→ quick_eval_2026-07-18_literature_round.md + database(60 条)+ #30 方案 v1.0.1 + journal(第十六次)+ **Self Check 补漏(07-18)**:compare(Dome放码行更新+FSDETR行+结论26)/timeline(2026主线+频域第7篇+门控线+Dome放码)/sota(Dome venue+FSDETR/PRNet/FFKD-Net行)/research_gap(双gap复核+哨点降级段)/decision_history(E1升级+哨点降级两条裁决)五文件同步✅
 - [x] **2026-07-17 续七: 文献检索轮(HF-DETR 撞车监控 + 双轨 gap 再确认)**——①**新命中 HF-DETR(IEEE SPL 2026)**:LoG stem+小波重建+SSMG saliency token 门控,VisDrone AP+4.3/121FPS,「高频+token稀疏+VisDrone+实时」四要素=#30 组合空间最近邻居 → 快评入库 `papers/summaries/HF-DETR_SPL2026.md`+🔔挂跟踪(SSMG 判据性质待全文核实;LoG=S1 工具又一佐证)+#30 方案 §6 风险 5;②UFO-DETR 快评补全数字(VisDrone mAP50 46.1/算力-60%,纯增强维持不威胁);③#5 近邻/Dome 放码检索无新动静;④YOLO P2 侧 2026 批量新作全部"加P2头"路线 → #5 gap 再确认,Edge-Constrained "P2 alone +31% AP_small"=新 motivation 数据点。同步:database(50 条/🔔×2)/ranking(续十一)/journal(第十五次)/research_history(续十一)/README
 - [x] **2026-07-17 续六: 🟦 A轨双文档修订**——①**#11 频域交叉分析 v1.1**:工具首选 FFT→S1 空域高通代理(EFSI 硬消融)+叙事"实现无关"+判据族收敛至 #30 §2+消融 F-impl 新增+SPA 记录为可学习选项;②**#5 v3.0 §十 Dome-DETR 划界段**:四轴划界+英文 RW 草案+概念红线(「熵引导的空间计算分配」)。A轨设计文档与 B轨 #30 方案完成判据统一,双轨"同判据跨架构"(⬜#24 架构无关性卖点)的文档基础闭环
 - [x] **2026-07-17 续五: 🟪 #30 技术方案 v1.0**(纯文档轮)——`Ideas/idea_030_technical_proposal_v1.md`:①判据三选项定型(S1 空域高通代理首选+局部异常度归一,吸收 EFSI 硬消融与 SET 警告;S2 DCT/S3 FFT 降为消融对照;叙事抽象为"高频响应统计判据·实现无关",同时规避 FFT 工具层撞车)②D-FINE 接入点与 Dome 逐点对齐(MWAS 结构沿用引用=控制变量;query 预算掩码过滤且**不引入 Dynamic NMS**=对 Dome 攻击面③的直接回应;背景 token identity 直通=SViT 教训)③Dome 三攻击面→#30 三卖点对照叙事表 ④实验协议 E0–E6 锁定:E1 判据 vs 复现版 DeFE 头对头=生死项,E3 免训练判据 AUROC=实验模块最低成本首验,E6 报 GFLOPs 分布+FPS(修 Dome 未报漏洞)⑤定位诚实声明:不许诺净省算力(Dome +37% 教训)。同步:ranking(rank11 状态)/candidate(#30 Current Status)/detr_map(挂点表)/TASKS/journal/README/research_history
@@ -158,4 +193,4 @@
 - [x] 2026-07-17 续四: **🟪 B轨衍生查新裁决:#5-D ❌ / #11-D→#30 ✅**：三轮检索(熵引导token剪枝/自适应稀疏化/频域条件计算/免训练频谱判据)+ 致命竞品 **Dome-DETR**(arXiv 2505.05741,USTC)深读入库(D-FINE底座,DeFE密度头→MWAS浅层掩码窗口token稀疏+PAQI自适应query,AI-TOD-V2 34.6/VisDrone val 39.0 双SOTA)→ ①#5-D 被结构性占据,不占编号,熵判据遗产并入 #19 DETR侧对照列;②**#11-D 通过 → 正式占编号 #30「免监督频谱判据→DETR浅层token条件计算」(3.9,B轨主Idea)**,三点划界(vs EFSI增强/UAV-DETR融合软门控/Dome学习式判据头)+Dome三攻击面(GFLOPs+37%非净省/保留NMS/判据需GT监督)=对照叙事;③「全线无P2」结论失效→#14 降级回结构对照;④产出:`Ideas/detr_derivative_novelty_check.md` + Dome summary + ranking(26 Idea)/candidate/detr_map/compare(结论25)/timeline/sota/database(49条)/journal(第十二次)/README 全面同步
 
 ---
-Last Update: 2026-07-17 | Maintainer: Claude Code
+Last Update: 2026-07-18 | Maintainer: Claude Code

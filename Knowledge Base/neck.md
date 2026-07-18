@@ -88,3 +88,56 @@
   2. 部分通道细化比例自适应(高信息量区域→更多通道走变换路径)
   3. MDFC的频率解耦迁移到YOLO PAN(替代简单Concat)
 - **References**: arXiv:2509.23056
+
+### 6. PRN (Progressive Refinement Neck, PRNet, arXiv 2025.10)
+- **Name**: PRN(骨干特征复用 + 迭代精炼 Neck)
+- **Function**: 替换 PAN-FPN,通过多次复用**原始浅层特征** P2^in/P3^in 解决"重建细节偏离原始信息"的退化问题
+- **Feature Fusion Strategy**: ①标准 top-down 初始融合;②骨干复用——P2^td 下采样与**未再用的 P3^in** 拼接 → 上采样与**原始 P2^in** 拼接;③渐进闭环——前阶段精炼特征引导后续融合,单次 down-up 循环/块;④输出端第三次拼接 P2^in
+- **Advantages**: VisDrone **单模块 +10.3 AP50**(39.0→49.3,YOLO11-s 基线)且**参数反降**(9.4→7.71M);跨架构泛化(v5s +7.1/v8s +7.8/11s +10.3/FBRT +6.0/RT-DETR-R50 +3.2);PRNet(7.77M/44.9G)以 1/3 参数超 YOLO11-m
+- **Weakness**: **FLOPs +110.7%**(21.3→44.9G)——稠密复用代价;全文无 FPS;迭代深度是静态超参(阶段 2/3 仍有 +1.7/+2.1 收益被一刀切放弃);DETR 系增益显著缩水(+3.2 vs YOLO +6~10)
+- **Computational Cost**: PRNet-N 2.2M/17.8G;PRNet 7.77M/44.9G;PRNet-L 24.6M/196.8G(@1024:505G)
+- **Suitable Scenario**: 小目标 | 航拍/遥感 | 参数受限但算力可放宽的场景
+- **Possible Improvement**:
+  1. 稠密复用 → **熵/高频判据的选择性复用**(只复用信息密集区的 P2^in)——保住 +10.3 大头,把 +110.7% FLOPs 压回(= #5 在强基线上的落点)
+  2. 静态迭代深度 → **输入自适应 early-exit**(表6 的 49.3/51.0/51.4 阶梯是现成上限,判据复用 #11 图像级高频统计)
+  3. ESSamp 的 PixelUnShuffle 重排天然保留 4 邻域相位 → 重排后通道上直接算局部高频异常度,判据与下采样共享一次访存(#11 的 S1 更省实现位点)
+- **References**: PRNet arXiv:2510.09531;SliceSamp[2023];对照 GCP-ASFF/AFPN
+
+### 23. OAM-FPN — Occlusion-Aware Multi-Scale FPN (GCS-DETR)
+- **Name**: OAM-FPN (遮挡感知多尺度特征金字塔)
+- **Function**: 遮挡场景下的多尺度特征融合——保留遮挡目标高频边缘+自适应融合+注意力去噪
+- **Feature Fusion Strategy**: 三合一——①小波变换分解高频/低频子带（显式保留遮挡边缘）; ②自适应多分支融合（遮挡区偏浅层细节/非遮挡区偏深层语义）; ③混合注意力（通道+空间联合抑制背景噪声）
+- **Advantages**: 小波变换的显式高频保留 vs 标准FPN的隐式平滑——遮挡边缘不丢失; 自适应分支权重实现"不同区域不同融合策略"; 混合注意力抑制密集场景背景噪声
+- **Weakness**: ⚠️ 小波类型（Haar/Daubechies/...）未确认; 三合一设计的消融贡献未知; 小波变换计算开销未消融
+- **Computational Cost**: 未知（整体模型参数−20.6% vs RT-DETR）
+- **Suitable Scenario**: 遮挡密集场景 | 小目标检测 | Neck级频域增强
+- **Possible Improvement**:
+  1. YOLO Neck 迁移: 将 OAM-FPN 的小波高频保留嵌入 PANet/ASFF→"标准融合 vs 自适应融合 vs 频域保留融合"三方对照
+  2. 频域判据替换小波: 用 #11 S1 空域高通代理（更轻量）替代小波变换的高频提取→保留高频子带的能力相似但计算更省
+  3. 自适应分支权重×密度感知: 密度高的区域→浅层分支权重自动↑
+- **References**: GCS-DETR | Multimedia Systems | 2026.05
+
+### 24. DSFFM — Dynamic Scale Feature Fusion Module (HEdge-MamYOLO)
+- **Name**: DSFFM (动态尺度特征融合模块)
+- **Function**: 平衡大/小目标的特征表达——防止大目标主导、小目标被淹没
+- **Feature Fusion Strategy**: 对每层特征图自适应调整感受野（大目标大感受野/小目标小感受野）→尺度平衡
+- **Advantages**: 与 FM-CHFEM 协同——FM-CHFEM 增强遮挡小目标后，DSFFM 确保不被大目标淹没; 尺度感知是航拍场景的核心需求
+- **Weakness**: ⚠️ 自适应机制细节未获取; 与 ASFF/AFPN 的区别不清晰; 可能增加 Neck 计算开销
+- **Suitable Scenario**: 极端尺度变化场景 | 航拍/遥感 | 小+大目标混合
+- **Possible Improvement**:
+  1. 与 ASFF 融合: ASFF 的空间自适应权重 + DSFFM 的尺度自适应感受野→双维自适应融合
+  2. 频域尺度判据: 用频谱特征判断局部区域的"有效尺度"→指导感受野选择
+- **References**: HEdge-MamYOLO | IEEE TGRS | 2026.04
+
+### 25. PSI + SDEA — Perceptual Spatial Integration + Scalable Dilated Efficient Aggregation (DRONet)
+- **Name**: PSI (感知空间集成) + SDEA (可扩展膨胀高效聚合)
+- **Function**: 密集遮挡场景的 Neck 特征融合管线——PSI 浅→中跨尺度融合 + SDEA 中→深多层聚合
+- **Feature Fusion Strategy**: PSI=部分卷积+三尺度通道混合+选择性上下文聚合; SDEA=多速率膨胀卷积(并行dilation 1/2/3)+结构重参数化(GELAN大核扩展)
+- **Advantages**: PSI 选择性聚合→密集场景中遮挡区精细处理、空旷区粗放处理; SDEA 多速率膨胀→同时感知不同尺度上下文（近处细节+远处全局）; 重参数化→零推理开销增加
+- **Weakness**: ⚠️ 消融数字未获取（各模块独立贡献未知）; 两模块联合设计→单独迁移价值受限; 基于 RT-DETR Neck→YOLO PANet 迁移需适配
+- **Computational Cost**: 60 FPS（整体 DRONet，含 backbone）
+- **Suitable Scenario**: 密集遮挡场景 | 小目标 Neck 增强 | 多尺度上下文
+- **Possible Improvement**:
+  1. PSI 选择性聚合 → #5 空间门控的 Neck 级实现（"选择性地聚合细节"≈"选择性跳过"的对偶操作）
+  2. SDEA 多速率膨胀 → YOLO Neck SPPF 的替代方案
+- **References**: DRONet | Displays (Elsevier) | 2026.02

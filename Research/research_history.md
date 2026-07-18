@@ -1,5 +1,68 @@
 # Research History
 
+## 2026-07-18 (续十八) — 📋 策略修订: DETR 降级为交叉融合副线，YOLO 回归唯一主战场
+
+- **用户决策**: "改变一下策略，DETR仅做为交叉融合的副研究方向，主要还是以YOLO进行研究"
+- **推翻**: 同日早些时候的「DETR 轨道强化」计划（DX1-DX5），B轨占比 15%→30%→**5%**
+- **核心变化**: ①DETR 从并行主方向降为 YOLO 灵感源（仅保留判据层通用 + 概念层迁移两条交叉线）②停止 DETR 独立 Idea 生成/设计文档 ③DETR P1 深读 5 篇取消 ④#32💤 纯 DETR 机制存档 ⑤DETR 论文阅读新原则: 每篇必须通过「YOLO 迁移过滤器」
+- **资源**: YOLO 主线 ~80%（条件计算 30% + 密集遮挡 30% + 旋转 15% + 尺度 5%），DETR 交叉融合 ~5%，理论 ~15%
+- **产出调整**: Idea 总数预期 45-55 → 35-45；产出重心从 DETR 独立创新 → YOLO 密集遮挡主力增量
+- **产出**: research_strategy.md（战略定位全文重写 + DETR 交叉融合章节替换 DX1-DX5）+ innovation_ranking.md（🧭+ #32💤）+ TASKS.md（B轨 70+ 行→8 行）+ README.md（基线/维度/Pipeline）+ journal(第二十三次)
+- **下一步**: 密集遮挡 L1.5 P1 深读 5 篇 YOLO 密集遮挡论文（DOMino-YOLO/DRONet/HEdge-MamYOLO/NWD-Soft-NMS/GCS-DETR）
+
+## 2026-07-18 (续十四) — 战略扩展: 四维问题空间 + 三方向系统性研究规划
+
+- **用户决策**: 当前 26 个 Idea 全部围绕条件计算/轻量化,要求拓展到**尺度急剧变化**、**密集排列与遮挡**、**旋转检测(OBB)** 三个方向
+- **全项目盘点结论**: 密集遮挡=完全空白(0 Idea/0 专项论文/KB 无条目); 旋转检测=有基础未激活(5 篇论文/#17 低优先级); 尺度变化=存量多但视角单一(仅 P2 稀疏化)
+- **产出**: `Decision/research_strategy.md` 新增 § 战略扩展(四维空间/三方向路线图/资源分配/预期产出 Idea 26→40-50) + `TASKS.md` 18 个新任务 + `README.md` v3.0 + journal(第十八次)
+- **下一步**: 密集遮挡 L1 文献检索(最薄弱优先)
+
+## 2026-07-18 (续十六) — 密集遮挡 L1 + DETR DX1 双线文献检索
+
+- **双线并行检索**: 🔴密集遮挡 L1(6组关键词) + 🟪DETR DX1(5组关键词),命中 22 篇(密集 13 + DETR 9),总条目 60→**78**
+- **密集遮挡**: DALA(密度感知LA)/OPL(遮挡感知Loss,召回率95.4%)/OAR-Loss(RepLoss 2025变体)/FAFL(五组件遮挡损失)/NWD-Soft-NMS(VisDrone +9.0%)/DRONet(50.1%)/HEdge-MamYOLO(频域+Mamba,52.5%)/GCS-DETR(DETR+频域+遮挡三交叉)
+- **DETR DX1**: Adaptive Query Allocation(密度图→动态query)/Pe-DETR(query差异化)/SCOPE-DETR(注意力温度调控)/RS-DETR+RO²-DETR(O²以外旋转DETR)/Hausdorff Matching(旋转框匹配改进)/**Dynamic DETR(ICML 2025,概念红线缺口)**
+- **Gap 确认**: 密集 4 + DETR 5 = 9 个初步 Gap;深读优先级 P0×3/P1×8/P2×7
+- **产出**: quick_eval_2026-07-18_dense_occlusion_detr_dx1.md + database(九/十两区) + journal(第二十次)
+- **下一步**: P0 深读(Dynamic DETR/DALA/OPL)
+
+## 2026-07-18 (续十五) — 🟪 DETR 轨道强化: 从单 Idea 到系统化研究（⚠️ 已由续十八策略修订推翻）
+
+- **用户指令**: DETR 轨道研究不足,须加强。当前 B轨仅 #30(条件计算)+#14(降级对照)两个 Idea,单点故障风险极高
+- **DETR 审计(并行 Agent 全项目盘查)**: B轨健康度 B+(79/100)——论文覆盖 A(92)/研究活跃度 A(95),但 Idea 管线 C+(58,仅1活跃Idea)/KB覆盖 B-(67,5/14文件零DETR)。DETR五大专属机制(Query/Cross-Attn/Bipartite Matching/Encoder-Decoder非对称/Token序列)完全未作为新Idea种子
+- **强化方案**: 五阶段 DX1–DX5(论文补读→知识深化→Gap分析→Idea生成→Design)+DETR×三维度交叉(密集query冲突/OBB旋转query/尺度token预算/频域query侧扩展/专属理论)→目标 B轨专属 Idea 2→8-12
+- **资源调整**: B轨总占比 15%→30%(条件计算10%+三维度扩展20%),与 A轨持平
+- **产出**: `Decision/research_strategy.md` 新增 § DETR轨道强化(机制表/交叉/Idea目标/五阶段/资源/产出) + `TASKS.md` 新增「🟪 B轨强化」区块(DX1–DX5 20+任务) + `README.md`(问题维度+Roadmap 全标注) + journal(第十九次)
+- **下一步**: ~~DX1 DETR 专属论文补读(与密集遮挡 L1 并行)~~ → ⚠️ 已由续十八策略修订推翻，DX1-DX5 全部停止
+
+## 2026-07-18 (续十三) — PRNet 深读:P2 复用矛盾量化 + 层深维条件计算入口
+
+- **深读论文**: PRNet: Original Information Is All You Have, arXiv 2510.09531(Zheng, Zhao, Cui, Li), 2025-10-10 提交,未见 venue。此前检索轮已纳入数据点,本轮升级为🔬深度总结
+- **核心贡献**: PRN(Progressive Refinement Neck)——替换 PAN-FPN,通过三阶段多次复用原始 P2^in/P3^in(带渐进闭环,单次 down-up/块,防信息稀释),解决 FPN 中原始特征只用一次 + 重建偏差两大缺陷。ESSamp(Enhanced SliceSamp):PixelUnShuffle 替代显式切片索引(访存合并)+ depth multiplier d=2 补单核表达力(d=3 掉点因后续压缩比过大)
+- **关键数字**: YOLO11-s 基线 39.0 AP50,PRN 单模块 **+10.3**(→49.3),参数反降(9.4→7.71M),FLOPs +110.7%(21.3→44.9G)。ESSamp 单模块 +1.1。联合 PRNet 49.9@7.77M/44.9G。PRNet-L 54.1@24.6M/196.8G;@1024 **61.0=检索所见唯一破 60 的 VisDrone AP50**。跨架构泛化:YOLOv5s +7.1/v8s +7.8/11s +10.3/FBRT +6.0/RT-DETR-R50 +3.2。迭代阶段 0→3 收益递增(45.0/49.3/51.0/51.4 AP50)但作者一刀切取 1
+- **对双轨 Idea 的影响**:
+  1. **#5 motivation 最强新证** ⭐:PRN 提供精确的可引数字——P2 复用价值(+10.3)与稠密成本(+110.7%)的矛盾,与 Edge-Constrained "P2 alone +31% AP_small" 并列叙事基石
+  2. **P2 利用路线图完整化**:四条路线(加头/注入P3/粗粒度选择/骨干复用)——全部静态稠密无输入自适应 → #5 gap = 跨路线共性空白(N+3),非某一支路空白
+  3. **层深维条件计算新入口**:PRN 迭代深度梯度(45.0→51.4) + 一刀切的设定 = 用无监督判据(#11)自适应决定精炼深度的天然场景;与 #26(decoder 层深最优停止)构成双轨"层深维条件计算"互补对
+  4. **#24 跨架构实证**:YOLO 系 +10.3 vs DETR +3.2 → CNN "浅层原特征复用"天然优于 self-attention;B轨需独立设计(为 #30 的 B轨独立定位背书)
+  5. **#30 E6 理由**:PRNet 全文无 FPS(标榜 real-time 但只报 FLOPs)→ 证实 #30 E6"必须报 FPS+延迟"不是矫枉过正
+- **产出**: PRNet_arXiv2025.md(🔬深度总结,按全协议)+ neck(KB entry 6:PRN)+ compare(表格行+结论 27)+ timeline(主线+FPN线+小目标线+**P2 利用路线分支**)+ sota(行升级:未核实→🔬)+ research_gap(PRNet 专项 5 点+N+3 确认)+ database(PRNet ⚡→🔬)+ journal(第十七次)+ Idea #5/#6/#24 注记 + README + TASKS
+- **下一步**: 周期性检索持续推进;PRN×#5 稀疏化融合预实验设计已记录(⏸待实验模块);PRN 迭代深度自适应可正式评估为候选 Idea(并入 #26 或独立,待评估)
+
+
+## 2026-07-18 (续十二) — 文献检索轮:Dome 放码 + #5 哨点降级 + 双 gap 维持
+
+- **任务**: 6 路并行检索(YOLO P2/DETR token/频域/轻量化/遥感UAV/蒸馏)+ 三跟踪项复查
+- **跟踪项三连裁决**:
+  - **Dome-DETR 放码 ✅ + ACM MM 2025 接收确认(#30 最大利好)**: github.com/RicePasteM/Dome-DETR——完整 PyTorch 实现(D-FINE 底座)+ S/M/L 预训练权重与训练日志(Dome-S = AI-TOD 32.1 / VisDrone 35.9)+ AI-TOD-v2/VisDrone2019 双数据集支持;官方自认限制"动态 query → 每 GPU 单批训练"(#30 实验设计需预估同约束)→ **E1 生死项升级"官方代码对照"**,MWAS 结构照抄的控制变量原则可落代码级;#30 方案 v1.0.1 同步(§5 注/风险 3 兑现/落款)
+  - **Unmasking the Tiny 见刊(IVC Vol.172, DOI 10.1016/j.imavis.2026.106026)→ #5 哨点降级**: 方法细节补全——核心洞察"前景分数被背景抑制而分类语义 robust";STSM 粗选弱信号 token + FRM 从分类特征蒸馏语义注意力图**补强**恢复前景分数 → **补强式(加法)vs #5 跳过式(减法)方向相反,同特征图可共存** → 威胁"最近哨点"降级"普通近邻";代码仍占位(见刊仍未放),转低频跟踪
+  - **HF-DETR 复查**: 仍付费墙(IEEE SPL Vol.33 pp.1245-1249,无 arXiv 镜像),SSMG 判据性质裁决继续悬置
+- **新作划界×3**: FSDETR(IJCNN 2026,arXiv 2604.14884,RT-DETR+FSFPN/CFSB 可学习频域滤波,VisDrone APs 13.9 超 D-FINE-M)= **频域浪潮第 7 篇纯增强** → #30 gap 反证;HI-MoE(arXiv 2604.04908 preliminary,DETR 两级 MoE scene→instance 路由,DINO +3.3 APs)= 条件计算在**专家维**非 token 空间维 → 与 #30 正交 + "条件计算利好小目标"与 Dome 互证 = 通路侧翼佐证;MFVL-YOLO(Physica Scripta 2025,熵引导前景判别+频域高频增强,VisDrone +3.1)——熵用于**增强判别**非计算分配 → #5 概念红线表述价值再显
+- **数据点**: PRNet VisDrone AP50 **54.1(24.6M)/61.0@1024 = 检索所见最高**;FFKD-Net 47.7@3.0M(#7 轻量+KD 上限证据);**Scale-Conscious KD(MSFD+SAOD 面积加权)= #7 语义熵加权的现成消融对照轴**;HFSP-YOLO Space-to-Depth P2→P3 注入 = P2 信息利用第三路线(加头/头内稀疏/注入,均静态);HA-DETR decoder 自注意力→卷积自交互(+1.9AP+13%速)= B轨 decoder 冗余证据库再+1
+- **双 gap 状态**: P2 内空间条件计算无人做(N+2 次确认)/频域 DETR 条件计算空白维持(7 篇全增强)
+- **产出文件(7)**: quick_eval_2026-07-18_literature_round.md(新建)+ database.md(50→60 条,Dome/Unmasking/HF-DETR 行更新)+ idea_030_technical_proposal_v1.md(v1.0.1)+ innovation_ranking(#30 行+07-18 日志)+ TASKS(跟踪项+Completed)+ journal(第十六次)+ README
+- **下一步**: ①🔔 HF-DETR 全文渠道/HI-MoE 正式版/Unmasking 放码(低频);②⏸ **实验模块首批任务已凑齐: E3 判据 AUROC + Dome 代码细读(MWAS/DeFE)+ E0 基线复现**;③周期性检索继续
+
 ## 2026-07-17 (续十一) — 文献检索轮:HF-DETR 撞车监控入库 + 双轨 gap 再确认
 
 - **任务**: 双轨全类目 2025–2026 新作检索(设计文档栈闭环后唯一无阻塞工作线);检索面 = UFO-DETR 追查 / DETR token 稀疏 / YOLO P2 / #5 近邻(语义熵空间门控)/ Dome 放码跟踪
@@ -233,6 +296,24 @@
 - YOLOv12快速评估: 注意力YOLO;无P2;FlashAttention硬依赖;不切换基线
 - 新增Idea #13(振幅门控) #14(D2=SLE) #15(三源门控)
 - Knowledge Base 8项更新;Decision ×4;Journal ×1
+
+## 2026-07-18 (续×) — DALA 深读: 密度感知标签分配
+
+- **深读**: DALA (Liu et al., ESWA 2026) — 首个密度显式建模进标签分配
+- **核心发现**: DALA 打破"统一标签分配"假设，按 GT 空间密度分类→密集 O2O/稀疏 Decreasing LA；密度(空间域)与熵/频域(语义域)是同一问题的正交视角
+- **关键 Gap 确认**: 密度感知 LA + 频域判据的组合空白(双轨共享)；标签分配条件计算 × 特征条件计算的协同框架空白
+- **KB 更新**: loss.md(+标签分配方法对比速查表)、training.md(+密度感知两阶段训练)、research_gap.md(+DALA 增量 Gap)、compare.md(+DALA 横向条目)
+- **Idea 新增**: #31 ⬜ 密度×频域联合判据→双维条件计算 (3.6) + #32 🟪 密度引导 DETR query 配额自适应 (3.7)；Idea 总数 26→28
+- **文件产出**: Summary (DALA_ESWA2026.md) + database 状态升级(⚡→🔬) + journal 更新
+
+## 2026-07-18 (续×) — OPL 深读: 首个显式遮挡感知损失
+
+- **深读**: OPL/OPD/OPC (Li & Li, ESWA 2025) — 首个显式遮挡感知损失(付费墙多源重构深读,精确公式/消融未获取已标注⚠️)
+- **核心发现**: 遮挡建模范式转换(隐式→显式)——OPD(Transformer遮挡图预测)+OPL(bbox重叠+高斯模糊零标注GT)+OPC(遮挡图注入检测头);遮挡召回率 95.4%(+22.6%),CrowdHuman/CityPersons 双验证
+- **关键 Gap 确认**: ①免 bbox 重叠的遮挡图生成空白(bbox重叠GT三盲区:并排假阳性/完全遮挡/截断背景遮挡)→频域判据替代;②遮挡区域-高熵相关性未验证(OPL增强 vs #5跳过的张力裁决点);③OPL 范式在 DETR 侧未验证(Cross-Attn 全局感受野+per-query遮挡图=天然优势)
+- **KB 更新**: loss.md(+OPL遮挡感知损失条目)、head.md(+OPD辅助头条目)、attention.md(+显式遮挡感知机制条目)、research_gap.md(+OPL Gap 6条)、compare.md(+OPL行+结论30)、timeline.md(+2025主线OPL+🔴遮挡感知/密集检测支线新建)
+- **Idea 新增**: #35 🔴 频域遮挡先验→免bbox重叠遮挡图生成 (3.8) + #36 🔴⬜ 语义熵隐式遮挡检测器 (3.9);🔴密集遮挡维度首批 Idea(0→2);Idea 总数 30→32
+- **文件产出**: Summary (OPL_ESWA2025.md) + database 状态升级(⚡→🔬) + candidate.md #35/#36 + journal(第二十一次) + TASKS L1.5 P0 OPL 打勾 + README 同步
 
 ## 2026-07-15 — 主体工作日
 - 阅读+总结: YOLO-World, YOLOE, Token Cropr, RFLA, SEEN-DA, SEMA-YOLO, SFIDM

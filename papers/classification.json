@@ -1,0 +1,130 @@
+{
+  "_meta": {
+    "description": "论文质量分类数据库 — 按五维标准标签×六级分类层级组织",
+    "created": "2026-07-18",
+    "maintainer": "Claude Code",
+    "totalPapers": 77,
+    "classificationRule": "每篇论文按优先级分配主分类: 【自】> 顶会/顶刊 > 已发表 > 有代码+知名机构 > 有代码或知名机构 > 纯arXiv"
+  },
+
+  "standards": {
+    "f": {"label": "【自】",    "desc": "用户提供文献", "icon": "📌", "cls": "self"},
+    "v": {"label": "顶会/顶刊", "desc": "CVPR/ICCV/ECCV/NeurIPS/ICML/ICLR/AAAI/ACM MM", "icon": "🏆", "cls": "venue"},
+    "p": {"label": "已发表",    "desc": "其他同行评审venue (TGRS/JSTARS/ESWA/IVC/WACV等)", "icon": "📰", "cls": "pub"},
+    "c": {"label": "有代码",    "desc": "开源代码仓库可获取", "icon": "💻", "cls": "code"},
+    "i": {"label": "知名机构",  "desc": "知名大学/企业研究院背书", "icon": "🏛️", "cls": "inst"},
+    "x": {"label": "纯arXiv",   "desc": "无venue/无代码/无机构背书", "icon": "📄", "cls": "arxiv"}
+  },
+
+  "categories": [
+    {"id": "self",   "label": "【自】用户投喂",      "icon": "📌", "desc": "用户提供的文献，独立于质量等级",                           "filter": "f",     "color": "#8a5a00", "bg": "#fff8ed"},
+    {"id": "venue",  "label": "🏆 顶会/顶刊",        "icon": "🏆", "desc": "CVPR/ICCV/ECCV/NeurIPS/ICML/ICLR/AAAI/ACM MM 接收",     "filter": "v",     "color": "#0fa87a", "bg": "#e8f8f2"},
+    {"id": "pub",    "label": "📰 已发表（其他venue）", "icon": "📰", "desc": "TGRS/JSTARS/ESWA/IVC/WACV等同行评审venue",          "filter": "p",     "color": "#2979ff", "bg": "#eef4ff"},
+    {"id": "dual",   "label": "💻+🏛️ 双重背书",       "icon": "✅", "desc": "有代码 + 知名机构，尚未被会议/期刊接收",                  "filter": "ci",    "color": "#6d28d9", "bg": "#f3edfd"},
+    {"id": "single", "label": "⚡ 单一背书",          "icon": "⚡", "desc": "有代码 或 知名机构，尚未被接收",                         "filter": "c_or_i","color": "#5e6f85", "bg": "#f1f4f8"},
+    {"id": "arxiv",  "label": "📄 纯 arXiv",          "icon": "📄", "desc": "arXiv预印本，无venue/无代码/无知名机构背书",              "filter": "x",     "color": "#9e9e9e", "bg": "#f5f5f5"}
+  ],
+
+  "sections": [
+    {"idx":0, "name":"开集/VLM 基座",          "emoji":"🔗", "track":"a"},
+    {"idx":1, "name":"频域检测",               "emoji":"🌊", "track":"a"},
+    {"idx":2, "name":"Token选择/门控/稀疏计算", "emoji":"🎛️", "track":"a"},
+    {"idx":3, "name":"小目标架构/P2路线",       "emoji":"🎯", "track":"a"},
+    {"idx":4, "name":"裁剪式 coarse-to-fine",   "emoji":"✂️", "track":"a"},
+    {"idx":5, "name":"标签分配/损失/蒸馏",      "emoji":"🏷️", "track":"a"},
+    {"idx":6, "name":"旋转框/其他",             "emoji":"🔄", "track":"a"},
+    {"idx":7, "name":"实时DETR基座",            "emoji":"🟪", "track":"b"},
+    {"idx":8, "name":"密集遮挡与Crowd Detection","emoji":"🔴", "track":"a"},
+    {"idx":9, "name":"DETR专属扩展",            "emoji":"🟪", "track":"b"}
+  ],
+
+  "papers": [
+    {"n":"YOLO-World",            "y":2024,"m":1, "v":"CVPR",      "s":0,"t":"vc","u":"https://arxiv.org/abs/2401.17270",                                                         "f":"YOLO-World_CVPR2024.md",          "d":"首个实时开集YOLO;RepVL-PAN跨模态融合"},
+    {"n":"YOLOE",                 "y":2025,"m":3, "v":"arXiv",     "s":0,"t":"ci","u":"https://arxiv.org/abs/2503.07465",                                                          "f":"YOLOE_2025.md",                   "d":"删融合改对齐;LRPC滤80%anchor=头级语义稀疏"},
+    {"n":"SEEN-DA",               "y":2025,"m":0, "v":"CVPR",      "s":0,"t":"fv", "u":"https://openaccess.thecvf.com/content/CVPR2025/html/Li_SEEN-DA_SEmantic_ENtropy_guided_Domain-aware_Attention_for_Domain_Adaptive_Object_CVPR_2025_paper.html","f":"SEEN-DA_CVPR2025.md","d":"语义熵注意力源头;冻结VLM+1.875M adapter"},
+    {"n":"CLIP-Bias",             "y":2026,"m":7, "v":"arXiv",     "s":0,"t":"x",  "u":"https://arxiv.org/abs/2607.10993",                                                          "f":"CLIP-Confidence-Bias_arXiv2026.md","d":"CLIP置信度双重偏差(尺度膨胀+语义抑制)"},
+    {"n":"MOCHA",                 "y":2026,"m":0, "v":"arXiv",     "s":0,"t":"ci", "u":"https://arxiv.org/abs/2509.14001",                                                          "f":"MOCHA_arXiv2026.md",              "d":"VLM→YOLO蒸馏;Translation Module跨架构映射"},
+    {"n":"DINOv2",                "y":2023,"m":4, "v":"ICCV",      "s":0,"t":"vc","u":"https://arxiv.org/abs/2304.07193",                                                          "f":"DINOv2_ICCV2023.md",             "d":"自监督patch features涌现objectness;免VLM中立判据"},
+
+    {"n":"SET",                   "y":2025,"m":0, "v":"CVPR",      "s":1,"t":"v",  "u":"https://openaccess.thecvf.com/content/CVPR2025/html/Sun_SET_Spectral_Enhancement_for_Tiny_Object_Detection_CVPR_2025_paper.html","f":"SET_CVPR2025.md","d":"频域归因:抑制背景噪声而非增强信号"},
+    {"n":"DERNet",                "y":2026,"m":6, "v":"arXiv",     "s":1,"t":"x",  "u":"https://arxiv.org/abs/2606.23825",                                                          "f":"DERNet_2026.md",                  "d":"频域全管线;1/6参数超YOLOv11"},
+    {"n":"SFDNet",                "y":2026,"m":0, "v":"ECCV",      "s":1,"t":"vc", "u":"https://arxiv.org/abs/2606.29029",                                                          "f":"SFDNet_ECCV2026.md",             "d":"低/中/高三频谱解耦+类别原型蒸馏"},
+    {"n":"FMC-DETR",              "y":2025,"m":9, "v":"arXiv",     "s":1,"t":"c",  "u":"https://arxiv.org/abs/2509.23056",                                                          "f":"FMC-DETR_arXiv2025.md",          "d":"振幅-相位解耦;[D2,D4]非均匀检测层;VisDrone 33.7"},
+    {"n":"D³R-DETR",             "y":2026,"m":1, "v":"arXiv",     "s":1,"t":"ci", "u":"https://arxiv.org/abs/2601.02747",                                                          "f":"D3R-DETR_arXiv2026.md",          "d":"Gabor频域核+密度引导注意力稀疏化"},
+    {"n":"DFIR-DETR",             "y":2026,"m":5, "v":"arXiv",     "s":1,"t":"x",  "u":"https://arxiv.org/abs/2512.07078",                                                          "f":"DFIR-DETR_arXiv2026.md",         "d":"频域最小二乘聚合+DKSA动态K-稀疏注意力"},
+    {"n":"EFSI-DETR",             "y":2026,"m":1, "v":"arXiv",     "s":1,"t":"x",  "u":"https://arxiv.org/abs/2601.18597",                                                          "f":"EFSI-DETR_arXiv2026.md",         "d":"频域启发非变换;空域代理胜FFT;APs 24.8@640/188FPS"},
+    {"n":"SFIDM",                 "y":2025,"m":0, "v":"RS",        "s":1,"t":"fp", "u":"https://doi.org/10.3390/rs17060972",                                                       "f":"SFIDM_RemoteSensing2025.md",     "d":"空频交互+KLD分布匹配FSOD"},
+    {"n":"FcaNet",                "y":2021,"m":0, "v":"ICCV",      "s":1,"t":"v",  "u":"https://arxiv.org/abs/2012.11879",                                                          "f":"FcaNet_ICCV2021.md",             "d":"GAP=最低频DCT;多频谱通道注意力"},
+    {"n":"FDConv",                "y":2025,"m":0, "v":"CVPR",      "s":1,"t":"vc", "u":"https://arxiv.org/abs/2503.18783",                                                          "f":"FDConv_CVPR2025.md",             "d":"频域动态卷积核;不做条件计算"},
+    {"n":"SFS-DETR",              "y":2026,"m":0, "v":"CVPR 2026F","s":1,"t":"v",  "u":"https://openaccess.thecvf.com/content/CVPR2026F/html/Jia_SFS-DETR_Spatial-Frequency_Selection_for_UAV_Object_Detection_CVPRF_2026_paper.html","f":"quick_eval_2026-07-16_literature_round2.md","d":"空间-频域联合选择"},
+    {"n":"UFO-DETR",              "y":2026,"m":0, "v":"CSCWD",     "s":1,"t":"p",  "u":"https://arxiv.org/abs/2602.22712",                                                          "f":"quick_eval_2026-07-17_attention_round1.md","d":"LSKNet+DynFreq-C3;VisDrone mAP50 46.1/算力-60%"},
+    {"n":"HF-DETR",               "y":2026,"m":0, "v":"IEEE SPL",  "s":1,"t":"p",  "u":"https://ieeexplore.ieee.org/document/11420990",                                              "f":"HF-DETR_SPL2026.md",             "d":"LoG stem+小波重建+SSMG saliency token门控"},
+    {"n":"FSDETR",                "y":2026,"m":0, "v":"IJCNN",     "s":1,"t":"p",  "u":"https://arxiv.org/abs/2604.14884",                                                          "f":"quick_eval_2026-07-18_literature_round.md","d":"RT-DETR基座+FSFPN/CFSB可学习频域滤波;频域浪潮第7篇"},
+    {"n":"SO-DETR",               "y":2025,"m":0, "v":"IJCNN",     "s":1,"t":"p",  "u":"https://dtic.dimensions.ai/details/publication/pub.1195037651",                              "f":"quick_eval_2026-07-18_literature_round.md","d":"双域hybrid encoder+KD+轻量backbone"},
+    {"n":"MFVL-YOLO",             "y":2025,"m":0, "v":"Physica Scripta","s":1,"t":"p","u":"https://doi.org/10.1088/1402-4896/ade1b6",                                                "f":"quick_eval_2026-07-18_literature_round.md","d":"YOLOv10+频域高频增强+熵引导前景判别"},
+
+    {"n":"Token Cropr",           "y":2025,"m":0, "v":"CVPR",      "s":2,"t":"vc", "u":"https://arxiv.org/abs/2412.00965",                                                          "f":"TokenCropr_CVPR2025.md",         "d":"单query router+任务辅助头;LLF末端复活零参数近无损"},
+    {"n":"SViT",                  "y":2024,"m":0, "v":"WACV",      "s":2,"t":"pc", "u":"https://arxiv.org/abs/2306.07050",                                                          "f":"SViT_WACV2024.md",               "d":"Token保留/再激活/动态率;硬删除崩溃根因"},
+    {"n":"MGS",                   "y":2025,"m":0, "v":"MLSP",      "s":2,"t":"p",  "u":"https://arxiv.org/abs/2510.09380",                                                          "f":"MGS_MLSP2025.md",                "d":"分组门控+冻结主干+BCE→85-95% MLP稀疏率"},
+    {"n":"SPA/SPT",               "y":2026,"m":0, "v":"ICLR",      "s":2,"t":"v",  "u":"https://arxiv.org/abs/2410.23608",                                                          "f":"SPA_ICLR2026.md",                "d":"GT监督门控+packing打包;训练期真实省算力"},
+    {"n":"Unmasking the Tiny",    "y":2026,"m":0, "v":"IVC",       "s":2,"t":"p",  "u":"https://doi.org/10.1016/j.imavis.2026.106026",                                              "f":"quick_eval_2026-07-18_literature_round.md","d":"YOLOX+STSM前景token选择+FRM语义细化;补强式加法"},
+    {"n":"HashEye",               "y":2026,"m":0, "v":"SciRep",    "s":2,"t":"p",  "u":"https://www.nature.com/articles/s41598-026-51941-w",                                        "f":"HashEye_SciRep2026.md",          "d":"输入级LSH免训练剪97.5%patch;Jetson 5.25×"},
+
+    {"n":"SEMA-YOLO",             "y":2025,"m":0, "v":"RS",        "s":3,"t":"fp", "u":"https://doi.org/10.3390/rs17111917",                                                       "f":"SEMA-YOLO_RemoteSensing2025.md", "d":"P2头+截短backbone减参19.7%;GCP-ASFF"},
+    {"n":"DM-EFS",                "y":2025,"m":0, "v":"ICCV",      "s":3,"t":"v",  "u":"https://openaccess.thecvf.com/content/ICCV2025/html/Sharma_DM-EFS_Dynamically_Multiplexed_Expanded_Features_Set_Form_for_Robust_and_ICCV_2025_paper.html","f":"DM-EFS_ICCV2025.md","d":"P2浅层价值验证;Size-Codebook尺寸引导"},
+    {"n":"TinyFormer",            "y":2026,"m":5, "v":"arXiv",     "s":3,"t":"c",  "u":"https://arxiv.org/abs/2605.25046",                                                          "f":"TinyFormer_2026.md",             "d":"YOLO-DETR混合;PBM阻断小目标信号稀释"},
+    {"n":"DQ-DETR",               "y":2024,"m":0, "v":"ECCV",      "s":3,"t":"v",  "u":"https://arxiv.org/abs/2404.03507",                                                          "f":"DQ-DETR_ECCV2024.md",            "d":"密度四档→自适应query数;AI-TOD-V2 30.2"},
+    {"n":"D3Q",                   "y":2025,"m":0, "v":"JSTARS",    "s":3,"t":"pc", "u":"https://ieeexplore.ieee.org/document/11007261",                                              "f":"D3Q_JSTARS2025.md",              "d":"连续密度回归+动态查询;DQ-DETR升级版"},
+    {"n":"FFCA-YOLO",             "y":2024,"m":0, "v":"IEEE TGRS", "s":3,"t":"p",  "u":"https://doi.org/10.1109/TGRS.2024.3363057",                                                "f":"FFCA-YOLO_IEEE2024.md",          "d":"三即插即用模块;L版107FPS"},
+    {"n":"MDI-YOLO",              "y":2026,"m":0, "v":"SciRep",    "s":3,"t":"p",  "u":"https://www.nature.com/articles/s41598-026-38378-x",                                        "f":"quick_eval_2026-07-16_literature_round2.md","d":"C2f-MCC通道分组Transformer-CNN混合"},
+    {"n":"YOLOv12",               "y":2025,"m":0, "v":"NeurIPS",   "s":3,"t":"vc", "u":"https://arxiv.org/abs/2502.12524",                                                          "f":"YOLOv12_NeurIPS2025.md",         "d":"注意力中心YOLO;无P2;FlashAttention硬依赖"},
+    {"n":"NSSA",                  "y":2026,"m":0, "v":"SciRep",    "s":3,"t":"p",  "u":"https://www.nature.com/articles/s41598-026-39381-y",                                        "f":"quick_eval_2026-07-16_evening.md","d":"快速评估"},
+    {"n":"PRNet",                 "y":2025,"m":10,"v":"arXiv",     "s":3,"t":"x",  "u":"https://arxiv.org/abs/2510.09531",                                                          "f":"PRNet_arXiv2025.md",             "d":"PRN骨干P2复用+迭代精炼;VisDrone AP50 49.9=检索最高"},
+    {"n":"HFSP-YOLO",             "y":2026,"m":4, "v":"IEEE",      "s":3,"t":"p",  "u":"https://ieeexplore.ieee.org/document/11543048",                                              "f":"quick_eval_2026-07-18_literature_round.md","d":"Space-to-Depth将P2细节无损注入P3"},
+
+    {"n":"AD-Det",                "y":2025,"m":0, "v":"RS",        "s":4,"t":"p",  "u":"https://arxiv.org/abs/2504.05601",                                                          "f":"AD-Det_RemoteSensing2025.md",    "d":"P3激活图零参数裁剪+DCC尾类copy-paste;37.5 AP非实时"},
+    {"n":"ViCrop-Det",            "y":2026,"m":4, "v":"arXiv",     "s":4,"t":"x",  "u":"https://arxiv.org/abs/2604.26806",                                                          "f":"ViCrop-Det_arXiv2026.md",        "d":"SAE注意力熵免训练裁剪;熵范式验证"},
+
+    {"n":"RFLA",                  "y":2022,"m":0, "v":"ECCV",      "s":5,"t":"vc", "u":"https://arxiv.org/abs/2208.08738",                                                          "f":"RFLA_ECCV2022.md",               "d":"高斯ERF先验+KLD尺度不变分配"},
+    {"n":"Focal Loss",            "y":2017,"m":0, "v":"ICCV",      "s":5,"t":"vc", "u":"https://arxiv.org/abs/1708.02002",                                                          "f":"FocalLoss_ICCV2017.md",          "d":"难例聚焦→Focal Computation理论平移"},
+    {"n":"YOLO26 STAL",           "y":2026,"m":6, "v":"arXiv",     "s":5,"t":"x",  "u":"https://arxiv.org/abs/2606.03748",                                                          "f":"quick_eval_2026-07-16_evening.md","d":"候选筛选阶段膨胀极小目标代理框"},
+    {"n":"ELDET",                 "y":2025,"m":0, "v":"NeurIPS",   "s":5,"t":"v",  "u":"https://proceedings.neurips.cc/paper_files/paper/2025/hash/6460e378f24da3a79f20ac2640732a00-Abstract-Conference.html","f":"ELDET_NeurIPS2025.md","d":"定位噪声比分类噪声更早记忆(epoch 4 vs 11)"},
+    {"n":"Mask-Guided Distill",   "y":2026,"m":0, "v":"IEEE",      "s":5,"t":"p",  "u":"https://ieeexplore.ieee.org/document/11542828",                                              "f":"quick_eval_2026-07-16_evening.md","d":"teacher objectness做蒸馏mask"},
+    {"n":"Scale-Conscious KD",    "y":2025,"m":11,"v":"IEEE",      "s":5,"t":"p",  "u":"https://ieeexplore.ieee.org/document/11251277",                                              "f":"quick_eval_2026-07-18_literature_round.md","d":"MSFD尺度解耦+SAOD按目标面积动态加权蒸馏"},
+    {"n":"FFKD-Net",              "y":2026,"m":0, "v":"JRTIP",     "s":5,"t":"p",  "u":"https://doi.org/10.1007/s11554-026-01910-3",                                               "f":"quick_eval_2026-07-18_literature_round.md","d":"MobileNetV3+分层蒸馏;VisDrone 47.7@仅3.0M"},
+
+    {"n":"O²-DFINE/O²-RTDETR",   "y":2026,"m":0, "v":"TGRS",      "s":6,"t":"pc", "u":"https://arxiv.org/abs/2603.15497",                                                          "f":"O2_TGRS2026.md",                 "d":"首个实时旋转DETR(297FPS);ADR角度分布"},
+    {"n":"GCA2Net",               "y":2025,"m":0, "v":"RS",        "s":6,"t":"fp", "u":"https://doi.org/10.3390/rs17061077",                                                       "f":"GCA2Net_RemoteSensing2025.md",   "d":"ARU自适应路由+DRC动态核旋转"},
+    {"n":"ACM-Coder",             "y":2024,"m":0, "v":"CVPR",      "s":6,"t":"fvc","u":"https://arxiv.org/abs/2305.10061",                                                          "f":"BoundaryDiscontinuity_CVPR2024.md","d":"证明KLD/GWD未真正解决边界不连续"},
+    {"n":"ALGS",                  "y":2025,"m":0, "v":"TGRS",      "s":6,"t":"fp", "u":"https://doi.org/10.1109/tgrs.2025.3604077",                                                "f":"AdaptiveLabelGranularity_TGRS2025.md","d":"自适应标签粒度;纯分类,迁移路径有限"},
+
+    {"n":"RT-DETR",               "y":2024,"m":0, "v":"CVPR",      "s":7,"t":"vc","u":"https://arxiv.org/abs/2304.08069",                                                          "f":"RT-DETR_CVPR2024.md",            "d":"首个实时端到端;AIFI+CCFF+不确定性QS;官方自认小目标短板"},
+    {"n":"D-FINE",                "y":2025,"m":0, "v":"ICLR",      "s":7,"t":"vc","u":"https://arxiv.org/abs/2410.13842",                                                          "f":"D-FINE_ICLR2025.md",             "d":"FDR分布式回归+GO-LSD自蒸馏;54.0@31M"},
+    {"n":"Deformable DETR",       "y":2021,"m":0, "v":"ICLR",      "s":7,"t":"vc", "u":"https://arxiv.org/abs/2010.04159",                                                          "f":"DeformableDETR_ICLR2021.md",     "d":"MSDeformAttn(K点稀疏采样);two-stage=QS诞生地"},
+    {"n":"DINO",                  "y":2023,"m":0, "v":"ICLR",      "s":7,"t":"vc","u":"https://arxiv.org/abs/2203.03605",                                                          "f":"DINO_ICLR2023.md",               "d":"CDN对比去噪+混合QS+LFT;首个端到端登顶COCO"},
+    {"n":"Dome-DETR",             "y":2025,"m":0, "v":"ACM MM",    "s":7,"t":"vc","u":"https://arxiv.org/abs/2505.05741",                                                          "f":"Dome-DETR_arXiv2025.md",         "d":"D-FINE底座+DeFE密度头→MWAS浅层token稀疏;VisDrone 39.0"},
+
+    {"n":"DALA",                  "y":2026,"m":0, "v":"ESWA",      "s":8,"t":"p",  "u":"https://www.sciencedirect.com/science/article/abs/pii/S0957417426020981",                   "f":"DALA_ESWA2026.md",               "d":"按空间密度分类→密集O2O/稀疏Decreasing LA;首个密度显式建模进LA"},
+    {"n":"OPL",                   "y":2025,"m":0, "v":"ESWA",      "s":8,"t":"p",  "u":"https://www.sciencedirect.com/science/article/abs/pii/S0957417425030805",                   "f":"OPL_ESWA2025.md",                "d":"首个显式遮挡感知损失;遮挡召回率95.4%(+22.6%)"},
+    {"n":"DOMino-YOLO",           "y":2025,"m":12,"v":"MDPI RS",   "s":8,"t":"p",  "u":"https://doi.org/10.3390/rs18010066",                                                       "f":"DOMino-YOLO_RS2025.md",          "d":"YOLOv11+DCEM+VASA+CSIM-Head;OAR-Loss=RepLoss+Visibility-Weighted CLS"},
+    {"n":"FAFL",                  "y":2026,"m":5, "v":"IEEE Conf", "s":8,"t":"p",  "u":"https://ieeexplore.ieee.org/document/11549881",                                              "f":"quick_eval_2026-07-18_dense_occlusion_detr_dx1.md","d":"五组件组合式损失;50%遮挡下+53.9%相对提升"},
+    {"n":"MFF-YOLO (NWD-Soft-NMS)","y":2024,"m":0,"v":"DMBD",      "s":8,"t":"p",  "u":"https://link.springer.com/chapter/10.1007/978-981-96-7175-5_19",                           "f":"MFF-YOLO_NWD-Soft-NMS_DMBD2025.md","d":"YOLOv8+MFF多级融合+NWD-Soft-NMS;VisDrone +9.0% mAP"},
+    {"n":"DRONet",                "y":2026,"m":2, "v":"Displays",  "s":8,"t":"p",  "u":"https://www.sciencedirect.com/science/article/abs/pii/S014193822600051X",                   "f":"DRONet_Displays2026.md",          "d":"RT-DETR+ResNet18;OAKB(KAN+GRAM频域参数化核);VisDrone 50.1%@60FPS"},
+    {"n":"HEdge-MamYOLO",         "y":2026,"m":4, "v":"IEEE TGRS", "s":8,"t":"p",  "u":"https://ieeexplore.ieee.org/document/11489323",                                              "f":"HEdge-MamYOLO_TGRS2026.md",       "d":"频域+Mamba协同高频增强→遮挡修复;VisDrone 52.5%=检索最高"},
+    {"n":"GCS-DETR",              "y":2026,"m":5, "v":"Multimedia Systems","s":8,"t":"p","u":"https://link.springer.com/article/10.1007/s00530-026-02378-8",                               "f":"GCS-DETR_MultimediaSystems2026.md","d":"FreqDyNet+OAM-FPN+NWD-MPDIoU;RT-DETR基座;Jetson Orin部署"},
+    {"n":"FSS",                   "y":2026,"m":0, "v":"2026",      "s":8,"t":"p",  "u":"https://www.sciencedirect.com/org/science/article/pii/S1546221826004236",                    "f":"quick_eval_2026-07-18_dense_occlusion_detr_dx1.md","d":"次优样本聚焦;概率矩阵+Gaussian-prior dynamic-k;50.8 AP零推理开销"},
+
+    {"n":"Adaptive Query Allocation","y":2025,"m":0,"v":"Results in Eng.","s":9,"t":"p","u":"https://www.sciencedirect.com/science/article/pii/S2590123025036163",                              "f":"quick_eval_2026-07-18_dense_occlusion_detr_dx1.md","d":"密度图引导动态query选择;Deformable DETR"},
+    {"n":"Pe-DETR",               "y":2026,"m":0, "v":"Computer Eng.","s":9,"t":"p","u":"https://cdn.sciengine.com/doi/10.19678/j.issn.1000-3428.0070106",                                "f":"quick_eval_2026-07-18_dense_occlusion_detr_dx1.md","d":"密集不同query+不引入无效相似query;CrowdHuman +3.7 AP"},
+    {"n":"SCOPE-DETR",            "y":2026,"m":0, "v":"DSP",       "s":9,"t":"p",  "u":"https://www.sciencedirect.com/science/article/abs/pii/S1051200426001508",                   "f":"quick_eval_2026-07-18_dense_occlusion_detr_dx1.md","d":"温度参数化调节空间注意力+通道能量抑制"},
+    {"n":"RS-DETR",               "y":2025,"m":0, "v":"EAAI",      "s":9,"t":"p",  "u":"https://www.sciencedirect.com/science/article/abs/pii/S0952197625036280",                   "f":"quick_eval_2026-07-18_dense_occlusion_detr_dx1.md","d":"旋转-语义双分支协同注意力解码器;DIOR-R/DOTA SOTA"},
+    {"n":"RO²-DETR",              "y":2025,"m":0, "v":"ISPRS",     "s":9,"t":"p",  "u":"https://www.sciencedirect.com/science/article/abs/pii/S0924271625002552",                   "f":"quick_eval_2026-07-18_dense_occlusion_detr_dx1.md","d":"1D旋转等变卷积+定向可变形解码器;DOTA 77.82%"},
+    {"n":"Hausdorff Distance Matching","y":2025,"m":0,"v":"WACV",  "s":9,"t":"p",  "u":"https://openaccess.thecvf.com/content/WACV2025/html/Lee_Hausdorff_Distance_Matching_with_Adaptive_Query_Denoising_for_Rotated_Detection_WACV_2025_paper.html","f":"quick_eval_2026-07-18_dense_occlusion_detr_dx1.md","d":"Hausdorff距离→匈牙利代价+Adaptive Query Denoising;DOTA +4.18"},
+    {"n":"Dynamic DETR",          "y":2025,"m":0, "v":"ICML",      "s":9,"t":"v",  "u":"https://proceedings.mlr.press/v267/cheng25i.html",                                          "f":"Dynamic-DETR_ICML2025.md",        "d":"三阶段动态保留率+DINO −42% FLOPs仅−0.7 AP"},
+    {"n":"Predictive Imbalance (LAD)","y":2025,"m":12,"v":"IEEE",  "s":9,"t":"p",  "u":"https://ieeexplore.ieee.org/document/11302474",                                              "f":"quick_eval_2026-07-18_dense_occlusion_detr_dx1.md","d":"分类-定位不一致定量分析→LAD loss对齐;51.5 AP"},
+
+    {"n":"Repulsion Loss",        "y":2018,"m":0, "v":"CVPR",      "s":8,"t":"v",  "u":"https://openaccess.thecvf.com/content_cvpr_2018/html/Wang_Repulsion_Loss_Detecting_CVPR_2018_paper.html","f":"RepulsionLoss_CVPR2018.md","d":"L_Attr+L_RepGT+L_RepBox;训练期排斥远离错误GT/预测框"},
+    {"n":"CrowdDet (EMD Loss)",   "y":2020,"m":0, "v":"CVPR",      "s":8,"t":"v",  "u":"https://arxiv.org/abs/2003.09163",                                                          "f":"CrowdDet_CVPR2020.md",           "d":"One Proposal→K Predictions;EMD Loss最优匹配+Set NMS"},
+    {"n":"Soft-NMS",              "y":2017,"m":0, "v":"ICCV",      "s":8,"t":"v",  "u":"https://openaccess.thecvf.com/content_iccv_2017/html/Bodla_Soft-NMS_--_Improving_ICCV_2017_paper.html","f":"Soft-NMS_ICCV2017.md",  "d":"IoU-based分数衰减替代硬清零;高斯罚函数;一行代码即插即用"}
+  ]
+}

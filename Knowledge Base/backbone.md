@@ -88,3 +88,54 @@
   2. Group KAN用更轻量的激活函数替代样条基(降低训练复杂度)
   3. 保留流/门控流/计算流三路分解 → 门控流用熵/频域先验替代可学习参数(=#5/#11思路)
 - **References**: arXiv:2509.23056; https://github.com/bloomingvision/FMC-DETR
+
+### 15. OAKB — Occlusion-Aware KANC Block (DRONet)
+- **Name**: OAKB (遮挡感知 KAN 卷积块)
+- **Category**: CNN + KAN Hybrid (频域参数化)
+- **Paper**: DRONet | Displays (Elsevier) | 2026.02
+- **Core Idea**: 用 KAN (Kolmogorov-Arnold Networks) 的可学习 B-spline 激活函数替代标准 CNN 的固定激活函数，GRAM 多项式展开构造频率多样性核，频域参数化解决 KAN 延迟瓶颈
+- **Architecture**: 集成在 ResNet18 backbone → B-spline 基函数非线性变换 → GRAM 多项式展开 → 频率多样性核（不同核响应不同空间频率）→ 频域点乘（替代逐点求值）
+- **Advantages**: KAN 在目标检测 backbone 的首批实践; GRAM 展开的频率多样性核自然区分遮挡碎片（高频不规则）vs 完整目标（轮廓规整）; 频域参数化解延迟瓶颈
+- **Disadvantages**: KAN 非标准 CNN 组件（ultralytics 集成困难）; 仅在 ResNet18 验证; CARPK +0.7%（价值绑定不规则遮挡场景）
+- **Computational Cost**: 60 FPS（整体 DRONet，含 backbone+neck+head）
+- **Performance**: VisDrone mAP50 50.1% (vs RT-DETR-R18 47.0%); CARPK 98.7%
+- **Used By**: DRONet (RT-DETR + ResNet18 基座)
+- **Possible Improvements**:
+  1. 标准 CNN 等价实现：DCT 基核组 + 可学习权重 → 同效果免 KAN 框架
+  2. 频域参数化核 → #11 S1 判据实现（Sobel/LoG 的频域核等效）
+  3. 多频段判据升级（不同遮挡程度 → 不同频率特征 → 不同核响应）
+- **References**: DRONet | Displays 93:103388 | ScienceDirect
+
+### 16. Vision Mamba Backbone (HEdge-MamYOLO)
+- **Name**: Vision Mamba (扩展自 Mamba-YOLO) — SS2D + LSBlock + RGBlock
+- **Category**: State Space Model (SSM) Hybrid
+- **Paper**: HEdge-MamYOLO | IEEE TGRS | 2026.04
+- **Core Idea**: 用 Mamba SSM 的 O(n) 线性复杂度全局扫描替代 ViT 的 O(n²) 自注意力，同时保留 CNN 局部建模能力
+- **Architecture**: 每个 VSSBlock = SS2D（四向选择性扫描2D: 水平/垂直/两对角线, O(n)线性复杂度）+ LSBlock（3×3深度可分离卷积, 补偿SSM局部弱势）+ RGBlock（乘性门控+残差连接, 增强跨通道信息流）; 额外组件: RAGE（区域注意力+门控增强）/ SCDown（参数高效空间下采样）/ A2C2f（面积注意力+C2f融合）
+- **Advantages**: O(n) 线性复杂度（vs ViT O(n²)）→ 高分辨率 UAV 图像友好; SS2D 四向扫描捕获全局依赖; LSBlock 补偿 SSM 局部建模不足; VisDrone 52.5% SOTA
+- **Disadvantages**: Mamba 生态不成熟（ultralytics 无原生支持, 复现门槛高）; 与 CNN backbone 的 YOLO 检测器不兼容（需整个 Mamba-YOLO 框架替换）; 训练/推理速度未与 YOLOv11 对标
+- **Computational Cost**: 未公开（推测高于 YOLOv11 同参数级 CNN backbone）
+- **Performance**: VisDrone mAP50 52.5%（检索所见最高）; UAVDT 33.4%
+- **Used By**: HEdge-MamYOLO
+- **Possible Improvements**:
+  1. FM-CHFEM 模块（频域+Mamba 协同）的 CNN 等价实现 → 使频域修复能力脱离 Mamba 依赖
+  2. SS2D 的 4 方向扫描 → CNN large-kernel conv（如 31×31 depthwise）近似全局感受野
+  3. LSBlock 局部补偿 → 标准 3×3 DWConv（ultralytics 原生支持）
+- **References**: HEdge-MamYOLO | IEEE TGRS Vol.64 Art.5619216 | DOI: 10.1109/tgrs.2026.3686228
+
+### 17. FreqDyNet — Frequency-Domain Dynamic Backbone (GCS-DETR)
+- **Name**: FreqDyNet (轻量频域动态骨干网)
+- **Category**: CNN + Frequency-Domain Filtering
+- **Paper**: GCS-DETR | Multimedia Systems | 2026.05
+- **Core Idea**: 在 backbone 中引入频域自适应滤波——对部分通道做频域变换→学习保留/抑制权重→增强高频细节+减少低频计算冗余
+- **Architecture**: RT-DETR backbone 改造 → Cross-Stage Partial Dynamic Filter Module（跨阶段部分动态滤波）→ 仅对部分通道做频域滤波（类似 PConv 的"部分"哲学）→ 跨 backbone stage 共享/级联滤波结果
+- **Advantages**: 频域滤波参数高效（整体模型 −20.6% 参数 vs RT-DETR）; 增强小目标高频细节同时减少背景低频冗余; 部分通道滤波思想控制计算开销; Jetson Orin Nano 实时部署验证
+- **Disadvantages**: ⚠️ "动态"机制未确认（输入自适应 vs 学习参数固定）; 频域变换方式未确认; 若为学习式固定参数 → 属于"频域增强"范式（非条件计算）
+- **Computational Cost**: 参数量 −20.6% vs RT-DETR; Jetson Orin Nano Super 实时
+- **Performance**: VisDrone +3.0% / HIT-UAV +3.5% vs RT-DETR
+- **Used By**: GCS-DETR (RT-DETR 基座)
+- **Possible Improvements**:
+  1. 频域部分滤波 → YOLO C2f/C3k2 模块的频域增强版本
+  2. 若为学习式 → 升级为输入自适应频域门控（#30 思路）
+  3. FreqDyNet + #11 S1 判据联合：频域滤波提供连续权重 + 频域判据提供离散门控 → 连续-离散谱系
+- **References**: GCS-DETR | Multimedia Systems Vol.32 Art.304 | DOI: 10.1007/s00530-026-02378-8

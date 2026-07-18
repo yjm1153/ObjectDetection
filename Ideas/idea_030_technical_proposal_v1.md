@@ -105,15 +105,16 @@ D-FINE(HGNetv2 + 1层 encoder AIFI + CCFF + 6层 decoder FDR)
 | E5 | query 预算消融:PAQI 简化版 vs 固定 Top-K vs Dome 全量(+Dynamic NMS) | 卖点③ |
 | E6 | 成本核算:GFLOPs(报告输入依赖分布,非只报均值——修 Dome 未报最坏开销的漏洞)+ FPS(Dome 未报,#30 必报) | 差异化 |
 
-注:Dome 未开源 → E1 的 DeFE 需按论文复现(0.8M 头结构完整公开,可复现);D-FINE 官方开源 = 公平基线。
+注:~~Dome 未开源 → E1 的 DeFE 需按论文复现~~ **2026-07-18 更新:Dome 已放码✅**(github.com/RicePasteM/Dome-DETR,ACM MM 2025 接收;S/M/L 预训练权重+训练日志,AI-TOD-v2/VisDrone 双数据集,Dome-DETR-S=AI-TOD 32.1/VisDrone 35.9)→ **E1 升级为官方代码对照**,DeFE/MWAS 实现可直接复核;⚠️ 其动态 query 限制"每 GPU 单批训练",#30 实验设计需预估同样约束;D-FINE 官方开源 = 公平基线。
 
 ## 6. 风险与退守
 
 1. **E1 输掉 >1 AP**:退守"成本-精度谱系"叙事(判据成本轴上的帕累托点),仍可发,档次降
 2. **免监督判据在极密集场景失效**(AI-TOD 密集簇):保底机制+保守阈值兜底;E3 提前暴露
-3. **Dome accept 后放码**(🔔 已挂跟踪):放码反而利好——E1 从"复现对照"升级为"官方对照",可信度提高
-4. **撞车窗口**:频域 DETR 六篇/年的节奏,「频谱判据+条件计算」空白可能 6–12 个月内被填 → #30 排 B轨最高优先
-5. **HF-DETR(IEEE SPL 2026,2026-07-17 检索命中)🔔**:「高频增强 + SSMG saliency token 门控 + VisDrone 实时」——迄今组合空间最近的邻居。现有信息判定:其高频组件做**特征增强**非判据统计,SSMG 大概率为**可学习微门**(落 learnable gating 已占区)→ 与 #30「免监督统计判据→预算分配」仍可划界;但 **SSMG 判据性质须全文核实**(无 arXiv,IEEE 拿不到)——若为免监督统计门则直接命中核心卖点,须启动叙事调整。附带正面证据:其 FSD-Stem 用 LoG(Laplacian 家族)做高频提取 = S1 工具选择的又一独立佐证。详见 [HF-DETR 快评](../papers/summaries/HF-DETR_SPL2026.md)
+3. ~~**Dome accept 后放码**(🔔 已挂跟踪):放码反而利好~~ → **✅ 已发生(2026-07-18 检索确认)**:ACM MM 2025 接收+代码/权重全放出;E1 正式升级为官方对照,MWAS 结构照抄可落到代码级(⏸ 代码细读待实验模块);利好兑现
+4. **撞车窗口**:频域 DETR 六→七篇/年的节奏(2026-07-18 FSDETR IJCNN 2026 = 第 7 篇,仍为增强范式),「频谱判据+条件计算」空白可能 6–12 个月内被填 → #30 排 B轨最高优先
+5. **HF-DETR(IEEE SPL 2026,2026-07-17 检索命中)🔔**:「高频增强 + SSMG saliency token 门控 + VisDrone 实时」——迄今组合空间最近的邻居。现有信息判定:其高频组件做**特征增强**非判据统计,SSMG 大概率为**可学习微门**(落 learnable gating 已占区)→ 与 #30「免监督统计判据→预算分配」仍可划界;但 **SSMG 判据性质须全文核实**(无 arXiv,IEEE 拿不到;2026-07-18 复查:仍付费墙)——若为免监督统计门则直接命中核心卖点,须启动叙事调整。附带正面证据:其 FSD-Stem 用 LoG(Laplacian 家族)做高频提取 = S1 工具选择的又一独立佐证。详见 [HF-DETR 快评](../papers/summaries/HF-DETR_SPL2026.md)
+6. **HI-MoE(arXiv 2026.04, preliminary)**:DETR 两级 MoE(scene→instance 路由),DINO +3.3 APs——条件计算在**专家维**非 token 空间维、判据为学习式路由 → 与 #30 正交;其"条件计算利好小目标"结论与 Dome 相互印证 = 通路侧翼佐证。若正式版扩展至 token 级路由需回读
 
 ## 7. 与相邻 Idea 的关系
 
@@ -123,4 +124,4 @@ D-FINE(HGNetv2 + 1层 encoder AIFI + CCFF + 6层 decoder FDR)
 - **#26**:D-FINE 1 层 encoder 底座本身即层深冗余证据,#30 不改 encoder 深度(控制变量)
 
 ---
-*v1.0: Claude Code | 2026-07-17 | 下一版本触发条件: 实验模块就绪(E3 先行)或 Dome 放码或新竞品命中*
+*v1.0: Claude Code | 2026-07-17 | v1.0.1 增补: 2026-07-18(Dome 放码✅→E1 官方对照;FSDETR=频域第7篇;HI-MoE 正交邻居)| 下一版本触发条件: 实验模块就绪(E3 先行)或 HF-DETR 全文获取或新竞品命中*

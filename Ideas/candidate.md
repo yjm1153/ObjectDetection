@@ -49,6 +49,7 @@
   2. **这对 #5 是利好**:语义熵(基于 CLIP 相似度)不依赖高频分量→**不会因为目标本身低频而误杀小目标**;#11 的高频判据在此维度上有根本性风险
   3. **但反面风险**:前景/背景在 CLIP 空间语义相似时(VisDrone "car" vs 路面)→语义熵也可能失效;#11 的高频判据成为更好的 fallback
   4. **双判据互补的逻辑被 SET 加强**:语义确认"是什么",高频确认"在哪里"——OR 融合(任一判据认为重要即保留)比单判据更安全
+- **PRNet 深读补充(2026-07-18,motivation 最强新证 ⭐)**: PRN 消融链完美暴露矛盾——P2^in 原始信息只用一次是大浪费(单模块 +10.3 AP50/参数反降)但稠密复用代价高涨(FLOPs +110.7%)→ **选择性复用的必要性不再只是理论推演,而是有确凿数字背书**。与 Edge-Constrained "P2 alone +31% AP_small" 并列 #5 叙事最强动机数据点。另,PRN 101 条实验全部静态稠密 = #5 gap 第 N+3 次确认(跨四条路线共性空白)。
 
 ### #6 SLE 策略在 VisDrone + YOLO11 上的复现与增强
 - **Idea Name**: P2 头 + backbone 截短至 P4,作为本项目第一个强 baseline
@@ -62,6 +63,7 @@
 - **Notes**: 同时验证 SLE 在 VisDrone 大小目标混合场景的适用边界(自带一个分析点)
 - **TinyFormer 补充(2026-07-16)**: PBM 的出现意味着 #6 的 Neck 选型可能需要从 PAN vs AFPN vs ASFF 扩展为 PAN vs PBM vs AFPN vs ASFF——但 PBM 原设计依赖 ViT backbone,在 CNN 上的适配性待验证
 - **D3Q 补充(2026-07-16)**: D3Q (DETR 系小目标最佳) VisDrone 36.7 未显著超越 YOLO 系,且 49M/543G 对比 YOLO11n 2.6M/6.3G→**"坚持 YOLO11 基线"决策再次确认**,#6 的工程价值不变
+- **PRNet 深读补充(2026-07-18,Neck 选型新增坐标点 ⭐)**: PRN=FPN 演进重要节点(单模块 +10.3,远超前代 Neck 增益),VisDrone 最高纪录(+9.5 vs YOLO11-s)→ **#6 的统一协议对照实验必须纳入 PRN**。另 PRN 参数反降(9.4→7.71M)但 FLOPs +110.7% = 参数-算力折衷形态完全不同于 SLE(P2 头加参数加算力),对照将直接回答"P2 信息利用的信息收益 vs 计算代价"。
 
 ### #7 语义熵图引导的知识蒸馏
 - **Idea Name**: VLM 检测器(教师)的语义熵图作为蒸馏 mask,指导 YOLO11n(学生)只在语义丰富区域模仿特征
@@ -315,6 +317,7 @@
 - **Expected Impact**: High
 - **Current Status**: Thinking
 - **Notes**: 务实路线:不做严格互信息估计,改用可测代理(如线性探针可解码性 decoding accuracy 随层级/尺寸的变化)——与 #23 的验证实验可完全共用一套特征统计
+- **PRNet 深读补充(2026-07-18,跨架构证据 ⭐)**: PRN 在 YOLO 系(+6~10 AP50)vs RT-DETR(+3.2)的增益差=**架构差异实证**——CNN 的"原始浅层特征多次复用"天然比 self-attention 的"MSDeformAttn 编码 token"更契合信息瓶颈揭示的"浅层保持小目标不可逆信息"命题。对 #24 的双轨叙事价值:PRNet 是"YOLO 侧已有强解",B轨需独立设计不能照搬——**一致的理论解释不同架构的不同实现路径,正是架构无关性叙事的卖点**。
 
 ### #25 频率签名(Frequency Signature)判据(4.4)
 - **Idea Name**: 每个空间位置的**频谱形状**(而非高频能量标量)决定其信号类别——小目标=点状信号→宽谱平坦;背景边缘=线状信号→窄谱尖锐(定向);纹理=面状信号→离散峰;据此做精确的"要不要算"判据
@@ -387,3 +390,169 @@
 ### ~~#5-D~~ 语义熵 QS 第三判据 + encoder token 门控(查新 ❌ 不占编号)
 - **裁决**: 被 Dome-DETR(arXiv 2505.05741)结构性占据——「判据热图→二值掩码→浅层 token 稀疏 + query 数量/位置自适应」完整实现,且底座(D-FINE)/主战场(VisDrone/AI-TOD)/卖点(小目标+效率)与拟议完全重合;熵判据侧另有 ViCrop-Det(DETR 头级)/MATP/EnTeR-Track(ViT 熵剪枝)/Dynamic DETR(ICML 2025 学习式 importance)夹击,剩余增量 = 判据替换,不足以过查新
 - **资产处置**: 熵判据遗产并入 #19 三判据对照的 DETR 侧对照列(作为 #30 的判据消融项存活);🟦 A轨 #5 不受影响,但 v3.0 Related Work 须补 Dome-DETR 划界段
+
+### #31 ⬜ 密度×频域联合判据→双维条件计算 (DALA + #5/#11 交叉)
+- **Idea Name**: 将 DALA 的密度分类(标签分配维度)与 #5/#11 的频域/熵判据(特征计算维度)融合为统一的双维条件计算框架——密度决定"每 GT 给几个正样本"，频域/熵决定"每 token 算不算"
+- **Source**: DALA (ESWA 2026) × #5 语义熵 × #11 高频能量 交叉
+- **Motivation**: DALA 证明"不同密度的目标需要不同的标签分配策略"；#5/#11 证明"不同区域的 token 需要不同的计算预算"。两个维度独立但共享"密度信息"——密度(空间域)提供 GT 级分配策略，频域/熵(语义域)提供 token 级计算决策。两者融合可实现**四象限联合策略**(密度×熵/频域→同时决定正样本数和 token 计算量)→比单维度更精细的条件计算
+- **Solved Problem**: 
+  1. DALA 的空间密度忽略语义密度(空间近但特征可分的目标被误判为密集)
+  2. #5/#11 的熵/频域忽略空间密度(密集区域的 token 即使低熵也要保留，但标签分配应 O2O)
+  3. 现有标签分配和特征计算是独立的两个阶段——无人做联合优化
+- **Novelty**: ★★★★ (DALA 的密度×频域的跨域组合是全新交叉维度，但双维框架复杂度高、实验设计难度大)
+- **Difficulty**: Hard (需要定义联合判据的计算公式、设计门控训练方案、验证两个维度各自贡献)
+- **Expected Impact**: High (若成功，是首个"标签分配-特征计算联合条件计算框架"，理论贡献>纯工程创新)
+- **Current Status**: Thinking (概念阶段，来自 DALA 深读启发)
+- **Notes**: 
+  - 四象限草案: 密集+低熵/高频→O2O+高稀疏率；密集+高熵/低频→O2O+全计算；稀疏+低熵→Decreasing+中稀疏；稀疏+高熵→Decreasing+全计算
+  - 风险: 双维联合的收益是否能大于分别独立优化？可能需要大量消融实验证明"协同效应"
+  - 优先验证: 先分别在 A 轨(CNN)验证单维度，再融合→需 #5/#11 实验先完成
+
+### #32 🟪 密度引导 DETR query 配额自适应 (DALA → DETR 二分匹配层移植)
+- **Idea Name**: 将 DALA 的密度分类思想移植到 DETR 的匈牙利匹配——密集 GT 强制 O2O (1 query)，稀疏 GT 保留 K_max→1 递减 query 配额。同时作为 Dome-DETR DeFE 密度监督的低成本替代(不用高斯密度图+DRFL，只需 GT 框密度分类)
+- **Source**: DALA (ESWA 2026) × Dome-DETR (ACM MM 2025) 交叉
+- **Motivation**: 
+  1. DALA 仅在 CNN 检测器(FCOS/RetinaNet/ATSS/GFL)验证→DETR 移植是理论空白
+  2. Dome-DETR 的 DeFE 密度头需要 GT 高斯密度图监督(0.8M 参数 + DRFL 损失 + 跨数据集重训)→DALA 的密度分类仅需 GT 框信息(零额外参数/零额外损失)→低成本替代
+  3. DETR 二分匹配在密集场景下的局限性(稠密目标竞争有限 query)可能与 CNN 的密集问题同源→密度感知匹配有潜在收益
+- **Solved Problem**: 
+  1. DETR 二分匹配未考虑目标密度差异(所有 GT 同等参与匹配)
+  2. Dome-DETR DeFE 密度监督成本高(参数/训练/泛化)
+  3. DETR 密集场景 query 冲突(多个目标竞争同一 query 表示)
+- **Novelty**: ★★★★☆ (DALA→DETR 移植是理论新方向；密度分类替代 DeFE 是低成本创新；但 Density-aware DETR query 已有 Adaptive Query Allocation 2025 竞争，需划界: DALA 是 GT 密度→匹配策略, AQA 是密度图→query 数量)
+- **Difficulty**: Medium-Hard (需修改匈牙利匹配逻辑→用密度分类决定 GT 的匹配候选 query 数；与 #30 的 token 稀疏化协同需协调训练)
+- **Expected Impact**: High (DETR 二分匹配的密度感知改进 + Dome-DETR 低成本替代→双卖点)
+- **Current Status**: Thinking (概念阶段，来自 DALA 深读启发)
+- **Notes**: 
+  - 与 Adaptive Query Allocation (Ha et al. 2025) 划界: AQA 是密度图→动态 query 数量(图像级分配), #32 是密度分类→per-GT 匹配策略(GT 级分配)→粒度不同
+  - 与 #30 的协同: #30 控制 encoder token 算不算(特征层), #32 控制 decoder query 配不配(匹配层)→两层独立但互不冲突
+  - 技术挑战: DETR 的匈牙利匹配是全局二分匹配(非 per-GT local 选择)→"为稀疏 GT 保留更多 query"如何实现？可能的方案: (a) 克隆稀疏 GT 为多个 GT 副本参与匹配, (b) 修改 cost matrix 为稀疏 GT 降低匹配代价
+
+---
+
+## Candidates(2026-07-18,来源:Dynamic DETR ICML 2025 深读)
+
+> 深读全文见 [Dynamic-DETR_ICML2025.md](../papers/summaries/Dynamic-DETR_ICML2025.md);裁决:与 #30 不撞车,升级为 #30 SOTA 对照基线
+
+### #33 🟪 频谱判据驱动的输入自适应 token 聚合(#30 × Dynamic DETR 框架融合)
+- **Idea Name**: 把 Dynamic DETR 的 MTA 双轨聚合框架(低层 Proximal 窗口合并 + 高层 Holistic 亲合注入 + RCDR 正则)整体保留,仅将其判据(attention weight 离线统计先验)替换为 #30 的免监督频谱判据(S1 空域高通代理+局部异常度)——实现从"stage 级静态先验"到"输入级实时自适应"的判据升级
+- **Source**: Dynamic DETR (ICML 2025) 深读 × #30 技术方案 v1.0 交叉
+- **Motivation**: Dynamic DETR 的最大弱点是判据非输入自适应——每图共享同一套 COCO 统计的保留率排序 ρ^s,分布外场景(航拍/密集小目标)失效风险高,且换模型/数据集需重新统计+扫参。#30 的频谱判据恰好免训练、逐图实时、模型无关。两者是"框架 × 判据"的正交组合: Dynamic DETR 提供顶会验证过的聚合架构(净省 40-47% FLOPs),#30 提供更强的判据泛化性
+- **Solved Problem**:
+  1. Dynamic DETR 的离线统计先验在小目标场景失效风险("低→高迁移"假设在 VisDrone 未验证)
+  2. ρ 向量每模型手动扫参的部署成本
+  3. #30 原方案的聚合机制空白——技术方案 v1.0 只定义了判据和接入点,token 处置方式(丢弃/合并/注入)未定;Dynamic DETR 的消融证明合并式(保 token 关系)优于丢弃式(Sparse DETR 对照 −2.7 vs −0.7 AP)
+- **Novelty**: ★★★★ (判据替换本身查新已通过[#30];增量在"免监督判据×合并式聚合"的组合与输入级自适应 ρ 分配公式——需设计频谱能量→保留率的映射函数,如 ρ_l = softmax(E_hf(x_l)/τ)·ρ_total 预算重分配)
+- **Difficulty**: Medium (框架可复现 Dynamic DETR,判据已有 #30 v1.0 设计;新工程量在 ρ 映射函数和两套系统对接)
+- **Expected Impact**: High (直接强化 #30 的 E1 实验设计: 三臂对照 = Dynamic DETR 原版 vs #30 判据替换版 vs Dome-DETR DeFE——同一框架下裁决"统计先验 vs 物理先验 vs 学习头"三种判据范式)
+- **Current Status**: Thinking (概念阶段,来自 Dynamic DETR 深读)
+- **Notes**:
+  - 与 #30 的关系: 不是竞争而是**技术方案 v1.1 的候选升级件**——若 E1 显示频谱判据+MTA 聚合优于频谱判据+MWAS 掩码,则 #30 的 token 处置层切换到聚合式
+  - RCDR(+0.6 AP 零推理开销)判据无关,无论哪条路线都应引入
+  - 风险: 频谱判据是 token 级标量,Dynamic DETR 的 ρ^s 是层级向量——需把 token 级判据聚合出层级保留率(均值/分位数),这一步的信息损失需消融
+  - 小目标专项卖点: 四个 token 稀疏化方法(Sparse/Focus/Lite/Dynamic)全部未测 VisDrone/AI-TOD → 第一个系统评估者占据"efficient DETR for small objects"生态位
+
+### #34 ⬜ 密度自适应聚合窗口: 小目标区域禁止合并(Dynamic DETR Proximal 的小目标修正)
+- **Idea Name**: Dynamic DETR 的 Proximal Aggregation 对入选 patch 一律 n²→1 合并(本质空间下采样),在小目标密集区域会把 ~10px 目标对应的 token 合并掉。提出密度/频谱自适应的窗口豁免机制: 判据(高频异常度或 DINOv2 objectness)超阈值的 patch 禁止合并或降低合并粒度(n²→n²/2),背景 patch 正常甚至加强合并(2n×2n)
+- **Source**: Dynamic DETR (ICML 2025) 深读局限分析 §5.5 × #23 SNR 退化理论 × #31 密度判据交叉
+- **Motivation**: Dynamic DETR 的窗口合并粒度是均匀的(n=2^{l-1} 全图一致),其 w_m(patch 内平均余弦相似度)判据只看"合并会不会损失语义多样性",不看"这里有没有小目标"——高相似度背景和小目标群在 w_m 上可能难以区分(密集小目标邻域 token 也高度相似)。SNR 退化理论(#23)指出小目标可解码信号集中在浅层——恰是 Proximal Aggregation 作用区,均匀合并直接压缩小目标的信号带宽
+- **Solved Problem**:
+  1. token 稀疏化方法在小目标基准上的系统性空缺(四方法零验证)
+  2. Proximal Aggregation 均匀粒度与小目标空间异质性的矛盾
+  3. 提供 token 稀疏化 × 小目标的第一个专项设计(误合并→定位精度损失的量化+修复)
+- **Novelty**: ★★★★ (聚合粒度的空间自适应无人做;"合并豁免"概念清晰;但依赖 #33/#30 判据先行,独立成篇需附完整消融)
+- **Difficulty**: Medium (机制简单——判据图→patch 分档→差异化合并;难点在证明小目标 AP 增益来自豁免机制而非稀疏率变化,需固定 FLOPs 对照)
+- **Expected Impact**: Medium-High (是 #33 的自然子模块,也可独立作为"小目标友好 token 稀疏化"的核心贡献;与 A轨 #5 的 LLF 兜底思想同构——都是"判据保护关键区域")
+- **Current Status**: Thinking (概念阶段)
+- **Notes**:
+  - 三档合并草案: 判据高(小目标嫌疑)→禁止合并;中→保留 super token + 最大响应 token 双份;低(背景)→正常合并或扩窗
+  - 与 #31 四象限的关系: #31 是"标签分配×特征计算"双维,#34 是特征计算单维内的"粒度维"细化——#34 可作为 #31 特征计算轴的实现件
+  - 验证起点(免训练): 在 VisDrone 上跑 Dynamic DETR 原版,统计被合并 patch 与 GT 小目标框的重叠率→若显著>随机,论文 motivation 图表直接成立(也是 #30 E3 判据 AUROC 实验的姊妹实验)
+
+---
+
+## Candidates(2026-07-18,来源:OPL ESWA 2025 深读——首个显式遮挡感知损失)
+
+### #35 🔴 频域遮挡先验: 免 bbox 重叠的遮挡图生成(OPL × #30 判据交叉)
+- **Idea Name**: 用高频局部异常度图(#30 判据族 S1 空域高通代理)替代 OPL 的"bbox 重叠+高斯模糊"作为遮挡图生成源→免除 bbox 重叠依赖的遮挡感知学习
+- **Source**: OPL (ESWA 2025) 深读局限分析 × #30 免监督频谱判据
+- **Motivation**: OPL 证明了显式遮挡建模有效(遮挡召回率 95.4%/+22.6%),但其 GT 遮挡图有三个结构性局限——①bbox 重叠≠真实遮挡(并排行人假阳性);②完全被遮挡目标(无 bbox)无法建模;③只覆盖框间重叠,截断/背景遮挡(柱子/树)盲区。高频局部异常度恰好覆盖这些盲区:遮挡边界=两物体纹理突变=高频异常;密集人群=纹理混乱=高频异常;且免标注、免重叠假设
+- **Solved Problem**:
+  1. OPL 遮挡 GT 的 bbox 重叠依赖(方法论最深层假设)
+  2. 遮挡感知与条件计算两条文献线的首次连接(OPL 社区与 #30 社区无交集)
+  3. #30 判据获得第二应用维度: 同一张判据图双用途(token 预算分配 + 遮挡先验注入)→摊薄判据计算成本,强化 #30 "不许诺净省算力"定位的性价比叙事
+- **Novelty**: ★★★★ (遮挡图生成的免 bbox 重叠替代无人做;但频域图与真实遮挡的相关性是未验证假设——需 AUROC 预实验先行)
+- **Difficulty**: Medium (判据已有 #30 v1.0 设计;新工程量在遮挡先验的注入机制(OPC 类似物)和与检测 loss 的权重平衡)
+- **Expected Impact**: High (若成立→🔴密集遮挡方向获得免标注遮挡建模路线;B轨 #30 的应用叙事扩容)
+- **Current Status**: Thinking (概念阶段,⏸验证依赖实验模块)
+- **Notes**:
+  - 关键预实验(实验模块就绪后最低成本首验): CrowdHuman/VisDrone 上离线计算高频异常度图 vs OPL 式 bbox 重叠图的 AUROC/IoU——判据能否预测重叠区域?(与 #30 E3 同型,可共用代码)
+  - 风险: 频域判据"看到"的是高频突变(边缘/纹理),不必然是语义遮挡——背景纹理(树叶/栅栏)高频也高→需局部异常度归一化(继承 #30 §2 的 SET 教训)
+  - 与 #36 的关系: #35 用频域判据替代遮挡 GT(B轨向),#36 用语义熵验证遮挡相关性(A轨向)——同一 OPL 启发的双轨分身,判据族对照(#19)可增加"遮挡预测"评估列
+
+### #36 🔴⬜ 语义熵 = 隐式遮挡检测器: OPL 遮挡图 × 熵图相关性验证
+- **Idea Name**: 验证"遮挡区域天然高熵"假设——OPL 式遮挡图(bbox 重叠+高斯模糊,零成本可离线生成)与 #5 语义熵图的空间相关性(Spearman ρ/AUROC);若显著→语义熵获得"零参数遮挡检测器"新身份
+- **Source**: OPL (ESWA 2025) 深读关联分析 × #5 语义熵门控
+- **Motivation**: 遮挡区域=两物体视觉特征混合→语义信号不纯→CLIP 相似度分布分散→高熵。这一推理链若被验证,意味着 #5 的熵图**免费附赠遮挡感知能力**——不需要 OPD(Transformer 辅助解码器)、不需要 OPL 监督训练,熵图本身就隐含遮挡信息
+- **Solved Problem**:
+  1. OPL 需要 OPD+OPL+OPC 三组件才能遮挡感知;语义熵若相关→零新增组件
+  2. **#5 与 OPL 的方向张力裁决**: OPL 对遮挡区域**增强**(注入遮挡图补信息),#5 对高熵区域**跳过**(降低计算)——冲突根源是"高熵的成因"(特征弱→该增强 vs 背景冗余→该跳过)。相关性实验可分解熵图: 高熵∩遮挡图=遮挡型高熵(不该剪,LLF 兜底应覆盖) vs 高熵∩非遮挡=背景型高熵(该剪)→**#5 v3.0 的误剪风险分析获得新的分解维度**
+  3. #5 的叙事扩容: 从"熵引导计算分配"到"熵引导计算分配+隐式遮挡感知"(双重物理意义)
+- **Novelty**: ★★★★ (熵-遮挡相关性从未被验证;两条文献线首次连接;若否定结论也有价值——证明熵图与遮挡正交→#5 误剪风险降低)
+- **Difficulty**: Medium-Easy (纯离线分析: CrowdHuman GT→bbox 重叠图,CLIP→熵图,算相关性——CPU 可跑,但按项目约定⏸暂缓)
+- **Expected Impact**: High (正反结论都反哺 #5;若正相关→熵门控设计需加遮挡豁免(遮挡区高熵但不该剪);若不相关→高熵=背景的假设更干净)
+- **Current Status**: Thinking (概念阶段,⏸CPU 分析类暂缓——2026-07-16 用户决策)
+- **Notes**:
+  - ⚠️ 关键细分: 需分别在 P2/P3 特征分辨率下验证(遮挡边界在高分辨率下更清晰)
+  - CLIP-Bias 风险传导: 小目标遮挡区域的熵可能被 CLIP 尺度偏差污染→对照组应加 DINOv2 特征熵(#18/#19 判据族)
+  - 与 OPL 的划界: OPL 是"训练一个遮挡预测器",#36 是"验证已有判据是否免费隐含遮挡信息"——目的/成本/组件数全不同
+  - 若验证通过的后续: #5 门控策略升级为三态(低熵前景→全算/高熵∩遮挡→算+LLF 保护/高熵∩非遮挡→跳过)
+
+## #37 🔴🟦 YOLO Grid-Cell EMD: 局部集合预测适配一阶段检测器
+- **Source**: CrowdDet (CVPR 2020) × YOLO dense prediction 范式
+- **Motivation**: CrowdDet 证明"一个 proposal 预测 K 个实例"可以有效处理密集重叠——但仅限 proposal-based 检测器。YOLO 的 P2 高分辨率 grid（160×160）在密集场景下每个 grid cell 同样面临"多个实例落入同一 cell"的问题。将 EMD 从 proposal 级迁移到 grid-cell 级，让 YOLO 也具备集合预测能力。
+- **Solved Problem**: YOLO 一阶段检测器在高度重叠场景下的漏检——当前每个 grid cell 只预测一个实例（或 N 个 anchor），密集重叠时多个 GT 竞争同一 cell 导致标签分配 ambiguity
+- **Novelty**: 4 (局部集合预测在 YOLO 密集预测范式上的首次适配；CrowdDet 的 proposal 级概念→grid-cell 级是架构级别的迁移，非简单移植)
+- **Difficulty**: Medium-Hard (需要设计 grid-cell 的 G(b_i) 定义 / K 值选择策略 / dummy box 填充 / Set NMS 的 YOLO 适配 / 与 YOLO 现有 TAL 标签分配的兼容)
+- **Expected Impact**: High (直接在 YOLO 架构内解决密集重叠的检测瓶颈；可与现有密集遮挡方案 OPL/OAR-Loss/频域判据互补叠加)
+- **Current Status**: Thinking (L2 经典补读交叉产物)
+- **Risk**: 3 (grid-cell 的 G(b_i) 定义可能出现大量空集→伪背景；K=2 的额外预测分支增加检测头复杂度；Set NMS 在 YOLO anchor-free 范式下需重新设计)
+- **Key Design Choices**:
+  1. **G(b_i) 定义**: 对 P2 每个 grid cell，G = {所有 GT 的中心点落入该 cell 或其 8 邻域的 GT}（比 CrowdDet 的 IoU 阈值更适配 YOLO grid 范式）
+  2. **K 值**: P2 K=2（密集）/ P3-P5 K=1（稀疏，退化为标准 YOLO）
+  3. **Dummy Boxes**: |G| < K → 用 "no object" 类别填充（类似 YOLO 现有的 obj 分支）
+  4. **Set NMS YOLO 适配**: 同一 grid cell 的 K 个预测互不抑制 + 不同 cell 间正常 NMS
+  5. **TAL 兼容**: EMD 匹配替代 YOLO 现有的 SimOTA/TAL——对齐 DETR 的集合匹配哲学
+- **Notes**: 与 #35(频域遮挡先验)可联合——频域判据识别高密度 cell→K 值自适应(K=1/2/3); 与 DETR 全局集合预测构成「局部+全局」层次化集合预测——Local EMD per cell + Global Hungarian across cells
+
+## #38 🔴⬜ 频谱感知 Soft-NMS: 频域内容相似度→NMS 第二衰减判据
+- **Source**: Soft-NMS (ICCV 2017) × #11 高频判据 × NWD-Soft-NMS (MFF-YOLO 2025)
+- **Motivation**: 过去 9 年所有 NMS 变体（Soft-NMS/Adaptive NMS/NWD-Soft-NMS/Softer-NMS）的共同盲区——**仅用 box 坐标判断冗余，完全忽略框内特征内容**。两个不同实例即使 IoU=0.9，其框内纹理/边缘/频谱模式可能完全不同。高频判据(#11 S1 空域高通代理)天然适合快速度量框内内容的「纹理复杂度」，为 NMS 提供独立于空间重叠的第二判断轴。
+- **Solved Problem**: NMS 无法区分"同实例多预测（应抑制）"和"不同实例高度重叠（应保留）"——Soft-NMS 用连续衰减缓解了硬清零，但衰减函数仍仅依赖 IoU（或 NWD）→ 无法利用内容信息做更智能的判断
+- **Novelty**: 4.5 (频谱内容相似度进入 NMS 衰减函数——概念层面全新，且与现有所有 NMS 变体正交可叠加；NWD-Soft-NMS 是"距离度量改进"，频谱感知是"内容维度增广")
+- **Difficulty**: Medium (关键在于设计判别力足够且计算轻量的内容特征——S1 空域高通代理输出可作为候选；需要在 IoU/NWD 衰减因子和频谱相似度衰减因子之间设计融合方式)
+- **Expected Impact**: Medium-High (如果判别力足够，将从根本上改变 NMS 的处理逻辑——从"空间重叠→必冗余"到"空间重叠+内容不同→非冗余")
+- **Current Status**: Thinking (L2 经典补读交叉产物)
+- **Risk**: 3 (频谱相似度的判别力需要验证——不同实例的高频模式可能仍然相似；计算开销——每个框内需要做一次频谱统计；融合方式(IoU×频谱 vs 双因子独立衰减)需要消融)
+- **Key Design Choices**:
+  1. **内容特征**: 框内区域的 S1 高频响应直方图 / 局部频谱能量统计量（均值+方差）——计算可由 #11 的 S1 判据共享
+  2. **衰减函数**: `s_i = s_i · exp(-NWD²/σ) · exp(-(1-cos_sim(f_i, f_M))²/σ_c)` —— NWD 衰减×频谱相似度衰减双因子
+  3. **融合权重**: λ 控制空间 vs 内容的相对重要性（可学习或启发式）
+  4. **计算共享**: 若 S1 判据已在 P2 层计算，每个预测框只需在其对应区域取统计量——几乎零额外开销
+- **Notes**: 与 NWD-Soft-NMS(#6 baseline 推荐)兼容——频谱感知是 NWD 衰减的第二乘子；若验证有效，可写为"Spectrum-Aware NMS: Beyond Spatial Overlap for Crowded Detection"
+
+## #39 🔴🟦 EMD+RepLoss 联合训练: 局部集合匹配+全局框间排斥
+- **Source**: CrowdDet (CVPR 2020) × RepLoss (CVPR 2018)
+- **Motivation**: 两条经典密集检测路线从未在同一检测器上联合使用。EMD Loss 解决"同一 proposal/grid-cell 内多实例的匹配"，RepLoss 解决"不同 proposal/grid-cell 间预测框的互斥"——两者覆盖密集检测的两个正交维度（匹配 vs 定位、内 vs 间）。联合使用可实现「proposal/grid-cell 内 EMD 匹配多个实例 + proposal/grid-cell 间 RepBox 推开不同目标的预测框」的完整方案。
+- **Solved Problem**: 密集检测的两个独立失败模式——①同一区域多实例的匹配失败（EMD 解决）②不同目标预测框互相吸引导致 NMS 误杀（RepBox 解决）——首次被同一训练框架覆盖
+- **Novelty**: 3.5 (两条已有路线的首次联合——增量创新但填补明确的空白；与 DETR 的 Hungarian+auxiliary loss 有精神相似但实现路线完全不同)
+- **Difficulty**: Hard (两条路线的底座不同——EMD 原为 Faster R-CNN proposal 级/RepLoss 也原为 Faster R-CNN → 需要统一适配到 YOLO；EMD 的 K 个预测如何与 RepBox 的排斥对象定义对齐；训练期两个损失的时间同步——RepBox 应在 EMD 匹配收敛到一定程度后再加大权重)
+- **Expected Impact**: High (若成功，将建立密集检测的「匹配+排斥」标准训练范式——类似 DETR 的 Hungarian+denoising 双支柱)
+- **Current Status**: Thinking (L2 经典补读交叉产物)
+- **Risk**: 4 (两条路线同时适配 YOLO 的工程复杂度高；EMD 匹配后的 K 个预测框与 RepBox 排斥对象的关系需要仔细定义——同一 cell 的 K 个预测 vs 不同 cell 的预测是不同的边界条件；训练稳定性——两个排斥项(EMD 隐式+RepBox 显式)可能导致梯度过大)
+- **Key Design Choices**:
+  1. **统一底座**: 先在 YOLO Grid-Cell EMD(#37)上实现→再叠加 RepBox 排斥(#37 作为 #39 的前置)
+  2. **排斥对象定义**: EMD 匹配后的 K 个预测作为一组→不同 cell 的组间施加 RepBox → 组内 EMD 保证多样性、组间 RepBox 保证分离
+  3. **训练 Schedule**: 前半段仅 EMD(匹配学习)→ 后半段 EMD+RepBox(匹配+排斥联合)
+  4. **频域加权**: 高频区域加重 RepBox 权重(遮挡区排斥需求更强)→#35 频域遮挡先验作为上游
+- **Notes**: 依赖 #37 先行验证；与 #35 频域遮挡先验可三级联动(#35 判据→#37 EMD K值自适应→#39 RepBox 权重自适应)

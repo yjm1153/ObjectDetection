@@ -237,3 +237,76 @@
   1. **#5 Related Work 必引划界**(迄今重叠面最大:YOLO系+稀疏token+语义信号;三轴划开:目的/层级/判据)
   2. "分类特征鲁棒"洞察→佐证 v3.0 用 P3 cls logits 做判据的合理性
   3. FRM 语义相似邻居修正→ #22 再激活的判据候选(误剪 token 若语义邻居高相似→复活)
+
+### 10. Dynamic DETR -- Multi-level Token Aggregation (ICML 2025)
+- **Module Name**: 多级动态 token 聚合 (DTA + MTA + RCDR)
+- **Paper**: Dynamic DETR (Not All Tokens Matter All The Time) | ICML 2025 | PMLR Vol.267
+- **Input / Output**: 多尺度 FPN token {Z_l} -- 三阶段逐步聚合 -- 稀疏化 token set {Z_hat_l}
+- **Complexity**: -40~47% encoder FLOPs(DINO -42%, H-DETR -47%) | 推理零额外参数 | 训练期仅加 lambda*L_align (lambda=0.1)
+- **Advantages**:
+  1. 首次发现"重要性跨 encoder 层迁移"规律(低层--高层, Figure 2/4)
+  2. 层级差异化聚合: 低层 Proximal(n*n 窗口内合并, n=2^{l-1} 超参自由) vs 高层 Holistic(全局余弦相似度--重要性分数 gamma_i=(1/N)Sum(1/e_{i,j})--Affinity 一对多注入 T=3)
+  3. 动态保留率分配: 基于 attention weight 离线统计先验--rho^s=rho[I^s], 阶段自适应(vs 静态固定 rho 的 Sparse/Focus DETR)
+  4. RCDR 正则稀疏前后中心对齐(||nu_pre-nu_post||_2), +0.6 AP 零推理开销
+  5. 5 种 DETR 变体 + 3 数据集 + Swin-T 验证--架构无关即插即用
+- **Weakness**:
+  1. 判据非输入自适应: DTA 依赖 COCO val-set 离线 attention 统计--分布外输入(航拍/密集)可能分配失效
+  2. rho 向量(4维)需每模型手动扫参(Table 6)
+  3. 未在 VisDrone/AI-TOD 小目标场景验证--"重要性低--高迁移"假设可能不成立
+  4. Backbone/Decoder 仍稠密--整体节省受 Backbone 占比限制
+- **Suitable Detector**: DETR 系(Deformable/DAB/DN/H-Deformable/DINO 验证)
+- **Can Improve**:
+  1. **与 #30 直接交叉**: 用 S1 空域高通代理判据替换 attention 统计先验--输入级自适应 (vs 当前图无关)
+  2. **与 #24 交叉**: 三阶段稀疏化天然 IB 框架实例--导出理论最优 rho 配置
+  3. Proximal Aggregation 窗口内合并策略可细粒度化(按 patch 相似度阶梯: 高--全并, 中--部分保留, 低--不并)
+  4. Stage 划分(N1/N2/N3)可密度自适应--小目标密集场景自动将更多 block 分配给浅层
+
+### 11. OPL Occlusion Perception — 显式遮挡感知建模 (ESWA 2025)
+- **Module Name**: OPD (Occlusion Perception Decoder) + OPC (Occlusion Perception Complement)
+- **Paper**: Insight any invisible: An occlusion perception method for robust pedestrian detection in crowded scenes | ESWA | 2025
+- **Input / Output**: 多尺度 FPN 特征 → Transformer OPD → 遮挡感知图 [H, W] (每位置遮挡概率 [0,1]) → OPC 注入主检测解码器
+- **Complexity**: Transformer 结构训练开销；推理时 OPD 可移除（OPC 特征固化）或保留（轻量推理）；具体 GFLOPs/FPS 未公开
+- **Advantages**:
+  1. **显式遮挡建模范式**: 从"隐式处理遮挡（数据增强/更强特征）"到"显式感知遮挡区域"的范式转换
+  2. **零额外标注**: GT 遮挡图 = bbox 重叠 + 高斯模糊（完全自动生成），不依赖人工遮挡标注
+  3. Transformer 全局感受野——能建模远距离遮挡关系（遮挡者与被遮挡者空间分离）
+  4. OPC 机制：遮挡图注入检测头→直接补偿遮挡区域的信息缺失，而非仅加权现有特征
+  5. 遮挡召回率 95.4%（+22.6%），CrowdHuman + CityPersons 双数据集验证
+- **Weakness**:
+  1. **Bbox 重叠 ≠ 真实遮挡**: 并排无遮挡行人的 bbox 重叠会被错误标记为遮挡区域（假阳性 GT）
+  2. 完全被遮挡目标（无 bbox 标注）无法建模——依赖 bbox 间重叠的前提
+  3. 神经网络学习的遮挡图受限于"人类标注了什么"（bbox 只标注可见部分≠完整遮挡推理）
+  4. Transformer OPD 在 P2 级特征图上的墙钟开销未消融
+  5. 仅验证行人检测，通用目标检测/遥感场景的遮挡建模效果未知
+- **Suitable Detector**: CNN 检测器（行人检测已验证）；DETR 系理论上更适配（Cross-Attention 全局感受野 + per-query 遮挡建模）
+- **Can Improve** (≥3个Idea):
+  1. **频域判据替代 bbox 重叠**: 高频局部异常度→遮挡先验（免 bbox 重叠依赖）→覆盖孤立截断/背景遮挡/密集人群（→ #30 扩展 + 新 Idea）
+  2. **语义熵 = 隐式遮挡检测器**: 遮挡区域混合特征→语义不纯→高熵→验证熵图与 OPL 遮挡图的相关性→若高度相关，熵图可作零参数遮挡先验
+  3. **DETR 化 OPL**: per-query 遮挡图（而非整图一张）+ Cross-Attention bias 注入→更精细的遮挡建模 + 免 NMS 端到端
+  4. **多尺度遮挡图**: 不同 FPN 层级预测不同粒度的遮挡图（P2 细粒度边界遮挡 / P5 粗粒度实例遮挡）→层级特化的遮挡建模
+
+### 12. FM-CHFEM — Frequency-Mamba Collaborative High-Frequency Enhancement (HEdge-MamYOLO)
+- **Module Name**: FM-CHFEM (频域-Mamba 协同高频增强模块)
+- **Paper**: HEdge-MamYOLO | IEEE TGRS | 2026.04
+- **Input / Output**: 特征图 → 频域变换提取高频边缘 → Mamba SS2D 四向扫描寻找同类完整目标 → 空间相似性修复遮挡区域特征
+- **Complexity**: 三步流水线（频域变换 + SS2D 四向扫描 + 空间相似性插值）→计算开销未知（非轻量）
+- **Advantages**: **范式突破**——从"频域增强"到"频域提取→全局搜索→特征修复"; 频域+Mamba 协同：频域告诉"哪有碎片边缘"，Mamba 全图找"完整边缘长啥样"; SS2D O(n) 线性复杂度（vs ViT O(n²)）; VisDrone 52.5%（检索所见最高）
+- **Weakness**: Mamba backbone 生态不成熟（ultralytics 无原生支持）; 三步流水线计算开销大（可能牺牲实时性）; 52.5% 中有多少来自 backbone vs FM-CHFEM 未知; 频域变换具体方式（DCT/FFT/Wavelet）未确认
+- **Suitable Detector**: Mamba-YOLO 系（原文）; CNN 等价实现可迁移 YOLO
+- **Can Improve**:
+  1. **CNN 等价实现**: FFT/DCT 提取高频边缘 → 可学习全局相似度矩阵（替代 SS2D）→ 特征插值修复——全 CNN 架构 YOLO 迁移（→ 新 Idea）
+  2. **高频判据双重角色**: #11 判据当前仅做门控→FM-CHFEM 证明高频也可指导特征修复→"判据+修复"统一框架
+  3. **三步流水线分解**: 频域提取（可复用 #11 S1）→全局搜索（可复用 self-attention 或 large-kernel conv）→修复（可复用 deformable conv）
+
+### 13. OAKB — Occlusion-Aware KANC Block (DRONet)
+- **Module Name**: OAKB (遮挡感知 KAN 卷积块) — KAN + GRAM 多项式展开
+- **Paper**: DRONet | Displays (Elsevier) | 2026.02
+- **Input / Output**: Backbone 特征图 → KAN B-spline 基函数非线性变换 → GRAM 多项式展开 → 频率多样性核 → 频域参数化点乘（降低延迟）
+- **Complexity**: 频域参数化将 GPU 不友好的逐点 B-spline 求值转为频域点乘→延迟可控; 60 FPS（整体 DRONet）
+- **Advantages**: **KAN 在目标检测 backbone 的首批实践**——可学习激活函数替代 MLP 固定激活→更强非线性; GRAM 展开构造频率多样性核→不同核响应不同空间频率（自然区分碎片化遮挡 vs 完整目标）; 频域参数化解 KAN 延迟瓶颈的实用工程方案
+- **Weakness**: KAN 非标准 CNN 组件→ultralytics 集成困难; 仅在 ResNet18 验证; CARPK +0.7%→价值绑定不规则遮挡场景; KAN 通用性未在更大 backbone 验证
+- **Suitable Detector**: RT-DETR 系（原文）; 频域参数化思想通用
+- **Can Improve**:
+  1. **频域参数化核 → #11 S1 判据实现**: OAKB 的频域核技术可用于高效计算 S1 空域高通代理（Sobel/LoG → 频域核等效）
+  2. **标准 CNN 等价实现**: 用 DCT 基核组 + 可学习权重组合→达到 KAN 的频率多样性且无需 B-spline 框架
+  3. **频率多样性 × #11**: OAKB 证明不同频率核对遮挡/完整的区分能力→#11 的"高频=保留"判据可细化为多频段判据（不同遮挡程度→不同频率特征）

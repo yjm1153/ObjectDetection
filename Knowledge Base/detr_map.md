@@ -68,10 +68,11 @@ D-FINE(ICLR'25)     FDR分布式回归 + GO-LSD自蒸馏;54.0@31M/91G;O365后APs
 | encoder 瘦身 | RT-DETR AIFI | 只算 S5:时延 −35% 且 AP +0.4;Deformable encoder 曾占 49% FLOPs 只给 11% AP | **#24 信息瓶颈** |
 | encoder 层数 | DINO 消融 | 6→2 层仅 −2.0 AP(decoder −3.0)→ encoder 冗余>decoder | #24 |
 | decoder 砍层 | RT-DETR | 免重训调速,6→5 层仅 −0.1 AP | **#26 最优停止** |
-| 层深×QS 交互 | DINO | 混合 QS 使 decoder 砍层损失远稳于 Dynamic DETR(−3.0 vs −13.8) | #26 须与 QS 质量联合建模 |
+| 层深×QS 交互 | DINO | 混合 QS 使 decoder 砍层损失远稳于 Dynamic DETR-2021(−3.0 vs −13.8;⚠️此为 2021 旧版,非 ICML'25 同名篇) | #26 须与 QS 质量联合建模 |
 | 轻量骨干 | D-FINE | HGNetv2+GELAN 减半隐藏维:31M/91G 反超 42M/136G | 基线红利 |
 | 自蒸馏 | D-FINE GO-LSD | 末层分布→浅层 KL,免教师,即插即用 +2.0~5.3 | **#7 迁移须划界**(IoU×Conf 已被占) |
 | 输入级裁剪 | ViCrop-Det | 免训练熵引导 crop,−20% 时延 | #5 正交佐证 |
+| **encoder token 聚合** | **Dynamic DETR(ICML'25,🔬深读 2026-07-18)** | 三阶段(2/3/1 blocks)动态保留率+双轨聚合(低层 Proximal 窗口合并/高层 Holistic 亲合注入)+RCDR 中心对齐:DINO −42% FLOPs 仅 −0.7 AP;H-DETR −47.4%;胜 Sparse/Lite/Focus 全系 | **#30 SOTA 对照基线**(统计先验 vs 物理先验);#24 IB 实例;#33/#34 新Idea 源 |
 
 ## 四、B轨 Idea 挂点汇总
 
@@ -86,7 +87,7 @@ D-FINE(ICLR'25)     FDR分布式回归 + GO-LSD自蒸馏;54.0@31M/91G;O365后APs
 | #17 | ADR(角度分布)与 FDR(边缘分布)同构 | O² 已用 D-FINE 作底座,迁移即撞车,只作理论印证 |
 | #6 | P2/D2 检测层(全线空白) | 与 #14 合并推进 |
 
-**概念红线**(compare 结论24 + 2026-07-17 查新扩充):「注意力稀疏采样」已被 MSDeformAttn(15000+ 引用)占据;「query 数量自适应」已被 DQ-DETR/D3Q/Dome-PAQI 占据;「熵引导裁剪」已被 ViCrop-Det 占据;「密度引导 token 稀疏」已被 Dome-DETR 占据;「learnable (frequency) gating」字样已被 UAV-DETR 占据;「学习式 token importance」已被 Dynamic DETR(ICML'25)占据 → B轨 Idea 的合法表述空间 = **「免监督/零参数判据驱动的 token 预算分配 + 与学习式判据头的成本-精度对照」**(即 #30 的定位)。
+**概念红线**(compare 结论24 + 2026-07-17 查新扩充 + 2026-07-18 Dynamic DETR 深读裁决):「注意力稀疏采样」已被 MSDeformAttn(15000+ 引用)占据;「query 数量自适应」已被 DQ-DETR/D3Q/Dome-PAQI 占据;「熵引导裁剪」已被 ViCrop-Det 占据;「密度引导 token 稀疏」已被 Dome-DETR 占据;「learnable (frequency) gating」字样已被 UAV-DETR 占据;「学习式 token importance」已被 Dynamic DETR(ICML'25,**已深读 ✅ 2026-07-18**)占据——**深读裁定:其判据实为 attention weight 离线统计先验(stage 级重排,非输入自适应、非端到端学习),且完全未触碰频谱/梯度信息 → #30 的「免监督物理判据+输入级自适应」空白不仅未被侵占,反而获得最强对照基线**(Summary §8.4)→ B轨 Idea 的合法表述空间 = **「免监督/零参数判据驱动的 token 预算分配 + 与学习式判据头的成本-精度对照」**(即 #30 的定位)。
 
 ## 五、基线选型(纸面初判,⏸ 最终确认待实验模块)
 
@@ -97,4 +98,4 @@ D-FINE(ICLR'25)     FDR分布式回归 + GO-LSD自蒸馏;54.0@31M/91G;O365后APs
 | 生态兜底 | ultralytics RT-DETR | 若实验模块要求 ultralytics 单栈则切换 |
 
 ---
-*Last Update: 2026-07-17(查新裁决修订) | Maintainer: Claude Code*
+*Last Update: 2026-07-18(Dynamic DETR ICML'25 深读入图) | Maintainer: Claude Code*
