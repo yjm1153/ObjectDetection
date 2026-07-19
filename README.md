@@ -12,9 +12,27 @@
   - 🟪 **DETR 交叉融合** — 仅保留判据/概念层，为 YOLO 主线提供灵感（副线，~5% 资源）
 
 ## Current Status
-- **阶段**：`文献调研 → 方向设计`（进度：🟩 50篇已读(质量筛选后)；🟨 **密集遮挡 L3 知识提取完成**;实验类任务 ⏸ 暂缓——2026-07-15 用户决策：数据集/GPU 暂不提供）
+- **阶段**：`文献调研 → 方向设计`（进度：🟩 50篇已读(质量筛选后)；🟩 **密集遮挡 D1 方向设计完成**←全链路闭环;实验类任务 ⏸ 暂缓——2026-07-15 用户决策：数据集/GPU 暂不提供）
 - **文献模式**：arXiv 公开渠道自动抓取（**以 2025+ 论文为主**；pre-2025 关键基础方法已解锁——2026-07-16 用户授权）
 - **目标**：文献调研 → 知识库构建 → 研究缺口发现 → Idea 提出与评估 → 方向设计
+- **本轮更新(2026-07-19 续二十九:🟠 OBB G1 Gap 分析 ✅)**：基于 OBB P0 3篇(FAA CVPR 2026·YOLO26-OBB·RDCNet)+L1 21篇→三模块系统化Gap分析(跨P0交叉7项+L1未覆盖7项+四维交叉7项=**19个系统性Gap**)。**核心发现**: ①频域判据在OBB的收益>HBB(一次FFT→能量+方向+签名三输出→四线下游·2-3×价值密度) ②FAA+YOLO26+RDCNet三角定位·三篇独立零互引→跨论文联合分析=可发表贡献 ③OBB×密集=项目双战略维度最强交汇(D1→OBB-D1独立发表价值) ④OBB条件计算=完全蓝海(21篇零涉足·三架构空白叙事完整) ⑤OBB=频域判据"跨任务通用性"论证最佳载体(HBB→OBB→DETR) ⑥VisDrone-OBB标注缺失=系统性瓶颈。**P0 Gap(7个)**: 双源角度监督/全链路旋转感知/OBB三维频域判据族/D1 OBB扩展/条件计算判据重验证/NMS路线对比/OBB密集NMS路线。**8条I1 Idea入口**(OBB三维频域判据框架~4.2/D1 v2.0~4.1/双源角度监督~4.0/条件计算判据适配~3.9/NMS路线裁决~3.8/全链路旋转感知~3.8/BDAssign~3.7/旋转等变选型指南~3.7)。产出: research_gap.md OBB G1专节(~400行·19Gap+优先级表+6发现) + compare(结论45) + journal(第四十四次) + research_history(续三十五)。**🟠 OBB方向 L1→P0→K1→G1 完成 ✅·I1 待生成**
+- **本轮更新(2026-07-18 续十二:🔴 密集遮挡 K1+I1+交叉分析全链路闭环)**：**K1 Gap分析(19个Gap,4维+4交叉)**→**I1 Idea生成(#40连续密度LA 3.9+#41密度自适应NMS 3.5)**→**三项交叉分析(密集×P2/密集×DETR/密集×频域)**。核心发现: ①频域判据是密集遮挡+条件计算两方向的天然桥梁分子(K1-X1) ②#5需增加密集/遮挡否决机制(交叉一) ③频域判据从辅助判据升级为场景自适应中枢(交叉三)。Idea总数 35→37(🟦19/🟪4/⬜16)。密集遮挡 L1→L3→K1→I1→交叉分析全链路闭环 ✅
+- **本轮更新(2026-07-18 续十三:🔴 密集遮挡 D1 方向设计 ✅)**：**频域驱动的密集检测统一框架**——选定方案A(频域统一框架·Novelty最高)击败方案B(密度自适应管线·增量)/方案C(局部集合预测·高风险)。核心设计: S1空域高通代理判据(#30 §2复用)为共享上游→三条独立下游(①#35频域遮挡先验→替代OPL bbox重叠遮挡图 ②#38频谱感知Soft-NMS→NMS首次引入框内特征内容 ③#40连续密度感知LA→空间+频域联合密度软值)。三"首次"创新+渐进式论文策略(下游2 NMS→下游1 遮挡→统一框架)+三下游独立验证(风险隔离)。密集遮挡方向**L1→L3→K1→I1→交叉分析→D1 全链路闭环 ✅**。产出: [D1 设计文档](Ideas/dense_occlusion_d1_design.md)(~350行, 10节完整设计)
+- **本轮更新(2026-07-18 续十四:🟠 OBB L1 补充检索 ✅)**：6 组关键词 × 3 轮检索, 命中 **21 篇**(P0×3: FAA CVPR 2026·频域×OBB首次交叉 / YOLO26-OBB·最新基线 / RDCNet·旋转感知LA; P1×4: BD Loss·旋转Loss新SOTA / HERO-Det AAAI 2026·Hilbert旋转等变 / SFMP-Net·空域频域融合 / GADet·轻量Pareto前沿; P2×14: 频域OBB×3/ YOLO-OBB应用×4/ 数据增强×2/ 旋转等变轻量×5)。核心发现: ①频域×OBB=全新交叉维度(此前项目未触及)→FAA的FFT角度估计+SFMP-Net空域频域融合为OBB×频域交叉分析提供技术入口 ②YOLO26-OBB的STAL+NMS-free+长边角度→直接影响OBB基线选型 ③旋转等变三范式成熟度提升(群卷积→极坐标→Hilbert曲线)。database 77→**98**条(🟠OBB 6→27)。OBB方向知识基础就绪→下一: P0 深读
+- **本轮更新(2026-07-19 续二十八:#42 训练-推理解耦三范式设计空间 v1.0 ✅)**: G1-S4 Gap→**分析性论文初稿完成** → [idea_042_train_inference_decoupling_design_space.md](Ideas/idea_042_train_inference_decoupling_design_space.md) (~450行·12节)。核心: ①三范式形式化(辅助Loss训后丢弃·λ(t)衰减/辅助Head训后丢弃·物理移除/门控训后硬化·温度退火)·统一符号系统 ②设计空间四轴(注入位置×时机×移除方式×适用任务) ③3×3兼容性矩阵+梯度冲突诊断(YOLO-Master级联冲突警示) ④决策树+8场景速查表+5场景"不推荐"矩阵 ⑤9方法实例化映射(FS-Mamba唯一三范式全用·作者未意识·范式混合是常态5/9) ⑥8臂实验协议(B0+E1三范式+E2两两混合+E3全联合·5维评估)+Venue策略(IJCAI/AAAI分析性track)。**关键洞察**: 训练-推理解耦=2026共识设计模式(三独立趋势汇合); "方法论的论文"差异化定位。产出: candidate/ranking更新 + compare(结论45) + journal(#43) + research_history(续三十四)。**#42 文档启动 ✅·当前最高可推进性任务完成**
+- **本轮更新(2026-07-19 续二十七:🟡 尺度变化 交叉分析 ✅)**: I1完成后→三维度交叉分析(Scale×条件计算/OBB/密集遮挡)。**核心发现: 频域判据=三维度交叉的通用语言**——同一频域图服务七条下游(空间门控+层级选择+专家路由+标签分配+NMS+遮挡检测+尺度估计)。产出: ①Scale×条件计算→三维统一计算分配框架(空间+层级+路由·~4.3) ②Scale×OBB→频域驱动免标注R-VIoU(FAA FAE角度+#11能量·~4.1)+四线OBB频域应用 ③Scale×密集遮挡→D1 v2.0升级路径(尺度自适应判据+联合衰减NMS+遮挡修正密度·~4.3)+遮挡-尺度退化-恢复完整管线。**7个新高分交叉Idea候选**(P0:三维统一分配+D1 v2.0 / P1:免标注R-VIoU+尺度感知遮挡+三态门控 / P2:动态迭代深度+OBB判据族)。理论贡献从"更好的检测器组件"升级为"被验证的通用物理先验+全场景自适应检测器"。产出: research_gap.md交叉分析专节(~200行·四模块) + compare结论44 + journal(#42) + research_history(续三十三)。**🟡 尺度方向 L1→P0→K1→G1→I1→交叉分析 全链路闭环 ✅**
+- **本轮更新(2026-07-19 续二十六:🟡 尺度变化 I1 Idea生成 ✅)**：G1→I1 **8条正式Idea**落地——4新(#42-#45)+4升级(#5 v3.3/#11 v2.0/#38动机/#40 v2.0)。**新Idea**: #42 ⬜训练-推理解耦三范式设计空间(G1-S4·~4.2·**最高可推进性·70%文档推演**)/#43 🟦频域驱动MoE空间路由(G1-S1·~4.0·条件计算×MoE首次交叉)/#44 🟠OBB旋转框双维LA(G1-X2·~3.8·VALA→OBB扩展)/#45 🟦频域门控路线裁决(G1-S5·~3.7·可学习vs免训练head-to-head)。**已有升级**: #5→v3.3层级+空间双维条件计算(G1-X1)/#11→v2.0频域双模统一框架(G1-S2·增强+节省)/#38→G1-L2动机强化(30篇零频域NMS)/#40→v2.0尺度×密度双维LA(G1-S3·VALA+DALA联合)。**Idea总数 37→41**(🟦YOLO 18→21/🟪DETR 4/⬜通用 16→17/🟠OBB #17+#44=2)。关键发现: ①#42=最低悬垂果实·可立即启动文档撰写 ②频域判据应用维度爆发(5线下游:MoE路由+条件计算+NMS+遮挡+尺度) ③条件计算三维扩展(空间+层级+路由) ④LA双维升级(密度+尺度)。产出: candidate.md(+4新+4升级注释) + innovation_ranking.md(新增4条目+更新4条目+路径九+架构刷新) + research_gap.md(I1交叉引用) + compare.md(结论43) + journal(#41) + research_history(续三十二)。**🟡 尺度方向 L1→P0→K1→G1→I1 全链路闭环 ✅**
+- **本轮更新(2026-07-19 续二十五:🟡 尺度变化 G1 Gap分析 ✅)**：基于K1知识补充→三模块系统化Gap分析(跨P0交叉8项+L1未覆盖6项+交叉维度6项=**20个系统性Gap**)。核心: ①G1-S1频域→MoE路由信号·条件计算双维融合·P0最高价值交汇点 ②G1-S2增强+节省统一框架·#11 v2.0核心方向 ③G1-S4训练-推理解耦三范式系统对比·**最低悬垂果实(70%可文档推演)**·独立分析性论文潜力 ④G1-X1层级+空间双维条件计算·#5从P2→全FPN升级。**8条I1 Idea入口**(G1-S4训练-推理解耦分析性论文⬜~4.2/G1-S1频域驱动MoE路由🟦~4.0/G1-S2频域双模统一🟦~4.0/G1-X1层级+空间双维🟦~4.0/G1-S3尺度×密度双维LA🟦~3.9/G1-L2频谱感知NMS🟦~3.8/G1-X2旋转框双维LA🟠~3.8/G1-S5频域门控路线裁决🟦~3.7)。五大发现: 频域→MoE路由=最高价值交叉点; 三范式对比=最低悬垂果实; 增强+节省统一=#11最高价值升级; 层级+空间双维=#5自然扩展; 频域判据一次计算五线共享(MoE路由+条件计算+NMS+遮挡+尺度)。产出: research_gap.md G1专节(~350行·20Gap·优先级排序表+I1路线图) + compare结论42 + journal(第四十次) + research_history(续三十一)
+- **本轮更新(2026-07-19 续二十四:🟡 尺度变化 K1 知识补充 ✅)**：基于4篇P0深读+30篇L1检索→loss.md/augmentation.md/head.md三文件尺度专节(共~520行)。核心产出: loss §🟡(LA三维创新空间·VALA VIoU+DSS·Anchor-free适配路径·推荐栈) / augmentation §🟡(五级增强体系·SR辅助范式·频域多尺度族·动态分辨率) / head §🟡(六级Head分类·MoE路由·FDHead算力代价·SR辅助Head·Head条件计算蓝海) + compare结论41 + timeline双增强线(尺度感知LA线+训练-推理解耦线) + research_gap K1专节(8个系统性Gap·跨论文交叉视角)。关键洞察: ①LA三维独立可叠加→#40双维升级 ②训练-推理解耦三范式从未系统对比→独立论文潜力 ③FDHead 55.6%FLOPs=#11节省路线最强动机 ④Head端条件计算=完全蓝海 ⑤频域判据双用途(尺度指示+密度指示)。**尺度方向知识基础设施就绪 ✅**。产出: journal(第三十九次) + research_history(续三十)
+- **本轮更新(2026-07-19 续二十三:🟡 尺度变化 P0 深读 FS-Mamba ✅·尺度P0收官)**：FS-Mamba (Displays 2026, 南京航空航天大学)——**Mamba SSM×频域解耦×SR辅助训练·尺度P0第四篇收官**。FDVSSBlock(Backbone·FDGate门控高通滤波)+FPU(Neck·双门控频率保持)+PDFAM(金字塔双融合注意力)+SR辅助训练头(训后丢弃·零推理开销)。VisDrone/UAV-ROD/WX-Road三基准。核心洞察: ①FDGate可学习门控 vs #11免训练判据=频域门控方法论对照 ②SR辅助 vs SET vs #5 Gumbel=训练-推理解耦三范式 ③Mamba→CNN迁移是首要障碍。产出: [Summary](papers/summaries/FS-Mamba_Displays2026.md)(~350行·10节·5方向) + database快评→🔬P0 + compare结论40 + timeline + research_gap 8条目 + journal(第三十八次)。**🟡 尺度变化 P0 深读 4/4 全部完成 ✅** (YOLO-Master+DERNet+VALA+FS-Mamba)
+- **本轮更新(2026-07-19 续二十二:🟡 尺度变化 P0 深读 VALA ✅)**：VALA (Neurocomputing 2026, 国防科技大学)——**首个将锚框尺度引入标签分配·尺度维LA开辟者**。VIoU(逐层GT尺寸统计→虚拟锚框尺度重校准→IoU一致性保持)+DSS(训练期渐进衰减归一化·课程学习式正则化)。AI-TOD 27.9/AI-TODv2 26.9/VisDrone 29.4 AP; 零架构修改+零推理开销+纯训练期LA。核心洞察: ①LA第三创新维度(规则/度量→尺度)→DALA(密度维)×VALA(尺度维)=双维自适应LA→#40最明确升级方向 ②anchor-free迁移需"逐层scale range重校准"等效设计 ③虚拟锚框为静态统计→频域判据可升级为动态校准。产出: [Summary](papers/summaries/VALA_Neurocomputing2026.md)(~350行·10节·5方向+YOLO迁移过滤器) + database快评→🔬P0 + compare结论39 + timeline 2026线 + research_gap 8条目 + journal(第三十七次)。**尺度P0进度: 3/4** (YOLO-Master✅ + DERNet✅ + VALA✅ → 最后一篇: FS-Mamba)
+- **本轮更新(2026-07-19 续二十一:🟡 尺度变化 P0 深读 DERNet ✅)**：DERNet (arXiv 2026.06, 南方科技大学)——**频域全管线特征学习最系统化方案·增强vs节省路线分野**。DER统一算子: WDG(Backbone·Haar DWT+RepCDC+HF自派生门控g∈(0,1)→x̃_LL=y_LL⊙(1+g))+LGE(Neck·Log-Gabor K=2/S=1+WTConv变体)+FDHead(P2-only·box-only·SHG)。DERNet-S **1.3M参数**(↓86.2% vs YOLOv11-S 9.4M)/13.3GFLOPs→VisDrone test 0.316(+0.005); DERNet-M 2.9M→0.362(超YOLOv11-M 20M); A100 162FPS/Jetson Nano 22FPS; 五检测器跨架构。核心洞察: ①"增强vs节省"路线分野——DERNet所有位置做频域增强 vs #11高频区算·低频区跳过→FDHead 55.6%GFLOPs占比=频域增强算力代价定量暴露→#11"节省"路线根本动机数据点 ②WDG的HF门控g可直接作为#11 P2稀疏化判据 ③三模块互补性低于预期(All three 0.458 vs WDG+FDHead 0.464→LGE无增量)。产出: [Summary](papers/summaries/DERNet_2026.md)(~350行·11节·6研究方向+YOLO迁移过滤器) + database快评→🔬P0 + compare结论38 + timeline 2026线/频域检测线双更新 + research_gap 10条目 + journal(第三十六次)。**尺度P0进度: 2/4** (YOLO-Master✅ + DERNet✅ → 下一: VALA)
+- **本轮更新(2026-07-19 续二十:🟡 尺度变化 P0 深读 YOLO-Master ✅)**：YOLO-Master (CVPR 2026, Tencent)——**首个MoE×YOLO深度融合·感受野维条件计算标杆**。ES-MoE: 多尺度专家(3×3/5×5/7×7 DWConv·E=4)+动态路由(GAP→γ=8→Soft→Hard Top-K·K=2)+负载均衡(λ=1.5)。COCO 42.4%@1.62ms(+0.8 vs YOLOv13-N·快17.8%); **VisDrone +2.1 mAP 跨基准最大增益**。关键发现: Backbone-only最优(级联梯度冲突→#5 P2专注Backbone获CVPR 2026独立验证); DFL移除共识(与YOLO26-OBB DFL-free双证); 条件计算路线扩充为五维(通道/感受野/空间/专家/token)。产出: [Summary](papers/summaries/YOLO-Master_CVPR2026.md)(~350行·9节·6研究方向) + database ⚡→🔬 + compare结论37 + timeline门控线+research_gap 9条目 + journal(第三十五次)
+- **本轮更新(2026-07-19 续十九:🟠 OBB K1 知识补充 ✅)**：loss.md §🟠OBB(旋转Loss六方法谱系+推荐栈) / augmentation.md §🟠OBB(旋转增强挑战+策略+等变关系) / head.md §🟠OBB(五类头分类体系+三级解耦路线)。基于 FAA+YOLO26-OBB+RDCNet 三篇P0深读+OBB L1 21篇交叉提炼, **OBB方向知识基础设施就绪**。
+- **本轮更新(2026-07-18 续十八:🟠 OBB P0 深读 RDCNet ✅)**：RDCNet (IEEE JSTARS 2026.04)——**极坐标DCN+AALA**。旋转等变最简实现: DCN偏移从笛卡尔(Δx,Δy)→极坐标(ρ,θ)→显式解耦尺度-方向, ~3M参数增量; AALA宽高比无关centerness→几何感知+任务对齐LA免阈值统一。DOTA **81.37%@35FPS/29.1M/108GFLOPs**(RTMDet-R-L 56%参数→+3.04 mAP)。关键发现: FAA FAE(FFT→极坐标)与RDC RDC(极坐标DCN)共享(ρ,θ)参数化→频域判据+空间旋转感知的数学桥梁→FAA+RDC+#30三线融合锚点。**OBB P0 深读全部完成(3/3)**: FAA(CVPR 2026·频域角度) + YOLO26-OBB(arXiv 2026.06·YOLO OBB最强基线) + RDCNet(IEEE JSTARS 2026.04·极坐标DCN+AALA) — 三角互补: 频域方向/空间域方向/检测头+Loss。产出: [Summary](papers/summaries/RDCNet_JSTARS2026.md)(~350行, 9节+6研究方向+YOLO迁移过滤器) + database ⚡→🔬 + compare结论36 + timeline旋转等变三范式线 + research_gap 9条目 + journal(第三十三次)
+- **本轮更新(2026-07-18 续十七:🟠 OBB P0 深读 YOLO26-OBB ✅)**：YOLO26-OBB (arXiv 2026.06, Ultralytics)——**2026 YOLO OBB单一最强基线**。五项核心改进: ①长边角度定义[-45°,135°)→消除边界不连续 ②直接角度回归→移除sigmoid非线性 ③宽高比感知角度损失sin²(2Δθ̃)·ωᵢ(λ=3最优) ④NMS-free双头+Progressive Loss ⑤STAL+DFL-free+MuSGD。DOTA-v1.0 +2.5~3.4 mAP vs YOLO11-OBB; AP₇₅ +4.6~6.0。**YOLO11-OBB已过时**（角度表示有根本缺陷）。产出: [Summary](papers/summaries/YOLO26-OBB_arXiv2026.md) + database ⚡→🔬 + KB全线同步 + journal(第三十二次)
+- **本轮更新(2026-07-18 续十六:🟠 OBB P0 深读 FAA CVPR 2026 ✅)**：FAA: Fourier Angle Alignment (CVPR 2026, 北理/港大/东北大学)——**频域×OBB首次系统性交叉**。FAE(FFT角度估计: 2D FFT→极坐标→径向加权积分→atan2主方向)+FAAFusion(低层方向引导高层对齐, 替换FPN加法)+FAA Head(RoI→规范角0°分类-回归解耦)。DOTA-v1.0 **78.72% SOTA**/v1.5 **72.28% SOTA**。YOLO迁移: ①FAE角度→OBB NMS频域相似度替代旋转IoU ②FAAFusion→YOLO PAN方向感知融合→#9第三对照臂 ③方向一致性→条件计算第四维判据(方向模糊区激进稀疏化)。项目协同: #11高频能量(重要性)+FAA角度(方向)+#25频率签名(形状)=三维频域判据族。产出: [Summary](papers/summaries/FAA_CVPR2026.md)(~350行, 9节+5研究方向+YOLO迁移过滤器) + database ⚡→🔬 + compare结论34 + timeline OBB×频域支线 + research_gap FAA段(8个新Gap) + journal(第三十一次)
+- **本轮更新(2026-07-18 续十五:🟡 尺度变化 L1 补充检索 ✅)**：6 组关键词 × 4 轮检索, 命中 **30 篇**(P0×4: YOLO-Master CVPR 2026·MoE×YOLO多尺度专家 / DERNet·频域三阶段特征学习 / VALA·虚拟锚框尺度感知LA / FS-Mamba·频域门控+SR辅助零推理开销; P1×5; P2×21·自适应感受野7/尺度感知LA 5/极端小目标增强10/Neck 2/频域×尺度8/条件计算×尺度2)。核心发现: ①尺度维度存量最大(30篇vs OBB 21篇vs密集遮挡13篇) ②频域×尺度=最成熟交叉维度(8篇·DERNet三阶段频域/小波+Fourier双频域) ③尺度感知LA成为独立方向(5篇·VALA/DCNet/CVPR 2026 SA-Matching DETR) ④YOLO-Master=MoE进入YOLO·多尺度专家路由(CVPR 2026·Tencent) ⑤SR辅助分支=小目标增强最优雅方案(训练专用→零推理开销)。**三维度扩展 L1 检索全部完成** 🔴密集遮挡(13篇)+🟠OBB(21篇)+🟡尺度(30篇)=**64篇新文献入库**。database 98→**128**条
 - **本轮更新(2026-07-18 续九:🔴 密集遮挡 L3 知识提取)**：**11篇论文知识体系闭环**——①loss.md 遮挡感知损失函数体系(七大类 taxonomy + 范式演化图谱 2017→Future) ②head.md 密集遮挡检测头设计(五大类 taxonomy + 五维对比表) ③NMS 演进线(完整演化图谱 + 六方法技术维度对比) ④compare.md 结论33(11篇知识全景 + 频域判据复用价值)。关键整合: 遮挡先验来源演化(人工→自动GT→物理先验→内容先验); 三阶段覆盖从未联合(训练期回归+匹配+推理后处理); 频域判据一次计算三次收益(#11/#35/#38); 检测头双维门控空白(通道×空间)。密集遮挡 L3 知识提取全部完成 ✅ → 下一: K1 Gap 分析
 - **本轮更新(2026-07-18 续十:📋 数据库质量筛选)**：**移除 5 篇纯 arXiv 论文**——按用户四条标准(有venue/高引用/知名机构/有代码)逐篇审核 18 篇纯 arXiv 论文: ❌PST(arXiv 1年+无venue)/❌HI-MoE(preliminary自认)/❌DroneScan-YOLO(仅快评)/❌DisDop(仅快评)/❌RFAssigner(无详情无代码)。保留 13 篇(YOLOE/PRNet/CLIP-Bias/DERNet/FMC-DETR/D³R-DETR/DFIR-DETR/EFSI-DETR/TinyFormer/ViCrop-Det/STAL/MOCHA均深度集成知识库或满足机构/影响标准; Dome-DETR 已有 ACM MM 2025 venue)。数据库 82→**77** 条，快评 31→26。
 - **本轮更新(2026-07-18 续六:📋 策略修订)**：用户决策——**DETR 降级为交叉融合副线，YOLO 回归唯一主战场**。推翻同日早些时候的「DETR 轨道强化」计划(DX1-DX5)。核心变化:①B轨从并行主方向降为 YOLO 灵感源(~5%资源);②DETR 论文阅读新原则——每篇必须通过「YOLO 迁移过滤器」(这对 YOLO 有什么用?)；③停止 DETR 独立 Idea 生成/设计文档;④#32💤 纯 DETR 机制存档;⑤DX1.5 P1 5 篇 DETR 深读全部取消;⑥DETR P1 深读队列取消。详见 [research_strategy.md](Decision/research_strategy.md) § DETR交叉融合。
@@ -46,13 +64,19 @@
 ## Research Progress
 | 指标 | 数量 |
 |------|------|
-| 已读论文 | 52 |
-| 已总结论文 | 38 |
+| 已读论文 | 110 |
+| 已总结论文 | 45 |
+| 🟡 尺度 K1 知识补充(本日增量) | 1(loss/augmentation/head 三文件尺度专节·~520行·尺度知识基础设施就绪 ✅) |
+| 🔬 FS-Mamba P0 深读(本日增量) | 1(Displays 2026·Mamba SSM×频域解耦×SR辅助·尺度P0收官) |
+| 🔬 VALA P0 深读(本日增量) | 1(Neurocomputing 2026·虚拟锚框尺度校准·LA第三维度·尺度×密度双维LA空白) |
+| 🔬 DERNet P0 深读(本日增量) | 1(arXiv 2026.06·频域全管线DER统一算子·增强vs节省路线分野) |
+| 🔬 YOLO-Master 深读(本日增量) | 1(CVPR 2026·Tencent·首个MoE×YOLO·VisDrone+2.1 mAP跨基准最大) |
+| 🔬 RDCNet 深读(本日增量) | 1(IEEE JSTARS 2026·极坐标DCN+AALA·OBB P0收官) |
 | 🔬 PRNet 深读(本日增量) | 1(VisDrone 最高纪录拆解,#5 motivation 最强新证) |
 | 🔬 Dynamic DETR 深读(本日增量) | 1(ICML 2025 全文;#30 撞车裁决=不撞车→SOTA 对照基线;#33/#34 新Idea) |
 | 🆕 密集遮挡 L1 检索 | 13 篇快评(快速评估文档) |
 | 🆕 DETR DX1 检索 | 9 篇快评(快速评估文档) |
-| 已对比论文 | 35 |
+| 已对比论文 | 43 |
 | SOTA 最近更新 | 是（2026-07-17）|
 
 ## Knowledge Base Status
@@ -63,10 +87,10 @@
 ## Idea Pipeline
 | 候选Idea | 已验证Idea | 已设计方向 |
 |----------|-----------|-----------|
-| 32（🟦15 / 🟪4💤含#32存档 / ⬜12 + 🔴2） | 0 | 4 (#5 v2.0→**v3.0** + #7 技术基线 + **#30 v1.0** + #11 v1.1)；2026-07-18 策略修订: DETR 降级→YOLO 密集遮挡贡献主力增量，目标 35-45 |
+| 41（🟦21 / 🟪4 / ⬜17 / 🟠2） | 0 | 6 (#5 v3.0→🆕**v3.3**·层级+空间双维 + #11 v1.1→🆕**v2.0**·频域双模 + #7 技术基线 + **#30 v1.0** + **D1 密集遮挡方向设计 v1.0** + 🆕**#42 v1.0**·训练-推理解耦三范式设计空间) |
 
 ## Current Ideas（按 innovation_ranking 排序）
-> 🧭 **架构方向分类(2026-07-18 策略修订: YOLO 为主,DETR 交叉融合副线)**: 🟦YOLO主线 15个(#5#6#7#8#9#10#11#12#13#15#16#17#21#22+#1) | 🟪DETR交叉融合 4个(**#30**(判据通用)+#14(降级对照)+**#33**(Dynamic DETR交叉,判据通用)+**#34**(小目标×token稀疏化,概念层可迁移); **#32💤**(纯DETR机制存档) | ⬜通用理论 12个(#18–#20,#23–#29,#31) + 🔴密集遮挡 2个(#35#36),详见 [innovation_ranking.md](Ideas/innovation_ranking.md)
+> 🧭 **架构方向分类(2026-07-18 策略修订: YOLO 为主,DETR 交叉融合副线)**: 🟦YOLO主线 21个(#5#6#7#8#9#10#11#12#13#15#16#17#21#22#37#39#40#43#44#45+#1) | 🟪DETR交叉融合 4个(**#30**(判据通用)+#14(降级对照)+**#33**(Dynamic DETR交叉,判据通用)+**#34**(小目标×token稀疏化,概念层可迁移); **#32💤**(纯DETR机制存档) | ⬜通用理论 17个(#18#19#20#23#24#25#26#27#28#29#31#35#36#38#41#42) | 🟠OBB 2个(#17#44) | 🆕 2026-07-19 I1新增 #42–#45·Idea总数 37→41,详见 [innovation_ranking.md](Ideas/innovation_ranking.md)
 
 | # | Idea | Status |
 |---|------|--------|
@@ -83,6 +107,10 @@
 | 30 | 🟪 **免监督频谱判据→DETR浅层token条件计算** | **3.9** B轨主Idea;查新✅+**技术方案 v1.0.1 ✅**(S1空域高通代理判据/D-FINE接入点无NMS/E1判据头对头=生死项;**Dome 放码✅→E1 官方对照**)→ [方案](Ideas/idea_030_technical_proposal_v1.md) |
 | 19 | 三判据对照实验(CLIP vs DINOv2 vs FFT) | **3.8** 路径三;确定最佳判据前置实验 |
 | 15 | 三源门控融合(振幅×熵×高频) | **3.8** CLIP偏差→双源互补价值提升 |
+| 42 | ⬜ **训练-推理解耦三范式设计空间** | **4.2** 🆕 G1-S4·I1; **Designing ✅ v1.0** → [设计文档](Ideas/idea_042_train_inference_decoupling_design_space.md)(~450行·12节·三范式形式化+四轴设计空间+3×3兼容性+决策树+8臂实验协议) |
+| 43 | 🟦 **频域驱动的MoE空间路由** | **4.0** 🆕 G1-S1·I1;条件计算×MoE首次交叉 |
+| 44 | 🟠 **OBB旋转框双维LA** | **3.8** 🆕 G1-X2·I1;R-VIoU·FAA角度先验 |
+| 45 | 🟦 **频域门控路线裁决** | **3.7** 🆕 G1-S5·I1;可学习vs免训练裁决 |
 | 7 | 语义熵图引导知识蒸馏 | **3.7** MOCHA提供技术基线✅ |
 | 22 | 多阶段P2门控(SViT×#5) | **3.5** 免训练+可学习混合范式;误剪兜底 |
 | 21 | 频域通道-空间双维稀疏化(FcaNet×#11) | **3.5** 首次通道维频域条件计算 |
@@ -120,19 +148,23 @@
 - ⚠️ **2026-07-17 新增 (B轨查新裁决)**: 「DETR 全线无浅层/P2」Gap **失效**——Dome-DETR 已用最浅层四尺度特征+MWAS 密度掩码稀疏;但「频域判据→DETR token 级条件计算」空白**确认成立**(频域 DETR 竞品 6+ 篇全是增强范式)→ #30 正式占据;「判据免监督 vs 学习式密度头(DeFE)」成为新的对照缺口
 
 ## Next Steps
-1. 持续检索 2025–2026 顶会顶刊新作(双轨全类目;✅ 07-18 检索轮完成, 6路并行+三跟踪项裁决);🔔 **HF-DETR 全文(SSMG 判据裁决=#30 撞车, 付费墙悬置)**; 🔔 Unmasking the Tiny 代码(已见刊 IVC Vol.172, **哨点已降级**→低频跟踪); ~~Dome-DETR~~ **✅ 已放码+ACM MM 2025 接收→#30 E1 升级官方对照, 代码细读⏸待实验模块**
-2. ⏸ 暂缓(待实验模块):B轨基线选型最终确认、#5 v3.0 验证点 M0–M4、**#30 E1 判据 vs DeFE 头对头(生死项)+ E3 免训练判据 AUROC(最低成本首验)**、SLE baseline 复现(#6+#12)
-   > ✅ 已完成移出:~~#30 技术方案 v1.0~~(续九)/~~#11 v1.1 修订~~(续十)/~~#5 v3.0 RW Dome 划界段~~(续十)——**双轨设计文档栈全部闭环**
+1. 🔴 **密集遮挡方向**: L1→L3→K1→I1→交叉分析→**D1 方向设计 ✅ 全部完成** → 下一: 实验模块就绪后 D1 Phase 0 判据确认(E0+E4)⏸
+2. 🟠 **OBB 方向**: L1 检索 ✅(21篇) → **P0 深读 ✅(3/3) + K1 知识补充 ✅** → **G1 Gap分析 ✅(19Gap·8 I1入口)** → 下一: I1 Idea 生成
+3. 🟡 **尺度变化方向**: L1 ✅(30篇) → P0 ✅(4/4) → K1 ✅ → G1 ✅(20Gap) → I1 ✅(8条Idea·4新+4升级·37→41) → 交叉分析 ✅(三维度·7个新高分交叉候选) → **#42 文档启动 ✅(v1.0·分析性论文初稿)** → 下一: OBB I1 或 #42 英文论文转写
+4. **三维度扩展 L1 全部完成** 🔴密集遮挡(13篇·全链路闭环✅)+🟠OBB(21篇)+🟡尺度(30篇)=**64篇新文献**; database 77→128
+2. 持续检索 2025–2026 顶会顶刊新作(双轨全类目;✅ 07-18 检索轮完成);🔔 **HF-DETR 全文(SSMG 判据裁决, 付费墙悬置)**; 🔔 Unmasking the Tiny 代码(**哨点已降级**→低频跟踪)
+3. ⏸ 暂缓(待实验模块):B轨基线选型、#5 v3.0 M0–M4、**#30 E1 判据 vs DeFE 头对头+ E3 AUROC**、SLE baseline 复现(#6+#12)、密集遮挡方向全部实验验证
+   > ✅ 已完成移出:~~K1 Gap分析~~/~~I1 Idea生成~~/~~交叉分析~~/~~D1 方向设计~~——**密集遮挡 L1→L3→K1→I1→交叉分析→D1 全链路闭环 ✅**
 
 ## Roadmap
 | 阶段 | 状态 |
 |------|------|
-| 1. 阅读论文 | 🟩 进行中（50篇,双轨:🟦A轨 + 🟪B轨基础线4/4✅;🚀密集遮挡 L1 检索✅ 13篇 + DETR DX1 检索✅ 9篇）|
-| 2. 总结论文 | 🟩 进行中（35篇深读总结）|
-| 3. 构建知识库 | 🟩 12/12 全部完成,持续扩充(+detr_map B轨地图,🚀扩版中) |
-| 4. 分析研究缺口 | 🟨 11+个Gap(双轨;⚠️"DETR无P2"失效/频域条件计算空白确认;🚀DETR专属Gap 8-10条即将启动) |
-| 5. 提出并评估 Idea | 🟨 26个候选(🟦15/🟪2/⬜10;🚀B轨强化目标🟪 2→8-12) |
-| 6. 设计研究方向 | 🟩 **双轨设计文档栈闭环**（🟦#5 v3.0+§十划界 + #11 v1.1 + #7 基线;🟪#30 v1.0·基线初判D-FINE;余下待实验模块/新文献;🚀B轨新增≥2设计文档） |
+| 1. 阅读论文 | 🟩 进行中（54篇深读,双轨:🟦A轨 + 🟪B轨基础线4/4✅;🔴密集 L1→D1✅;🟠OBB L1→P0→K1→**G1✅**;🟡尺度 L1→P0→K1→G1→I1→交叉分析✅·全链路闭环）|
+| 2. 总结论文 | 🟩 进行中（45篇深读总结）|
+| 3. 构建知识库 | 🟩 12/12 + OBB K1 + 尺度 K1(loss/augmentation/head 三文件尺度专节) |
+| 4. 分析研究缺口 | 🟨 多维度Gap(🔴密集K1 19Gap✅+🟡尺度K1 8Gap+G1 20Gap✅+🆕**🟠OBB G1 19Gap✅**;频域条件计算空白维持) |
+| 5. 提出并评估 Idea | 🟨 41个候选(🟦21/🟪4/⬜17/🟠2) + 🆕 OBB I1 8条待录入 |
+| 6. 设计研究方向 | 🟩 **5 设计文档**（🟦#5 v3.0+§十划界 + #11 v1.1 + #7 基线;🟪#30 v1.0·基线初判D-FINE;🆕🔴D1 v1.0）+ 🟠OBB+🟡尺度双K1 知识基础设施就绪 ✅ |
 | 7. Idea 生成元研究 | 🟩 已完成（三路径分析, #18–#29 录入） |
 
 ## Records
@@ -141,7 +173,7 @@
 | **论文数据库** | **papers/database.md(50 条结构化索引,八大主题分区)** |
 | Idea 历史 | 见 Ideas/innovation_ranking.md |
 | 阅读历史 | SEEN-DA（CVPR 2025）✅ \| SEMA-YOLO（RS 2025）✅ \| SFIDM（RS 2025）✅ \| RFLA（ECCV 2022）✅ \| YOLO-World（CVPR 2024）✅ \| YOLOE（arXiv 2025）✅ \| Token Cropr（CVPR 2025）✅ \| TinyFormer（arXiv 2026）✅ \| DERNet（arXiv 2026）✅ \| SET（CVPR 2025）✅ \| D3Q（JSTARS 2025）✅ \| SFDNet（ECCV 2026）✅ \| FMC-DETR（arXiv 2025）✅ \| FDConv（CVPR 2025）✅ \| YOLOv12（NeurIPS 2025）✅ \| MGS（MLSP 2025）✅ \| ELDET（NeurIPS 2025）✅ \| GCA2Net（RS 2025）✅ \| ACM-Coder（CVPR 2024）✅ \| ALGS（TGRS 2025）✅ \| **ViCrop-Det（arXiv 2026.04）✅** \| **D³R-DETR（arXiv 2026.01）✅** \| **DM-EFS（ICCV 2025）✅** \| **O²-DFINE/O²-RTDETR（TGRS 2026）✅** \| **MOCHA（arXiv 2026）✅** \| **CLIP-Bias（arXiv 2026.07）✅** \| **YOLO26 STAL（arXiv 2026.06）✅** \| **Mask-Guided Distillation（IEEE 2026）快速评估✅** \| **NSSA（SciRep 2026）快速评估✅** \| **SViT（WACV 2024）✅** \| **DFIR-DETR（arXiv 2026）✅** \| **DQ-DETR（ECCV 2024）✅** \| **FFCA-YOLO（IEEE 2024）快速评估✅** \| **MDI-YOLO（SciRep 2026）快速评估✅** \| **SFS-DETR（CVPR 2026F）快速评估✅** \| **AD-Det（RS 2025）✅** \| **HashEye（SciRep 2026）深度评估✅** \| **EFSI-DETR（arXiv 2026.01）深度评估✅** \| **DroneScan-YOLO（arXiv 2026.04）快速评估✅** \| **SPA/SPT（ICLR 2026）深度评估✅** \| **Unmasking the Tiny（IVC 2026）快速评估✅🔔跟踪** \| **PST（arXiv 2025.05）快速评估✅** \| **🟪 RT-DETR（CVPR 2024）✅** \| **🟪 D-FINE（ICLR 2025）✅** \| **🟪 Deformable DETR（ICLR 2021）✅** \| **🟪 DINO（ICLR 2023）✅** \| **OPL（ESWA 2025）✅(🔬深读 2026-07-18)** | **🟪🔴 Dome-DETR（arXiv 2025.05）✅** |
-| 方向设计历史 | Idea 生成突破分析（三路径元研究）✅ |
+| 方向设计历史 | Idea 生成突破分析（三路径元研究）✅ \| **D1 密集遮挡方向设计（频域统一框架 v1.0）✅** |
 
 ---
-*Last Update: 2026-07-17 | Maintainer: Claude Code*
+*Last Update: 2026-07-19 | Maintainer: Claude Code | #42 v1.0 分析性论文初稿 ✅*

@@ -3,6 +3,9 @@
 
 | Date | Decision | Reason | Alternatives Considered | Result | Reflection |
 |------|----------|--------|------------------------|--------|------------|
+| 2026-07-18 | **D1 密集遮挡方向设计: 选定方案A(频域驱动的密集检测统一框架)** | K1-X1(P0·频域三线共享)+K1-G9(P0·免标注遮挡先验)双P0交汇→频域判据为统一上游。方案A Novelty最高(三"首次")、项目协同最强(复用#30 S1判据→零上游成本)、叙事最清晰(One Frequency Map, Three Benefits)、风险可控(三下游独立验证→渐进式论文)。方案B(#40+#41·增量·Novelty天花板低)/方案C(#37+#39·架构级·工程风险高)均为备选。核心: S1判据一次计算→#35遮挡感知(免bbox重叠)+#38内容NMS(9年首次框内特征)+#40连续密度LA(替代DALA硬二分)三条下游。 | 方案B(密度自适应管线: #40+#41, Novelty增量但工程简单); 方案C(局部集合预测: #37+#39, Novelty架构级但YOLO改造工程大风险高) | D1 设计文档 v1.0 产出 → [Ideas/dense_occlusion_d1_design.md](Ideas/dense_occlusion_d1_design.md) | 密集遮挡L1→L3→K1→I1→交叉分析→D1 全链路闭环; 实验就绪后首验 E0(内容特征判别力·CPU可跑) + E4(频域遮挡图质量) → 下游2优先发表(最快出成果) |
+| 2026-07-18 | Unmasking the Tiny 哨点降级为普通近邻 | IVC Vol.172见刊细节: STSM+FRM=前景分数**补强式加法**, 与#5跳过式减法方向相反 | 维持哨点等级(但方向相反→无撞车风险) | 降级为普通近邻, 低频跟踪 | STSM+FRM 可作#5 Related Work "增强vs跳过"对照引用 |
+| 2026-07-18 | DETR 降级为交叉融合副线，YOLO 回归唯一主战场 | 用户决策: DETR 方向投入产出比不高; 密集遮挡方向全链路已产出 7 个 YOLO Idea; DETR 保留为灵感源 | 维持双轨并行(用户否决) | DETR 仅保留判据/概念层交叉; DX1-DX5 强化计划停止 | 资源释放到 YOLO 密集遮挡方向; DETR 论文阅读必须通过「YOLO 迁移过滤器」 |
 | 2026-07-15 | 下一步执行顺序:①SLE baseline(#6)→ ②熵-尺度预实验+查新(#5前置)→ ③GCP-ASFF/AFPN对照(#9) | #5 评分最高但有查新风险和小目标高熵风险,需前置验证;#6 零风险且是一切后续实验的地基;不允许见一个Idea就开工 | 直接做#5(风险:novelty未确认);直接换AFPN(风险:无对照依据) | 待执行 | - |
 | 2026-07-15 | 坚持 YOLO11 基线,不转向 RT-DETR | 两篇论文数据均显示小目标场景 RT-DETR 系落后 YOLO 系 15–40 点(RS-STOD/AI-TOD) | RT-DETR-R50 / DETR变体 | 已确认 | 与 DQ-DETR 等小目标专用 DETR 的对比留待后续文献 |
 | 2026-07-15 | Idea #5 查新通过,确认继续推进 | WebSearch 查新:ViCrop-Det/SViT/Token Cropr/BiSD-YOLO/PEEK 等最近邻均不覆盖「VLM语义熵×YOLO P2特征稀疏化」组合(详见 research_gap.md) | 若查新失败则放弃#5转#7 | 已确认 | 剩余前置仅剩熵-尺度预实验;Related Work 需与四条最近邻支线划界 |

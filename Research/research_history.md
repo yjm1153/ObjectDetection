@@ -1,5 +1,158 @@
 # Research History
 
+## 2026-07-19 (续三十五) — 🟠 OBB G1 Gap 分析完成：19个系统性Gap·跨P0三角定位·四维交叉·8条I1入口
+
+- **工作**: OBB P0 3篇(FAA+YOLO26-OBB+RDCNet) + L1 21篇 → 三模块系统化Gap分析(跨P0交叉7项+L1未覆盖7项+四维交叉7项=19Gap)·6关键发现·8条I1入口
+- **核心发现**: ①频域在OBB收益>HBB(一次FFT→三输出→四线下游·2-3×价值密度) ②FAA+YOLO26+RDCNet三角互补零引用=跨论文联合分析可发表 ③OBB×密集=D1独立发表价值 ④OBB条件计算=完全蓝海(21篇零涉足) ⑤OBB=频域判据跨任务通用性最佳载体 ⑥VisDrone-OBB标注缺失=系统性瓶颈
+- **P0 Gap(7个)**: 双源角度监督/NMS路线对比/全链路旋转感知/OBB三维频域判据族/D1 OBB扩展/条件计算判据重验证/OBB密集NMS路线
+- **8条I1 Idea**: OBB三维频域判据框架(~4.2)/D1 v2.0(~4.1)/双源角度监督(~4.0)/条件计算判据适配(~3.9)/NMS路线裁决(~3.8)/全链路旋转感知(~3.8)/BDAssign(~3.7)/旋转等变选型指南(~3.7)
+- **产出**: research_gap.md(~400行新增) + compare(结论45) + journal(第四十四次) + README(续二十九) + TASKS(G1✅+I1更新)
+
+## 2026-07-19 (续三十四) — #42 训练-推理解耦三范式设计空间 v1.0 分析性论文初稿完成
+
+- **工作**: G1-S4 Gap→#42 文档启动→完整设计文档(~450行·12节)。三范式形式化(统一符号系统+数学定义)+设计空间四轴+3×3兼容性矩阵+决策树+9方法实例化映射+8臂实验协议
+- **核心发现**: 训练-推理解耦=2026共识设计模式(三独立趋势汇合); FS-Mamba是唯一三范式全用方法(作者未意识); 范式混合是常态(5/9); 梯度冲突是最大工程风险; "方法论的论文"差异化定位
+- **产出**: [idea_042_train_inference_decoupling_design_space.md](Ideas/idea_042_train_inference_decoupling_design_space.md) + candidate/ranking更新 + compare(结论45) + journal(#43) + README(续二十八) + TASKS(#42✅)
+- **下一**: 🟠 OBB G1 Gap分析
+
+## 2026-07-19 (续三十三) — 🟡 尺度变化 交叉分析完成：Scale×条件计算/OBB/密集遮挡·频域判据=三维度通用语言·7个新高分交叉候选
+
+- **工作**: I1 Idea生成->交叉分析。三维度交叉(Scale×条件计算/OBB/密集遮挡)·频域判据驱动统一框架
+- **三大模块**: ①Scale×条件计算: 空间+层级+路由三维决策统一·五类联合策略·~4.3 ②Scale×OBB: FFT->尺度+角度双输出·免标注R-VIoU·~4.1 ③Scale×密集遮挡: 遮挡->尺度退化->频域修复·D1 v2.0升级·~4.3
+- **核心发现**: 频域判据=三维度通用语言·七线下游(空间门控+层级选择+专家路由+LA+NMS+遮挡检测+尺度估计)·理论贡献从"组件"升级为"通用物理先验"
+- **7个新高分交叉候选**: P0:三维统一计算分配(~4.3)+D1 v2.0(~4.3) / P1:免标注R-VIoU(~4.1)+尺度感知遮挡检测(~4.1)+三态门控(~4.0) / P2:频域动态迭代深度(~4.0)+OBB判据族(~4.0)
+- **产出**: research_gap.md交叉分析专节(~200行) + compare(结论44) + journal(#42) + README(续二十七) + TASKS
+- **下一**: 🟠 OBB G1 / #42 文档启动(70%文档推演)
+
+## 2026-07-19 (续三十二) — 🟡 尺度变化 I1 Idea生成：8条正式Idea落地·4新+4升级·Idea总数37→41
+
+- **工作**: G1→I1 Idea正式生成。4个新Idea(#42-#45)+4个已有升级(#5 v3.3/#11 v2.0/#38动机/#40 v2.0)
+- **新Idea**: #42 ⬜训练-推理解耦三范式设计空间(G1-S4·4.2·最高可推进性) / #43 🟦频域驱动MoE路由(G1-S1·4.0) / #44 🟠OBB双维LA(G1-X2·3.8) / #45 🟦频域门控路线裁决(G1-S5·3.7)
+- **已有升级**: #5→v3.3层级+空间双维(G1-X1) / #11→v2.0频域双模统一(G1-S2) / #38→G1-L2动机强化(30篇零频域NMS) / #40→v2.0尺度×密度双维(G1-S3)
+- **产出**: candidate.md(+4新+4升级注释) + innovation_ranking.md(新增4条目+更新4条目+路径九+架构分类刷新·🟦18→21/⬜16→17) + research_gap.md(I1交叉引用) + compare.md(结论43) + journal(#41) + README(续二十六) + TASKS(I1✅)
+- **关键发现**: #42训练-推理解耦分析性论文=最低悬垂果实(70%文档推演·0实验可启动); 频域判据应用维度爆发(5线下游); 条件计算三维扩展(空间+层级+路由); LA双维升级(密度+尺度)
+- **Idea现状**: 总数37→41(🟦YOLO 18→21 / 🟪DETR 4 / ⬜通用 16→17 / 🟠OBB新增#44·#17→2)
+- **下一**: 🟠 OBB G1 Gap分析 / 🟡 Scale交叉分析 / #42 文档启动(最高可推进性)
+
+## 2026-07-19 (续三十一) — 🟡 尺度变化 G1 Gap分析：20个系统性Gap·跨P0+L1未覆盖+三维度交叉·8条I1入口
+
+- **工作**: 基于 K1 知识补充 → 三模块系统化Gap分析(跨P0交叉8项+L1未覆盖6项+交叉维度6项=20个Gap)
+- **产出**: research_gap.md G1专节(~350行·含优先级排序表+I1路线图) + compare结论42 + journal(第四十次) + README + TASKS 同步
+- **P0 Gap(4项)**: G1-S1频域→MoE路由(条件计算双维融合)/G1-S2增强+节省统一框架(#11 v2.0)/G1-S4训练-推理解耦三范式对比(分析性论文·70%可文档推演)/G1-X1层级+空间双维条件计算(#5全FPN升级)
+- **8条I1 Idea入口**: 训练-推理解耦分析性论文(⬜~4.2)→频域驱动MoE路由(🟦~4.0)→频域双模统一(🟦~4.0)→层级+空间双维(🟦~4.0)→尺度×密度双维LA(🟦~3.9)→频谱感知NMS(🟦~3.8)→旋转框双维LA(🟠~3.8)→频域门控路线裁决(🟦~3.7)
+- **五大核心发现**: 频域→MoE路由=最高价值交叉点; 三范式对比=最低悬垂果实; 增强+节省统一=#11最高价值升级; 层级+空间双维=#5自然扩展; 频域判据一次计算五线共享
+- **下一**: Scale I1 Idea生成 / OBB G1 Gap分析
+
+## 2026-07-19 (续三十) — 🟡 尺度变化 K1 知识补充：loss/augmentation/head 三 KB 尺度专节·知识基础设施就绪
+
+- **工作**: 基于 4 篇 P0 深读 + 30 篇 L1 检索 → 合成 loss.md/augmentation.md/head.md 的尺度感知专节(共~520行)
+- **产出**: loss §🟡(LA三维空间+VALA VIoU/DSS+尺度感知LA全景+Anchor-free适配+推荐栈) / augmentation §🟡(五级增强体系+SR辅助范式+频域多尺度族+动态分辨率+尺度Copy-Paste) / head §🟡(六级Head分类+MoE路由+频域驱动+SR辅助+多尺度融合+Head条件计算蓝海) + compare结论41 + timeline双增强线 + research_gap K1专节(8系统性Gap) + journal(第三十九次) + README + TASKS 同步
+- **核心洞察**: LA三维独立可叠加→#40双维升级方向; 训练-推理解耦三范式从未系统对比→独立论文潜力; FDHead 55.6% FLOPs=#11节省路线最强动机; Head端条件计算=蓝海; 频域判据双用途(尺度+密度)
+- **尺度方向知识基础设施就绪** ✅ → 下一: Scale G1 Gap分析
+
+## 2026-07-19 (续二十九) — 🟡 尺度变化 P0 深读: FS-Mamba Mamba SSM×频域解耦×SR辅助·尺度P0收官
+
+- **论文**: FS-Mamba (Displays 2026, Vol.94, 南京航空航天大学)
+- **工作方式**: 付费墙+编码损坏→多源WebSearch重建
+- **核心**: Mamba SSM Backbone+FDGate(门控高通滤波·可学习)+FPU(双门控频率保持)+PDFAM(金字塔注意力)+SR辅助训练头(训后丢弃·零推理开销)
+- **产出**: [Summary](papers/summaries/FS-Mamba_Displays2026.md)(~350行·10节·5方向+YOLO迁移过滤器) + database快评→🔬P0 + compare结论40 + timeline 2026线 + research_gap 8条目 + journal(第三十八次)
+- **核心洞察**: FDGate可学习门控 vs #11免训练判据=频域门控路线的根本性方法论对照; SR辅助 vs SET vs #5 Gumbel=训练-推理解耦三范式; Mamba→CNN迁移是首要障碍
+- **尺度P0全部完成 (4/4) ✅**
+
+## 2026-07-19 (续二十八) — 🟡 尺度变化 P0 深读: VALA 虚拟锚框尺度校准LA
+
+- **论文**: VALA (Neurocomputing 2026, Vol.696, 国防科技大学)
+- **工作方式**: 付费墙无arXiv→多源WebSearch重建(ScienceDirect+Dimensions+DBLP+WebSearch×3→细节重建+同方法对比)
+- **核心**: 首个将锚框尺度引入标签分配的方法——VIoU(逐层GT尺寸统计→虚拟锚框尺度重校准→IoU一致性保持)+DSS(训练期渐进衰减归一化)
+- **关键数据**: AI-TOD 27.9 / AI-TODv2 26.9 / VisDrone 29.4 AP; 零架构修改+零推理开销+纯训练期LA
+- **产出**: [Summary](papers/summaries/VALA_Neurocomputing2026.md)(~350行·10节·5研究方向+YOLO迁移过滤器) + database快评→🔬P0 + compare结论39 + timeline 2026线 + research_gap 8条目 + journal(第三十七次)
+- **核心洞察**: LA第三创新维度(规则/度量→尺度)——DALA(密度维)×VALA(尺度维)=双维自适应LA→#40最明确技术升级方向
+- **YOLO迁移**: anchor-free适配需"逐层scale range重校准"等效设计(核心挑战·中难度·高价值)
+- **局限**: 仅anchor-based; 静态统计非动态; 无arXiv+付费墙+代码未发布→复现风险尺度P0最高
+
+## 2026-07-19 (续二十七) — 🟡 尺度变化 P0 深读: DERNet 频域全管线三阶段统一DER算子
+
+- **论文**: DERNet (arXiv 2026.06:2606.23825, 南方科技大学)
+- **工作方式**: 2026-07-16快评→升级全协议P0深读; WebSearch+WebFetch多源获取全文细节(arXiv HTML+scirate→消融/跨架构/推理效率/参数拆解全数据)
+- **核心**: 首个频域全管线检测器——WDG(Backbone·Haar DWT+RepCDC+HF自派生门控g∈(0,1)→x̃_LL=y_LL⊙(1+g))+LGE(Neck·Log-Gabor K=2/S=1+WTConv变体)+FDHead(P2-only·box-only·SHG频域门控)
+- **关键数据**: DERNet-S 1.3M参数(↓86.2%)/13.3GFLOPs→VisDrone test 0.316(+0.005 vs YOLOv11-S); DERNet-M 2.9M→0.362(超YOLOv11-M 20M·0.353); A100 162FPS/Jetson Nano 22FPS; FDHead占55.6%GFLOPs
+- **产出**: [Summary](papers/summaries/DERNet_2026.md)(~350行·11节·6研究方向+YOLO迁移过滤器) + database快评→🔬P0 + compare结论38 + timeline 2026线/频域检测线双更新 + research_gap 10个新Gap + journal(第三十六次)
+- **核心洞察**: "增强vs节省"路线分野——DERNet=频域→特征增强(所有位置都处理) vs #11=频域→条件计算(高频算·低频跳过); WDG的HF门控g可直接作为#11 P2稀疏化判据(per-location高频重要性已计算·仅缺"从增强到节省"的决策转换); FDHead 55.6% FLOPs=频域增强算力代价定量暴露→#11"节省"路线根本动机数据点
+- **YOLO迁移**: WDG g→#11 P2判据(⭐×5) / WDG "HF as gate"→#30 DETR token判据(⭐×5) / RepCDC→#6 SLE零开销边缘增强(⭐×4) / LGE方向→OBB Neck方向感知(#9第三对照臂·⭐×3)
+- **局限**: 绝对精度有限(+0.005 S→S); 非严格同构(参数减少非纯频域模块贡献); 三模块互补性低于预期; 密集遮挡盲区
+
+## 2026-07-19 (续二十六) — 🟡 尺度变化 P0 深读: YOLO-Master MoE×YOLO
+
+- **论文**: YOLO-Master (CVPR 2026, Tencent Youtu Lab + SMU, arXiv:2512.23273)
+- **核心**: 首个MoE×YOLO深度融合——ES-MoE多尺度专家(3×3/5×5/7×7 DWConv) + 阶段化路由(Soft→Hard Top-K) + 负载均衡
+- **COCO**: 42.4% AP@1.62ms (+0.8 AP vs YOLOv13-N·快17.8%); VisDrone +2.1 mAP(跨基准最大增益)
+- **产出**: [Summary](papers/summaries/YOLO-Master_CVPR2026.md)(~350行·9节) + database ⚡→🔬 + compare结论37 + timeline门控线扩充(条件计算五维格局) + journal(第三十五次) + KB同步进行中
+- **关键发现**: Backbone-only路由最优(级联梯度冲突→#5 P2专注Backbone获独立验证); 移除DFL与YOLO26形成2026双证; 训练-推理路由解耦=与#5 Gumbel→硬阈值同范式
+- **路线对照**: ES-MoE(可学习·感受野维·图像级) ⟂ #5(免训练·空间维·像素级) ⟂ #11(免训练·频域维) → 三线互补·双维门控
+- **下一工作**: 🟡 尺度P0 第二篇 DERNet(频域三阶段·与项目频域判据线直接对标)
+
+## 2026-07-19 (续二十五) — 🟠 OBB K1 知识补充: loss/augmentation/head OBB章节
+
+- **触发**: OBB P0 深读 3/3 全部完成 → K1 知识系统化
+- **产出**: loss.md §🟠OBB(~120行·六方法谱系+推荐栈) + augmentation.md §🟠OBB(~70行·挑战+策略+等变关系) + head.md §🟠OBB(~120行·五类头+四核心详解+任务冲突四级解耦) + journal(第三十四次)
+- **知识来源**: FAA+YOLO26-OBB+RDCNet 三篇P0深读 + OBB L1检索21篇交叉提炼
+- **关键发现**: 三级解耦(Backbone/Head/Loss)=OBB系统性方案; YOLO26 ωᵢ角度损失极其优雅; FAA规范角概念优越但工程需验证; 旋转等变降低增强依赖→数据高效
+- **下一工作**: TASKS/README同步 → 🟡 尺度变化 P0 深读 或 🟠 OBB L2/G1/I1
+
+## 2026-07-18 (续二十四) — 🟠 OBB P0 深读: RDCNet 极坐标DCN+AALA
+
+- **论文**: RDCNet (IEEE JSTARS 2026.04, Ryu/Yoon/Song, pp.18033–18049)
+- **核心**: 极坐标DCN解耦尺度-方向(旋转等变第三范式·最简实现) + AALA宽高比无关centerness(几何感知+任务对齐LA统一框架)
+- **DOTA**: 81.37%@35FPS/29.1M/108GFLOPs
+- **产出**: Summary + KB 全线同步(compare结论36/timeline旋转等变三范式线/research_gap 9条目) + journal(第三十三次)
+- **OBB P0 深读全部完成(3/3)**: FAA(CVPR 2026·频域角度) + YOLO26-OBB(arXiv 2026.06·YOLO OBB最强基线) + RDCNet(IEEE JSTARS 2026.04·极坐标DCN+AALA)
+- **三角关系**: FAA=频域方向(物理先验) / RDC=空间域方向(可学习·极坐标) / YOLO26-OBB=检测头+Loss改进 —— 三维互补, 联合基线(FAA+RDC+YOLO26) = 理论上的YOLO OBB终极方案
+- **关键发现**: 极坐标同构——FAA FAE(FFT→fftshift→polar)与RDC RDC(polar offset)共享(ρ,θ)参数化→频域判据+空间域旋转感知的数学桥梁→FAA+RDC+#30三线融合锚点
+- **下一工作**: 🟠 OBB K1 知识补充(loss.md/augmentation.md/head.md OBB章节) 或 切换🟡尺度变化P0深读
+
+## 2026-07-18 (续二十三) — 🟠 OBB P0 深读: YOLO26-OBB 最新基线
+
+- **论文**: YOLO26: Unified Real-Time Vision Models (arXiv 2026.06, Ultralytics)
+- **核心改进**: ①长边角度定义[-45°,135°)→消除0°/90°边缘交换(+1.3 mAP) ②直接角度回归→移除sigmoid非线性 ③宽高比感知角度损失sin²(2Δθ̃) ωᵢ自动调节(λ=3最优, +1.2 mAP) ④NMS-free双头(O2O推理+O2M训练+Progressive Loss) ⑤STAL+DFL-free+MuSGD
+- **结果**: DOTA-v1.0 +2.5~3.4 mAP vs YOLO11-OBB; AP₇₅ +4.6~6.0; CPU推理+43%
+- **项目影响**: YOLO26-OBB = 2026 YOLO OBB单一最强基线(YOLO11-OBB角度表示有根本缺陷→已过时); #6 baseline若升级YOLO26可获免费增益; #17 ADR离散bin vs 连续回归需对比裁决; NMS-free与#38互补
+- **局限**: VisDrone OB末测试; O2O在密集场景可能退化(每cell K=1); STAL旋转框膨胀角度保持未讨论
+- **产出**: [Summary](papers/summaries/YOLO26-OBB_arXiv2026.md) + database ⚡→🔬 + compare结论35 + timeline + research_gap + journal + README/TASKS 同步
+
+## 2026-07-18 (续二十二) — 🟠 OBB P0 深读: FAA (CVPR 2026) 频域×OBB首次交叉
+
+- **论文**: FAA: Fourier Angle Alignment for Oriented Object Detection in Remote Sensing (CVPR 2026, 北理/港大/东北大学)
+- **核心方法**: FAE(FFT角度估计: 2D FFT→极坐标→径向加权积分→atan2主方向)→FAAFusion(低层方向引导高层对齐, 替换FPN加法)+FAA Head(RoI→规范角0°做分类+残差保留旋转敏感回归)
+- **理论**: 傅里叶旋转等变性 + 矩形频谱能量⊥长轴 → 从频谱直接估计目标方向
+- **结果**: DOTA-v1.0 78.72% SOTA / DOTA-v1.5 72.28% SOTA / HRSC2016 +2.17%; FAAFusion+FAA Head独立有效且可叠加
+- **YOLO迁移**: ①FAE角度估计→YOLO OBB NMS频域角度相似度替代旋转IoU ②FAAFusion→YOLO PAN方向感知特征融合→#9第三对照臂 ③FAE方向一致性→新门控判据维度(方向模糊区激进稀疏化)
+- **项目协同**: #11/#30频域判据(重要性) + FAA频域判据(方向) = 双维频域判据互补 / #25频率签名可吸收FAE的E_θ(θ)方向签名 / D1频域统一框架可扩展OBB方向
+- **产出**: [Summary](papers/summaries/FAA_CVPR2026.md) + database ⚡→🔬 + compare/timeline/research_gap/journal/README/TASKS 全面同步
+
+## 2026-07-18 (续二十一) — 🟡 尺度变化 L1 补充检索: 三维度扩展 L1 全部完成
+
+- **检索**: 6 组关键词 × 4 轮, 命中 30 篇(P0×4/P1×5/P2×21); 尺度存量30>OBB 21>密集遮挡 13
+- **P0**: YOLO-Master(CVPR 2026·MoE×YOLO) / DERNet(频域三阶段) / VALA(虚拟锚框LA) / FS-Mamba(SR辅助+频域门控)
+- **核心发现**: 频域×尺度最成熟(8篇); 尺度感知LA独立方向(5篇); MoE×尺度=条件计算新范式; SR辅助零推理开销
+- **三维度扩展 L1 全部完成**: 🔴密集遮挡13篇+🟠OBB21篇+🟡尺度30篇=64篇新文献; database 77→128
+- **产出**: [quick_eval](papers/summaries/quick_eval_2026-07-18_scale_variation_l1_retrieval.md) + database P0/P1 + TASKS/README/journal 全面同步
+
+## 2026-07-18 (续二十) — 🟠 OBB L1 补充检索: 旋转检测方向文献扫描完成
+
+- **检索**: 6 组关键词 × 3 轮, 命中 21 篇(P0×3/P1×4/P2×14); OBB 存量 6→27; database 77→98
+- **P0**: FAA(CVPR 2026·频域×OBB首次交叉) / YOLO26-OBB(最新基线) / RDCNet(旋转感知LA)
+- **核心发现**: 频域×OBB=全新交叉维度(4篇但全是增强·条件计算空白); YOLO26 STAL+NMS-free; 旋转等变三范式成熟; BD Loss新SOTA
+- **产出**: [quick_eval](papers/summaries/quick_eval_2026-07-18_obb_l1_retrieval.md) + database +21 + TASKS/README/journal 全面同步
+
+## 2026-07-18 (续十九) — 🔴 D1 密集遮挡方向设计: 频域驱动的密集检测统一框架 v1.0
+
+- **D1 方向选定**: 三方案对比→方案A(频域统一框架)击败方案B(密度自适应·增量)/方案C(局部集合预测·高风险)
+- **核心设计**: S1 空域高通代理判据(#30 §2 复用)→三条独立下游(①#35 频域遮挡先验·免bbox重叠 ②#38 频谱感知NMS·内容感知衰减 ③#40 连续密度感知LA·联合密度软值)
+- **三"首次"**: ①首次频域用于遮挡图生成 ②首次框内特征内容引入NMS ③首次频域密度作为LA正交维度
+- **论文策略**: 渐进式——阶段1 下游2 NMS(最快出成果)→阶段2 下游1 遮挡(核心novelty)→阶段3 统一框架(完整叙事)
+- **密集遮挡全链路闭环**: L1→L3→K1→I1→交叉分析→D1 ✅
+- **产出**: [D1 设计文档](Ideas/dense_occlusion_d1_design.md)(~350行10节) + TASKS/README/journal/decision_history/innovation_ranking 全面同步
+
 ## 2026-07-18 (续十八) — 📋 策略修订: DETR 降级为交叉融合副线，YOLO 回归唯一主战场
 
 - **用户决策**: "改变一下策略，DETR仅做为交叉融合的副研究方向，主要还是以YOLO进行研究"

@@ -21,7 +21,7 @@
 | 论文 | Venue | 类型 | 关联 Idea | 一句话 | Summary |
 |---|---|---|---|---|---|
 | [SET](https://openaccess.thecvf.com/content/CVPR2025/html/Sun_SET_Spectral_Enhancement_for_Tiny_Object_Detection_CVPR_2025_paper.html) | CVPR 2025 | 🔬 | #11判据修正 | 频域归因:"抑制背景噪声而非增强信号";去高频帮小目标 | [→](summaries/SET_CVPR2025.md) |
-| [DERNet](https://arxiv.org/abs/2606.23825) | arXiv 2026.06 | 🔬 | #11最强竞争+佐证 | 频域全管线(WDG+LGE+FDHead);1/6参数超YOLOv11 | [→](summaries/DERNet_2026.md) |
+| [DERNet](https://arxiv.org/abs/2606.23825) | arXiv 2026.06 | 🔬P0 | #11最强佐证·频域全管线·增强vs节省路线分野 | WDG(Haar DWT+RepCDC+HF自派生门控)+LGE(Log-Gabor K=2/S=1+WTConv变体)+FDHead(P2-only·box-only·SHG);1.3M/13.3GFLOPs→VisDrone 0.316;五检测器跨架构;FDHead 55.6%GFLOPs=频域增强算力代价定量证据 | [→](summaries/DERNet_2026.md) |
 | [SFDNet](https://arxiv.org/abs/2606.29029) | ECCV 2026 | 🔬 | #11竞争者 | 低/中/高三频谱解耦+类别原型蒸馏 | [→](summaries/SFDNet_ECCV2026.md) |
 | [FMC-DETR](https://arxiv.org/abs/2509.23056) | arXiv 2025.09 | 🔬 | #11 #13技术方案 #14 | 振幅-相位解耦;[D2,D4]非均匀检测层;VisDrone 33.7 | [→](summaries/FMC-DETR_arXiv2025.md) |
 | [D³R-DETR](https://arxiv.org/abs/2601.02747) | arXiv 2026.01 | 🔬 | #13 #16(Gabor工具) | Gabor频域核+密度引导注意力稀疏化;Gabor>Fourier>Haar | [→](summaries/D3R-DETR_arXiv2026.md) |
@@ -91,6 +91,45 @@
 | [GCA2Net](https://doi.org/10.3390/rs17061077) 【自】 | RS 2025 | 🔬 | #5/#11路由范式 | ARU自适应路由+DRC动态核旋转 | [→](summaries/GCA2Net_RemoteSensing2025.md) |
 | [ACM-Coder](https://arxiv.org/abs/2305.10061) 【自】 | CVPR 2024 ⚠️ | 🔬 | #12方法论警示 | 证明KLD/GWD未真正解决边界不连续;"换度量≠解决问题" | [→](summaries/BoundaryDiscontinuity_CVPR2024.md) |
 | [ALGS](https://doi.org/10.1109/tgrs.2025.3604077) 【自】 | TGRS 2025 | 🔬 | 概念参考 | 自适应标签粒度;纯分类,迁移路径有限 | [→](summaries/AdaptiveLabelGranularity_TGRS2025.md) |
+| [FAA (Fourier Angle Alignment)](https://arxiv.org/abs/2602.23790) | **CVPR 2026** | 🔬 | 🟠OBB×频域 #17 #11 #30 #25 OBB×频域交叉 | FFT角度估计(频域旋转等变性)→FAAFusion(Neck方向对齐)+FAA Head(RoI→规范角分类-回归解耦);DOTA 78.72% SOTA;频域×OBB首次系统性交叉;FAE角度判据可迁移YOLO OBB NMS→#38方向扩展;FAAFusion可插入YOLO PAN→#9对照臂 | [→](summaries/FAA_CVPR2026.md) |
+| [YOLO26-OBB](https://arxiv.org/abs/2606.03748) | arXiv 2026.06 | 🔬 | 🟠OBB基线 #17 #6 #12 #40 | NMS-free双头+长边角度定义[-45°,135°)+STAL小目标LA+移除DFL+宽高比感知角度损失sin²(2Δθ̃)+MuSGD; DOTA +3.4 AP vs YOLO11; 2026 YOLO OBB单一最强基线 | [→](summaries/YOLO26-OBB_arXiv2026.md) |
+| [RDCNet](https://ieeexplore.ieee.org/document/11495006) | IEEE JSTARS 2026.04 | 🔬 | 🟠OBB #17 #40 OBB×密集交叉 #31 | 极坐标DCN解耦尺度-方向+AALA宽高比无关centerness;DOTA 81.37%@35.3FPS/29.1M/108GFLOPs;旋转等变新范式(最简实现)+LA免阈值统一框架;YOLO迁移: RDC→C2f嵌入/AALA→SimOTA替换 | [→](summaries/RDCNet_JSTARS2026.md) |
+| [BD Loss (2025 Survey)](https://ctujs.ctu.edu.vn/) 🆕 | CTU JS 2025 | ⚡→🔬P1 | 🟠OBB #12 Loss | 2025旋转Loss综述;Bhattacharyya Distance全面超越GWD/KLD/KFIoU;DOTA +1.5~2.8 AP vs KLD;满足全部IoU理想属性 | [→](summaries/quick_eval_2026-07-18_obb_l1_retrieval.md) |
+| [HERO-Det](https://ojs.aaai.org/index.php/AAAI/article/view/37753) 🆕 | **AAAI 2026** | ⚡→🔬P1 | 🟠OBB #17 OBB×条件计算 | Hilbert曲线遍历卷积旋转等变(替代群卷积)+方向自适应预测头;DOTA 79.56%/HRSC2016 90.64%;跨任务泛化 | [→](summaries/quick_eval_2026-07-18_obb_l1_retrieval.md) |
+| [SFMP-Net](https://doi.org/10.1088/1361-6501/ae6936) 🆕 | Meas. Sci. Technol. 2026 | ⚡→🔬P1 | 🟠OBB×频域 OBB×频域交叉 | 空域-频域动态增强+全局多尺度池化+旋转自适应检测头;DIOR-R 80.16%/DOTA 87.63%(YOLOv8n);频域+空域融合OBB | [→](summaries/quick_eval_2026-07-18_obb_l1_retrieval.md) |
+| [GADet](https://www.sciencedirect.com/science/article/abs/pii/S0950705126002182) 🆕 | KBS 2026 | ⚡→🔬P1 | 🟠OBB #17 轻量旋转 | CIA剪枝+旋转敏感注意力;DOTA 76.90%@56.5FPS/20.3GFLOPs;精度-效率Pareto前沿 | [→](summaries/quick_eval_2026-07-18_obb_l1_retrieval.md) |
+
+### 🟠 OBB P2 快评 (2026-07-18 L1 检索)
+
+| 论文 | Venue | 类型 | 关联 | 一句话 |
+|------|-------|------|------|------|
+| [ASEP-Net](https://dl.acm.org/doi/10.1145/3800227.3800263) 🆕 | ACM 2026 | ⚡ | 🟠OBB×频域·小目标 | SPDConv P2保留+频域注意力分支(CSP-OmniKernel);Helicopter +15.16% |
+| [FADL-Net](https://openreview.net/forum?id=nJuXmKx12W) 🆕 | IEEE/OpenReview 2026 | ⚡ | 🟠OBB×频域 | 空间-频谱FPN自适应多频段长程依赖;复杂背景+LA不均衡+分类-定位不对齐 |
+| [FrequencyFormer](https://eudl.eu/doi/10.4108/airo.10701) 🆕 | EAI AIRO 2025 | ⚡ | 🟠OBB×频域 | DCT压缩OBB形状→频率向量注入Decoder query;端到端Transformer |
+| [YOLOv11-OBB+SAHI](https://www.mdpi.com/1424-8220/26/3/942) 🆕 | Sensors 2026 | ⚡ | 🟠OBB·应用 | 切片训练+SAHI推理;海洋雷达mAP>0.95;4-6FPS边缘部署 |
+| [Improved YOLOv8-OBB](http://www.tseit.org.cn/) 🆕 | JTSEIT 2025 | ⚡ | 🟠OBB·模块改进 | LSKAM大核注意力+VoV-GSCSP;73.7% mAP@26.9GFLOPs |
+| [YOLO11n-OBB改进](https://www.mdpi.com/) 🆕 | AgriEngineering 2026 | ⚡ | 🟠OBB·密集场景 | LSK+BiFPN+KFIoU;密集粘连mAP 0.931;100FPS/2.71M |
+| [角度分类+动态匹配](http://cje.ustb.edu.cn/) 🆕 | Chin. J. Eng. 2026 | ⚡ | 🟠OBB·LA | 形状感知角度分类+hIoU→rIoU渐进匹配;DOTA 0.786 |
+| [NBBOX](https://arxiv.org/) 🆕 | arXiv 2025 | ⚡ | 🟠OBB·增强 | OBB标注级旋转/缩放/平移噪声注入;scale-aware变体 |
+| [PointOBB-v3](https://arxiv.org/) 🆕 | IJCV 2025 | ⚡ | 🟠OBB·增强 | 旋转/翻转视图+对称性SSL角度学习;平均+3.56% |
+| [PGWave-RotNet](https://www.semanticscholar.org/) 🆕 | 2026 | ⚡ | 🟠OBB·轻量 | Ghost卷积+小波旋转网络+门控位置敏感注意力 |
+| [Mobile-RetinaNet](https://ieeexplore.ieee.org/document/11373719) 🆕 | IEEE 2025 | ⚡ | 🟠OBB·SSM | MobileMamba backbone+EfficientViT-FPN+旋转RetinaNet头 |
+| [RASST](https://scholarworks.bwise.kr/) 🆕 | 2025.05 | ⚡ | 🟠OBB·半监督 | 自适应旋转卷积+旋转感知patch embedding+半监督 |
+| [CRV YOLOv9-t Equivariant](https://crv.pubpub.org/) 🆕 | CRV 2026 | ⚡ | 🟠OBB·等变 | C4/S/C4-S等变群卷积→YOLOv9-t;COCO +4.9% |
+
+### 🟡 尺度变化 P0/P1 (2026-07-18 L1 检索)
+
+| 论文 | Venue | 类型 | 关联 Idea | 一句话 | Summary |
+|------|-------|------|-----------|------|------|
+| [YOLO-Master](https://arxiv.org/abs/2512.23273) | **CVPR 2026**·Tencent | 🔬 | 🟡尺度×条件计算 #5 #22 #11 #30 | 首个MoE×YOLO深度融合;ES-MoE多尺度专家(3×3/5×5/7×7 DWConv)+Soft→Hard Top-K阶段化路由+负载均衡Loss; Backbone-only最优(级联路由梯度冲突); 移除DFL+λ=1.5最优; VisDrone +2.1 mAP(跨基准最大增益); 开源+TensorRT/ncnn部署 | [→](summaries/YOLO-Master_CVPR2026.md) |
+| [DERNet](https://arxiv.org/abs/2606.23825) 🆕 | arXiv 2026.06 | 🔬P0 ✅ | 🟡尺度×频域 #11 D1 #5 #30 OBB | WDG(Haar DWT+RepCDC+HF自派生门控·Backbone)+LGE(Log-Gabor K=2/S=1+WTConv·Neck)+FDHead(P2-only·box-only·SHG·Head);1.3M/13.3GFLOPs→VisDrone 0.316;A100 162FPS(Jetson 22FPS);FDHead 55.6%GFLOPs;五检测器跨架构;频域增强vs条件计算路线分野 | [→](summaries/DERNet_2026.md) |
+| [VALA](https://www.sciencedirect.com/science/article/abs/pii/S0925231226014530) 🆕 | Neurocomputing 2026 | 🔬P0 ✅ | 🟡尺度×LA #40 #12 #11 OBB | VIoU(逐层GT尺寸统计→虚拟锚框尺度重校准→IoU一致性保持)+DSS(训练期渐进衰减归一化·课程学习式正则化);AI-TOD 27.9/AI-TODv2 26.9/VisDrone 29.4AP;零架构修改·纯训练期LA;anchor-based→YOLO anchor-free需scale range重校准等效设计 | [→](summaries/VALA_Neurocomputing2026.md) |
+| [FS-Mamba](https://www.sciencedirect.com/science/article/abs/pii/S0141938226001253) 🆕 | Displays 2026 | 🔬P0 ✅ | 🟡尺度×频域 #11 #5 #30 | Mamba SSM Backbone+FDGate(门控高通滤波)+FPU(双门控频率保持上采样)+PDFAM(金字塔双融合注意力)+SR辅助训练头(训后丢弃·零推理开销);VisDrone/UAV-ROD/WX-Road三基准;可学习频域门控vs免训练判据路线对照 | [→](summaries/FS-Mamba_Displays2026.md) |
+| [DCNet (DSA)](https://www.sciencedirect.com/science/article/abs/pii/S0031320325011112) 🆕 | Pattern Recognition 2025/26 | ⚡→🔬P1 | 🟡尺度×LA #40 | DSA(锚框回归信息自适应调整)+CEM(上下文增强·位移卷积+自注意力) | [→](summaries/quick_eval_2026-07-18_scale_variation_l1_retrieval.md) |
+| [SA-Matching DETR](https://openaccess.thecvf.com/content/CVPR2026F/html/Yang_SA-Matching_DETR_A_Lightweight_Transformer_Detector_with_Enhanced_Scale_Adaptive_CVPRF_2026_paper.html) 🆕 | **CVPR 2026F** | ⚡→🔬P1 | 🟡尺度×LA·DETR | 尺度自适应匹配(小目标假阳性+大目标假阴性);54.8% COCO mAP | [→](summaries/quick_eval_2026-07-18_scale_variation_l1_retrieval.md) |
+| [RFAG-YOLO](https://pmc.ncbi.nlm.nih.gov/articles/PMC11991089/) 🆕 | Sensors 2025 | ⚡→🔬P1 | 🟡尺度·感受野 #5 | RFN(动态核参数调整)+SAF(尺度感知特征融合·尺度注意力);VisDrone 38.9%/+12.43% vs YOLOv7 | [→](summaries/quick_eval_2026-07-18_scale_variation_l1_retrieval.md) |
+| [MFR-YOLO](https://www.nature.com/articles/s41598-026-45641-8) 🆕 | Scientific Reports 2025 | ⚡→🔬P1 | 🟡尺度·感受野 #6 | DCNv4全backbone+MSFEM(SPDConv+DCNv4双分支)+GAM+PPA;VisDrone/UA-DETRAC | [→](summaries/quick_eval_2026-07-18_scale_variation_l1_retrieval.md) |
+| [FA-YOLO](https://ieeexplore.ieee.org/document/11542900) 🆕 | IEEE 2026.04 | ⚡→🔬P1 | 🟡尺度×频域·Neck #9 | AFPN+ASFF+FDAFE(频域自适应特征增强);+4.1% Recall vs YOLOv11n | [→](summaries/quick_eval_2026-07-18_scale_variation_l1_retrieval.md) |
 
 ---
 
@@ -137,11 +176,13 @@
 
 | 维度 | 数量 |
 |---|---|
-| 总条目 | **77**(🔬深读 48 + 🔍深度评估 3 + ⚡快评 26)| 2026-07-18 质量筛选: 移除5篇纯arXiv无venue/无代码/无机构背书论文 |
-| VisDrone 相关 | 30+ |
-| 频域检测线 | 18(核心 5 + 工具/外围 13) |
-| Token选择/门控线 | **7** |
+| 总条目 | **128**(🔬深读 48 + 🔍深度评估 3 + ⚡快评 77)| 🟡尺度 L1 检索 +30 篇(P0×4/P1×5/P2×21); **三维度扩展 L1 全部完成**(密集13+OBB21+尺度30=64篇新文献) |
+| VisDrone 相关 | 50+ |
+| 频域检测线 | 30(核心 5 + 工具/外围 25; 🆕OBB×频域 4+尺度×频域 8) |
+| Token选择/门控线 | **9**(+YOLO-Master MoE+Input-Adaptive DNN) |
 | 🔴 密集遮挡 | **12** |
+| 🟠 OBB 旋转检测 | **27**(存量 6 + L1 检索 21) |
+| 🟡 尺度变化拓展 | **30**(存量多篇 + L1 检索 30; 项目存量最大维度) |
 | 🟪 B轨·实时DETR基座 | 5(基础线 4 闭环 ✅ + Dome-DETR 竞品深读 🔴 **已放码✅**) |
 | 🟪 DETR 专属扩展（DX1 新增） | **8** |
 | pre-2025(路径三+基础+经典补读) | 15 |
