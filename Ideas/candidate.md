@@ -510,7 +510,7 @@
   - 与 OPL 的划界: OPL 是"训练一个遮挡预测器",#36 是"验证已有判据是否免费隐含遮挡信息"——目的/成本/组件数全不同
   - 若验证通过的后续: #5 门控策略升级为三态(低熵前景→全算/高熵∩遮挡→算+LLF 保护/高熵∩非遮挡→跳过)
 
-## #37 🔴🟦 YOLO Grid-Cell EMD: 局部集合预测适配一阶段检测器
+### #37 🔴🟦 YOLO Grid-Cell EMD: 局部集合预测适配一阶段检测器
 - **Source**: CrowdDet (CVPR 2020) × YOLO dense prediction 范式
 - **Motivation**: CrowdDet 证明"一个 proposal 预测 K 个实例"可以有效处理密集重叠——但仅限 proposal-based 检测器。YOLO 的 P2 高分辨率 grid（160×160）在密集场景下每个 grid cell 同样面临"多个实例落入同一 cell"的问题。将 EMD 从 proposal 级迁移到 grid-cell 级，让 YOLO 也具备集合预测能力。
 - **Solved Problem**: YOLO 一阶段检测器在高度重叠场景下的漏检——当前每个 grid cell 只预测一个实例（或 N 个 anchor），密集重叠时多个 GT 竞争同一 cell 导致标签分配 ambiguity
@@ -527,7 +527,7 @@
   5. **TAL 兼容**: EMD 匹配替代 YOLO 现有的 SimOTA/TAL——对齐 DETR 的集合匹配哲学
 - **Notes**: 与 #35(频域遮挡先验)可联合——频域判据识别高密度 cell→K 值自适应(K=1/2/3); 与 DETR 全局集合预测构成「局部+全局」层次化集合预测——Local EMD per cell + Global Hungarian across cells
 
-## #38 🔴⬜ 频谱感知 Soft-NMS: 频域内容相似度→NMS 第二衰减判据
+### #38 🔴⬜ 频谱感知 Soft-NMS: 频域内容相似度→NMS 第二衰减判据
 - **Source**: Soft-NMS (ICCV 2017) × #11 高频判据 × NWD-Soft-NMS (MFF-YOLO 2025)
 - **Motivation**: 过去 9 年所有 NMS 变体（Soft-NMS/Adaptive NMS/NWD-Soft-NMS/Softer-NMS）的共同盲区——**仅用 box 坐标判断冗余，完全忽略框内特征内容**。两个不同实例即使 IoU=0.9，其框内纹理/边缘/频谱模式可能完全不同。高频判据(#11 S1 空域高通代理)天然适合快速度量框内内容的「纹理复杂度」，为 NMS 提供独立于空间重叠的第二判断轴。
 - **Solved Problem**: NMS 无法区分"同实例多预测（应抑制）"和"不同实例高度重叠（应保留）"——Soft-NMS 用连续衰减缓解了硬清零，但衰减函数仍仅依赖 IoU（或 NWD）→ 无法利用内容信息做更智能的判断
@@ -544,7 +544,7 @@
 - **Notes**: 与 NWD-Soft-NMS(#6 baseline 推荐)兼容——频谱感知是 NWD 衰减的第二乘子；若验证有效，可写为"Spectrum-Aware NMS: Beyond Spatial Overlap for Crowded Detection"
 - **🟡 G1-L2 动机强化(2026-07-19·I1)**: G1-L2确认——30篇L1尺度文献中**零篇**将频域用于NMS或后处理。全部频域论文(8篇)=特征增强/融合。频域在后处理阶段的应用是完全空白。尺度变化使此Gap更严重:小目标IoU对位置敏感(1px偏移→IoU暴跌)但频域特征对位置鲁棒→频域NMS对小目标特别友好。此Gap直接支撑#38的novelty叙事——"首个频域内容感知NMS"。详见 research_gap.md § G1-L2。
 
-## #39 🔴🟦 EMD+RepLoss 联合训练: 局部集合匹配+全局框间排斥
+### #39 🔴🟦 EMD+RepLoss 联合训练: 局部集合匹配+全局框间排斥
 - **Source**: CrowdDet (CVPR 2020) × RepLoss (CVPR 2018)
 - **Motivation**: 两条经典密集检测路线从未在同一检测器上联合使用。EMD Loss 解决"同一 proposal/grid-cell 内多实例的匹配"，RepLoss 解决"不同 proposal/grid-cell 间预测框的互斥"——两者覆盖密集检测的两个正交维度（匹配 vs 定位、内 vs 间）。联合使用可实现「proposal/grid-cell 内 EMD 匹配多个实例 + proposal/grid-cell 间 RepBox 推开不同目标的预测框」的完整方案。
 - **Solved Problem**: 密集检测的两个独立失败模式——①同一区域多实例的匹配失败（EMD 解决）②不同目标预测框互相吸引导致 NMS 误杀（RepBox 解决）——首次被同一训练框架覆盖
